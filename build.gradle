@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+}
+
+group 'com.svydovets'
+version '1.0-SNAPSHOT'
+sourceCompatibility = '17'
+targetCompatibility = '17'
+
+jar {
+    archiveBaseName = 'svydovets-bibirnate'
+}
+
+ext {
+    junitVersion = '5.8.2'
+    mockitoVersion = '4.6.1'
+    reflections = '0.10.2'
+    lombok = '1.18.24'
+    commonsLang3 = '3.12.0'
+    checkstyle = '10.3.1'
+    log4j = '2.18.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    compileOnly "org.projectlombok:lombok:${lombok}"
+
+}
+
+test {
+    useJUnitPlatform()
+}
