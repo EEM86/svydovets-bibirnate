@@ -1,5 +1,7 @@
 package com.svydovets.bibirnate.session;
 
+import java.util.Optional;
+
 /**
  * This is main interface to work with Bibirnate. It allows to read operations for mapped classes.
  */
@@ -10,7 +12,7 @@ public interface Session {
      * @param id of entity
      * @param type mapped class with {@link com.svydovets.bibirnate.annotation.Entity}
      * @param <T>  type of entity
-     * @return found entity or null if no such entity was found
+     * @return found entity wrapped in optional
      */
-    <T> T findById(Object id, Class<T> type);
+    <T> Optional<T> findById(Object id, Class<T> type);
 }
