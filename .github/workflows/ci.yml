@@ -1,0 +1,24 @@
+name: 'CI'
+on: [push, pull_request]
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3         # checkout the repo
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v3       # setup adopt-hotspot jdk 17
+        with:
+          java-version: '17'
+          distribution: 'adopt-hotspot'
+
+      - name: Setup gradle
+        uses: gradle/gradle-build-action@v2 # setup gradle and use a wrapper
+        with:
+          gradle-version: wrapper
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew            # make ./gradlew an executable command for Linux
+
+      - name: Execute gradle task
+        run: ./gradlew clean build test    # run gradle tasks: clean, test and build
