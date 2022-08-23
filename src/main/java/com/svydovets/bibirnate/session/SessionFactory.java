@@ -7,7 +7,7 @@ import javax.sql.DataSource;
  */
 public interface SessionFactory {
     /**
-     * Creates {@link Session} for provided {@link DataSource}
+     * Creates {@link Session} for provided {@link DataSource}.
      */
     Session createSession(DataSource dataSource);
 }
