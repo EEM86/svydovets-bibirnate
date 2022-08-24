@@ -11,16 +11,22 @@ import java.util.Optional;
 import static com.svydovets.bibirnate.cache.util.CommandUtil.checkOnIsAssignableTo;
 import static com.svydovets.bibirnate.cache.util.CommandUtil.checkPassedParametersOnNull;
 
+/**
+ * This is the realization of the {@link KeyExtractorCommand} that extracts {@link Key} by {@link QueryKeyParam}.
+ */
 public class QueryKeyExtractorCommand implements KeyExtractorCommand {
 
     public QueryKeyExtractorCommand() {
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Optional<Key<?>> executeExtract(Map<Key<?>, Object> cacheMap, AbstractKeyParam<?> abstractKeyParam) {
-        checkPassedParametersOnNull(cacheMap, abstractKeyParam);
+    public Optional<Key<?>> executeExtract(Map<Key<?>, Object> cacheMap, AbstractKeyParam<?> keyParam) {
+        checkPassedParametersOnNull(cacheMap, keyParam);
 
-        QueryKeyParam<?> queryKeyParam = (QueryKeyParam<?>) checkOnIsAssignableTo(abstractKeyParam, QueryKeyParam.class);
+        QueryKeyParam<?> queryKeyParam = (QueryKeyParam<?>) checkOnIsAssignableTo(keyParam, QueryKeyParam.class);
 
         return cacheMap.keySet().stream()
                 .filter(key -> key.getKeyParam().getClass().isAssignableFrom(QueryKeyParam.class))

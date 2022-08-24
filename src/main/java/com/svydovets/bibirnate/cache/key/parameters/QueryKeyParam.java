@@ -3,6 +3,10 @@ package com.svydovets.bibirnate.cache.key.parameters;
 import java.util.Collection;
 import java.util.Objects;
 
+/**
+ * This class is extension for the {@link AbstractKeyParam} that builds on the entity class type, query (original query
+ * to the DB), and collection class type of result.
+ */
 public class QueryKeyParam<T> extends AbstractKeyParam<T> {
 
     private final String query;
@@ -13,7 +17,6 @@ public class QueryKeyParam<T> extends AbstractKeyParam<T> {
         this.query = query;
         this.collectionType = collectionType;
     }
-
 
     public String getQuery() {
         return query;

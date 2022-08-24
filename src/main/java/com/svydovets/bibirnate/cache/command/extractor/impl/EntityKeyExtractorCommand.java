@@ -8,19 +8,25 @@ import com.svydovets.bibirnate.cache.key.parameters.EntityKeyParam;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.svydovets.bibirnate.cache.util.CommandUtil.checkPassedParametersOnNull;
 import static com.svydovets.bibirnate.cache.util.CommandUtil.checkOnIsAssignableTo;
+import static com.svydovets.bibirnate.cache.util.CommandUtil.checkPassedParametersOnNull;
 
+/**
+ * This is the realization of the {@link KeyExtractorCommand} that extracts {@link Key} by {@link EntityKeyParam}.
+ */
 public class EntityKeyExtractorCommand implements KeyExtractorCommand {
 
     public EntityKeyExtractorCommand() {
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Optional<Key<?>> executeExtract(Map<Key<?>, Object> cacheMap, AbstractKeyParam<?> abstractKeyParam) {
-        checkPassedParametersOnNull(cacheMap, abstractKeyParam);
+    public Optional<Key<?>> executeExtract(Map<Key<?>, Object> cacheMap, AbstractKeyParam<?> keyParam) {
+        checkPassedParametersOnNull(cacheMap, keyParam);
 
-        EntityKeyParam<?> entityKeyParam = (EntityKeyParam<?>) checkOnIsAssignableTo(abstractKeyParam, EntityKeyParam.class);
+        EntityKeyParam<?> entityKeyParam = (EntityKeyParam<?>) checkOnIsAssignableTo(keyParam, EntityKeyParam.class);
 
         return cacheMap.keySet().stream()
                 .filter(key -> key.getKeyParam().getClass().isAssignableFrom(EntityKeyParam.class))

@@ -2,6 +2,9 @@ package com.svydovets.bibirnate.cache.key.parameters;
 
 import java.util.Objects;
 
+/**
+ * This class is extension for the {@link AbstractKeyParam} that builds on the entity class type and entity id.
+ */
 public class EntityKeyParam<T> extends AbstractKeyParam<T> {
 
     private final Object id;
@@ -28,4 +31,5 @@ public class EntityKeyParam<T> extends AbstractKeyParam<T> {
     public int hashCode() {
         return Objects.hash(super.hashCode(), getId());
     }
+
 }

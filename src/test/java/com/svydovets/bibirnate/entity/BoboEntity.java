@@ -1,17 +1,17 @@
 package com.svydovets.bibirnate.entity;
 
-public class TestEntity {
-
+public class BoboEntity {
     private long version;
 
-    public TestEntity() {
+    public BoboEntity() {
     }
 
-    public TestEntity(long version) {
+    public BoboEntity(long version) {
         this.version = version;
     }
 
     public long getVersion() {
         return version;
     }
+
 }

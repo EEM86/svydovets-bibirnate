@@ -14,11 +14,19 @@ import static com.svydovets.bibirnate.cache.util.CommandUtil.checkOnIsAssignable
 import static com.svydovets.bibirnate.cache.util.CommandUtil.checkPassedParametersOnNull;
 import static com.svydovets.bibirnate.cache.util.CommandUtil.removeAllCacheWithQueryKeyRelated;
 
+
+/**
+ * This is the realization of the {@link InvalidationCommand} that makes invalidation for caches related to passed
+ * {@link Key}.
+ */
 public class QueryKeyInvalidationCommand implements InvalidationCommand {
 
     private static final String SELECT = "SELECT";
     private static final String INSERT = "INSERT";
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void executeInvalidate(Map<Key<?>, Object> cacheMap, Key<?> key) {
         // todo: add logger with info that invalidation caches process is started

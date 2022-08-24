@@ -2,6 +2,9 @@ package com.svydovets.bibirnate.cache.key.parameters;
 
 import java.util.Objects;
 
+/**
+ * This is an abstraction for key parameter instances.
+ */
 public abstract class AbstractKeyParam<T> {
 
     private final Class<T> entityType;
@@ -26,4 +29,5 @@ public abstract class AbstractKeyParam<T> {
     public int hashCode() {
         return Objects.hash(getEntityType());
     }
+
 }

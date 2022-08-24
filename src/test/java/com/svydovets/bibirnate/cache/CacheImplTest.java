@@ -1,6 +1,5 @@
-package com.svydovets.bibirnate.cache.impl;
+package com.svydovets.bibirnate.cache;
 
-import com.svydovets.bibirnate.cache.Cache;
 import com.svydovets.bibirnate.cache.command.extractor.impl.EntityKeyExtractorCommand;
 import com.svydovets.bibirnate.cache.command.extractor.impl.QueryKeyExtractorCommand;
 import com.svydovets.bibirnate.cache.command.invalidation.impl.EntityKeyInvalidationCommand;
@@ -10,9 +9,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.svydovets.bibirnate.cache.util.KeyFactory.generateCacheKey;
-import static com.svydovets.bibirnate.cache.util.KeyParamUtil.generateKeyParam;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.svydovets.bibirnate.cache.key.factory.KeyParamFactory.generateKeyParam;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CacheImplTest {
 
@@ -29,18 +28,18 @@ public class CacheImplTest {
     }
 
     @Test
-    void tt(){
+    void tt() {
         List<String> strings = List.of("", "1");
         TestEntity testEntity = new TestEntity(11);
 
 
-        cache.put(generateCacheKey(generateKeyParam(TestEntity.class, "dd", List.class)), strings);
-        cache.put(generateCacheKey(generateKeyParam(TestEntity.class, "dkkdkkd", List.class)), strings);
-        cache.put(generateCacheKey(generateKeyParam(TestEntity.class, 11)), testEntity);
+        cache.put(generateKeyParam(TestEntity.class, "dd", List.class), strings);
+        cache.put(generateKeyParam(TestEntity.class, "dkkdkkd", List.class), strings);
+        cache.put(generateKeyParam(TestEntity.class, 11), testEntity);
 
         Object dd = cache.get(
-                generateKeyParam(TestEntity.class, "dd", List.class),
-                QueryKeyExtractorCommand.class)
+                        generateKeyParam(TestEntity.class, "dd", List.class),
+                        QueryKeyExtractorCommand.class)
                 .orElse(null);
 
         assertEquals(strings, dd);

@@ -20,8 +20,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static com.svydovets.bibirnate.cache.constant.CacheConstant.PARAMETER_CANNOT_BE_NULL;
+
 /**
  * This class is LRU cache realization.
+ * It provides
  */
 public class Cache {
 
@@ -33,9 +36,8 @@ public class Cache {
     private static final int ONE_HOUR = 1;
     private static final int TWO_HOURS = 2;
     private static final int ONE_HUNDRED = 100;
-    private static final int MAX_CACHE_SIZE_PERCENTAGE = 90;
+    private static final int MAX_CACHE_SIZE_PERCENTAGE = 80;
     private static int CACHE_SIZE;
-    private static final String PARAMETER_CANNOT_BE_NULL = "Parameter [%s] cannot be null!";
 
     private final Map<Key<?>, Object> cacheMap;
     private Map<Class<? extends KeyExtractorCommand>, KeyExtractorCommand> keyExtractorCommandMap;
@@ -62,41 +64,35 @@ public class Cache {
         initializeInvalidationCommandMap();
     }
 
-    public void put(Key<?> key, Object value) {
-        Objects.requireNonNull(key, String.format(PARAMETER_CANNOT_BE_NULL, key));
+    public void put(AbstractKeyParam<?> keyParam, Object value) {
+        Objects.requireNonNull(keyParam, String.format(PARAMETER_CANNOT_BE_NULL, keyParam));
         Objects.requireNonNull(value, String.format(PARAMETER_CANNOT_BE_NULL, value));
 
-        cacheMap.put(key, value);
+
+        cacheMap.put(new Key<>(keyParam), value);
 
         autoClean();
     }
 
-    public Optional<Object> get(AbstractKeyParam<?> abstractKeyParam, Class<? extends KeyExtractorCommand> commandType) {
-        Objects.requireNonNull(abstractKeyParam, String.format(PARAMETER_CANNOT_BE_NULL, abstractKeyParam));
+    public Optional<Object> get(AbstractKeyParam<?> keyParam, Class<? extends KeyExtractorCommand> commandType) {
+        Objects.requireNonNull(keyParam, String.format(PARAMETER_CANNOT_BE_NULL, keyParam));
         Objects.requireNonNull(commandType, String.format(PARAMETER_CANNOT_BE_NULL, commandType));
 
-        Optional<Key<?>> key = getKey(abstractKeyParam, commandType);
+        Optional<Key<?>> key = getKey(keyParam, commandType);
 
         return key.map(cacheMap::get);
     }
 
-    public void invalidateRelated(AbstractKeyParam<?> abstractKeyParam,
-                                  Class<? extends KeyExtractorCommand> extractCommandType,
-                                  Class<? extends InvalidationCommand> invalidationCommandType) {
-        Objects.requireNonNull(abstractKeyParam, String.format(PARAMETER_CANNOT_BE_NULL, abstractKeyParam));
+        public void invalidateRelated(AbstractKeyParam<?> keyParam,
+                                      Class<? extends KeyExtractorCommand> extractCommandType,
+                                      Class<? extends InvalidationCommand> invalidationCommandType) {
+        Objects.requireNonNull(keyParam, String.format(PARAMETER_CANNOT_BE_NULL, keyParam));
         Objects.requireNonNull(extractCommandType, String.format(PARAMETER_CANNOT_BE_NULL, extractCommandType));
 
 
-        getKey(abstractKeyParam, extractCommandType)
+        getKey(keyParam, extractCommandType)
                 .ifPresent(value -> invalidationCommandMap.get(invalidationCommandType)
                         .executeInvalidate(cacheMap, value));
-    }
-
-    public void delete(AbstractKeyParam<?> abstractKeyParam, Class<? extends KeyExtractorCommand> commandType) {
-        Objects.requireNonNull(abstractKeyParam, String.format(PARAMETER_CANNOT_BE_NULL, abstractKeyParam));
-        Objects.requireNonNull(commandType, String.format(PARAMETER_CANNOT_BE_NULL, commandType));
-
-        getKey(abstractKeyParam, commandType).ifPresent(cacheMap::remove);
     }
 
     /**
@@ -104,6 +100,10 @@ public class Cache {
      */
     public void clear() {
         cacheMap.clear();
+    }
+
+    public int cacheSize(){
+        return this.cacheMap.size();
     }
 
     public void addKeyExtractorCommand(KeyExtractorCommand keyExtractorCommand) {
