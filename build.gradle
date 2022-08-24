@@ -33,9 +33,11 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.projectlombok:lombok:1.18.22'
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     compileOnly "org.projectlombok:lombok:${lombok}"
+    implementation "postgresql:postgresql:8.4-701.jdbc3"
 
 }
 

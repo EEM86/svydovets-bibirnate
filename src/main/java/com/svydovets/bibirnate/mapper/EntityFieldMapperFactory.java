@@ -2,6 +2,7 @@ package com.svydovets.bibirnate.mapper;
 
 import java.lang.reflect.Field;
 
+import com.svydovets.bibirnate.exceptions.EntityMappingException;
 import com.svydovets.bibirnate.utils.EntityUtils;
 
 public class EntityFieldMapperFactory {
@@ -14,7 +15,7 @@ public class EntityFieldMapperFactory {
         } else if (EntityUtils.isEntityCollectionField(field)) {
             return new ToManyFieldMapper();
         } else {
-            throw new RuntimeException(String.format("Field type: %s not supported", field.getType()));
+            throw new EntityMappingException(String.format("Field type: %s not supported", field.getType()));
         }
     }
 }
