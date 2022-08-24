@@ -8,8 +8,8 @@ import com.svydovets.bibirnate.cache.key.parameters.EntityKeyParam;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.svydovets.bibirnate.cache.util.CommandUtil.checkOnIsAssignableTo;
-import static com.svydovets.bibirnate.cache.util.CommandUtil.checkPassedParametersOnNull;
+import static com.svydovets.bibirnate.cache.command.util.CommandUtil.checkOnIsAssignableTo;
+import static com.svydovets.bibirnate.cache.command.util.CommandUtil.checkPassedParametersOnNull;
 
 /**
  * This is the realization of the {@link KeyExtractorCommand} that extracts {@link Key} by {@link EntityKeyParam}.

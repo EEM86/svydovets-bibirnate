@@ -1,6 +1,5 @@
 package com.svydovets.bibirnate.cache.command.invalidation.impl;
 
-import com.svydovets.bibirnate.cache.command.extractor.KeyExtractorCommand;
 import com.svydovets.bibirnate.cache.command.invalidation.InvalidationCommand;
 import com.svydovets.bibirnate.cache.key.Key;
 import com.svydovets.bibirnate.cache.key.parameters.EntityKeyParam;
@@ -9,9 +8,9 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.svydovets.bibirnate.cache.util.CommandUtil.checkOnIsAssignableTo;
-import static com.svydovets.bibirnate.cache.util.CommandUtil.checkPassedParametersOnNull;
-import static com.svydovets.bibirnate.cache.util.CommandUtil.removeAllCacheWithQueryKeyRelated;
+import static com.svydovets.bibirnate.cache.command.util.CommandUtil.checkOnIsAssignableTo;
+import static com.svydovets.bibirnate.cache.command.util.CommandUtil.checkPassedParametersOnNull;
+import static com.svydovets.bibirnate.cache.command.util.CommandUtil.removeAllCacheWithQueryKeyRelated;
 
 /**
  * This is the realization of the {@link InvalidationCommand} that makes invalidation for caches related to passed

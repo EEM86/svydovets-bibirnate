@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.svydovets.bibirnate.cache.util.CommandUtil.checkOnIsAssignableTo;
-import static com.svydovets.bibirnate.cache.util.CommandUtil.checkPassedParametersOnNull;
-import static com.svydovets.bibirnate.cache.util.CommandUtil.removeAllCacheWithQueryKeyRelated;
+import static com.svydovets.bibirnate.cache.command.util.CommandUtil.checkOnIsAssignableTo;
+import static com.svydovets.bibirnate.cache.command.util.CommandUtil.checkPassedParametersOnNull;
+import static com.svydovets.bibirnate.cache.command.util.CommandUtil.removeAllCacheWithQueryKeyRelated;
 
 
 /**

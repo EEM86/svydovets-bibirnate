@@ -1,4 +1,4 @@
-package com.svydovets.bibirnate.cache.util;
+package com.svydovets.bibirnate.cache.command.util;
 
 import com.svydovets.bibirnate.cache.key.Key;
 import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
@@ -56,7 +56,7 @@ public class CommandUtil {
         } else {
             throw new IllegalArgumentException(
                     String.format("The [keyParam] parameter has a wrong type! It should be [%s]" +
-                            "but was [%s]", keyParamType, keyParam.getClass()));
+                            " but was [%s]", keyParamType, keyParam.getClass()));
         }
     }
 
