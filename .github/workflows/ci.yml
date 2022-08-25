@@ -23,5 +23,11 @@ jobs:
       - name: Execute checkstyle
         run: ./gradlew checkstyleMain     # run gradle checkstyle
 
+      - name: Sonar analyze
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew sonarqube --info    # run sonar
+
       - name: Execute gradle task
         run: ./gradlew clean build test    # run gradle tasks: clean, test and build
