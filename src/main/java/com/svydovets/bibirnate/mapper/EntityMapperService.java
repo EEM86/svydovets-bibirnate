@@ -12,8 +12,6 @@ import com.svydovets.bibirnate.utils.EntityUtils;
 
 public class EntityMapperService {
 
-    EntityFieldMapperFactory factory = new EntityFieldMapperFactory();
-
     public <T> T mapToObject(Class<T> toClass, ResultSet resultSet) {
         try {
             var constructor = toClass.getConstructor();
@@ -22,13 +20,14 @@ public class EntityMapperService {
                 if (!field.isAnnotationPresent(Transient.class)) {
                     var fieldName = EntityUtils.getFieldName(field);
                     var dbValue = resultSet.getObject(fieldName);
-                    var mapper = factory.getFieldMapper(field);
+                    var mapper = EntityFieldMapperFactory.getFieldMapper(field);
                     mapper.mapField(field, instance, dbValue);
                 }
             }
             return instance;
         } catch (NoSuchMethodException e) {
-            throw new DefaultConstructorNotFoundException("Entity class should contain default empty constructor", e);
+            throw new DefaultConstructorNotFoundException(
+              String.format("Entity class: %s should contain default empty constructor", toClass.getSimpleName()), e);
         } catch (InvocationTargetException e) {
             throw new EntityMappingException(
               String.format("Could create instance of entity: %s", toClass.getSimpleName()), e);
@@ -42,10 +41,5 @@ public class EntityMapperService {
             throw new EntityMappingException("Could not execute sql query", e);
         }
     }
-
-//    public mapFromObject(){
-//
-//    }
-
 
 }

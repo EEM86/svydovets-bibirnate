@@ -7,7 +7,7 @@ import com.svydovets.bibirnate.utils.EntityUtils;
 
 public class EntityFieldMapperFactory {
 
-    public EntityFieldMapper getFieldMapper(Field field) {
+    public static EntityFieldMapper getFieldMapper(Field field) {
         if (EntityUtils.isRegularField(field)) {
             return new RegularFieldMapper();
         } else if (EntityUtils.isEntityField(field)) {
@@ -15,7 +15,7 @@ public class EntityFieldMapperFactory {
         } else if (EntityUtils.isEntityCollectionField(field)) {
             return new ToManyFieldMapper();
         } else {
-            throw new EntityMappingException(String.format("Field type: %s not supported", field.getType()));
+            throw new EntityMappingException(String.format("Field type: %s is not supported", field.getType().getName()));
         }
     }
 }
