@@ -12,7 +12,7 @@ SonarQube analyzes branches and Pull Requests so you spot and resolve issues BEF
 * choose sonarCloud and enter any name 
 * In the next step enter the token (provided in slack) and add a new connection 
 * go back to SonarLint -> Project Settings and choose your connection from the dropdown list 
-* enter 'maingroon_svydovets-bring' as Project_key and apply changes
+* enter 'svydovets-bibernate' as Project_key and apply changes
 
 ### Run SonarCloud locally
 
