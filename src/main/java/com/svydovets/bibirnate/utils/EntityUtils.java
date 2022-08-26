@@ -2,10 +2,13 @@ package com.svydovets.bibirnate.utils;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 import com.svydovets.bibirnate.annotation.Column;
 import com.svydovets.bibirnate.annotation.ManyToOne;
 import com.svydovets.bibirnate.annotation.OneToMany;
+import com.svydovets.bibirnate.annotation.OneToOne;
 
 /**
  * Utility class with different entity-related helper methods.
@@ -32,13 +35,13 @@ public final class EntityUtils {
     }
 
     /**
-     * Checks if the entity field is a custom object with any to one relations.
+     * Checks if the entity field is a custom object with any to one relation.
      *
      * @param field - mapped entity's field.
      * @return true if the field is a custom object, otherwise - false
      */
     public static boolean isEntityField(Field field) {
-        return field.isAnnotationPresent(ManyToOne.class);
+        return field.isAnnotationPresent(ManyToOne.class) || field.isAnnotationPresent(OneToOne.class);
     }
 
     /**
@@ -57,17 +60,14 @@ public final class EntityUtils {
      * @param field - mapped entity's field
      */
     public static String getFieldName(Field field) {
-        return field.isAnnotationPresent(Column.class)
-            && !field.getAnnotation(Column.class).name().isEmpty()
-            ? field.getAnnotation(Column.class).name() : field.getName();
+        return Optional.ofNullable(field.getAnnotation(Column.class))
+          .map(Column::name)
+          .filter(Predicate.not(String::isEmpty))
+          .orElse(field.getName());
     }
 
     private static boolean isJavaType(Field field) {
         return field.getType().isPrimitive()
-            || field.getType().getName().startsWith("java.lang")
-            || field.getType().getName().startsWith("java.math")
-            || field.getType().getName().startsWith("java.util")
-            || field.getType().getName().startsWith("java.sql")
-            || field.getType().getName().startsWith("java.time");
+            || field.getType().getName().startsWith("java");
     }
 }
