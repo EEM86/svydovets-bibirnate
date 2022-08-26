@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'checkstyle'
+    id 'org.sonarqube' version '3.4.0.2513'
 }
 
 group 'com.svydovets'
@@ -32,7 +33,8 @@ repositories {
     mavenCentral()
 }
 
-dependencies
+dependencies {
+    implementation "org.projectlombok:lombok:${lombok}"
     annotationProcessor "org.projectlombok:lombok:${lombok}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombok}"
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
@@ -60,4 +62,17 @@ checkstyleMain {
     print "${project.rootDir}"
     enabled = gradle.startParameter.taskNames.contains('checkstyleMain')
     source = 'src/main/java'
+}
+
+checkstyleTest {
+    enabled = gradle.startParameter.taskNames.contains('checkstyleTest')
+    source = 'src/test/java'
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "svydovets-bibernate"
+        property "sonar.organization", "svydovets-bibernate"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
 }

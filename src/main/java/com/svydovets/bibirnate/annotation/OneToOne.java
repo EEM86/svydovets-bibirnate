@@ -5,12 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
-/**
- * This annotation marks {@link Entity} field to be ignored by the mapper.
- * and any integration with a DB.
- */
+//todo: add javadoc in scope of BIB-15
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface Transient {
+public @interface OneToOne {
 }

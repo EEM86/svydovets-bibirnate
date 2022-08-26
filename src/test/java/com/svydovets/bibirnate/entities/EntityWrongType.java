@@ -1,6 +1,11 @@
 package com.svydovets.bibirnate.entities;
 
+import java.util.List;
+
 import com.svydovets.bibirnate.annotation.Entity;
+import com.svydovets.bibirnate.annotation.ManyToOne;
+import com.svydovets.bibirnate.annotation.OneToMany;
+import com.svydovets.bibirnate.annotation.OneToOne;
 
 import lombok.Data;
 
@@ -8,5 +13,15 @@ import lombok.Data;
 @Data
 public class EntityWrongType {
 
-    private com.svydovets.bibirnate.entities.Entity entity;
+    private AllTypesEntity entity;
+
+    @ManyToOne
+    private AllTypesEntity manyToOneEntity;
+
+    @OneToOne
+    private AllTypesEntity oneToOneEntity;
+
+    @OneToMany
+    private List<AllTypesEntity> oneToManyEntities;
+
 }

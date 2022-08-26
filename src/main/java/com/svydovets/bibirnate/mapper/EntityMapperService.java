@@ -10,8 +10,21 @@ import com.svydovets.bibirnate.exceptions.DefaultConstructorNotFoundException;
 import com.svydovets.bibirnate.exceptions.EntityMappingException;
 import com.svydovets.bibirnate.utils.EntityUtils;
 
+/**
+ * Class responsible for converting SQL result set to appropriate java Object structure
+ * and converting java Object to appropriate SQL structure.
+ */
 public class EntityMapperService {
 
+    /**
+     * Converts SQL result set to java Object.
+     *
+     * @param toClass   - object's class structure the raw result set should be converted to.
+     * @param resultSet - sql result set
+     * @return T - an instance of Entity populated with values from sql result set
+     * @throws DefaultConstructorNotFoundException in case no default constructor present in the result Entity class
+     * @throws EntityMappingException              in case by some reason an instance of the Entity could not be created
+     */
     public <T> T mapToObject(Class<T> toClass, ResultSet resultSet) {
         try {
             var constructor = toClass.getConstructor();
@@ -25,20 +38,20 @@ public class EntityMapperService {
                 }
             }
             return instance;
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException ex) {
             throw new DefaultConstructorNotFoundException(
-              String.format("Entity class: %s should contain default empty constructor", toClass.getSimpleName()), e);
-        } catch (InvocationTargetException e) {
+              String.format("Entity class: %s should contain default empty constructor", toClass.getSimpleName()), ex);
+        } catch (InvocationTargetException ex) {
             throw new EntityMappingException(
-              String.format("Could create instance of entity: %s", toClass.getSimpleName()), e);
-        } catch (InstantiationException e) {
+              String.format("Could create instance of entity: %s", toClass.getSimpleName()), ex);
+        } catch (InstantiationException ex) {
             throw new EntityMappingException(
-              String.format("Could not create instance of abstract class: %s", toClass.getSimpleName()), e);
-        } catch (IllegalAccessException e) {
+              String.format("Could not create instance of abstract class: %s", toClass.getSimpleName()), ex);
+        } catch (IllegalAccessException ex) {
             throw new EntityMappingException(
-              String.format("Could not access default constructor for entity: %s", toClass.getSimpleName()), e);
-        } catch (SQLException e) {
-            throw new EntityMappingException("Could not execute sql query", e);
+              String.format("Could not access default constructor for entity: %s", toClass.getSimpleName()), ex);
+        } catch (SQLException ex) {
+            throw new EntityMappingException("Could not execute sql query", ex);
         }
     }
 
