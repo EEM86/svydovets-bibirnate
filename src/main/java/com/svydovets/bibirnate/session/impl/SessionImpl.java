@@ -1,10 +1,11 @@
 package com.svydovets.bibirnate.session.impl;
 
-import com.svydovets.bibirnate.session.Session;
-import lombok.RequiredArgsConstructor;
-
 import javax.sql.DataSource;
 import java.util.Optional;
+
+import com.svydovets.bibirnate.session.Session;
+
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class SessionImpl implements Session {

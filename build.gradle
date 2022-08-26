@@ -36,7 +36,7 @@ repositories {
 dependencies {
     annotationProcessor "org.projectlombok:lombok:${lombok}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombok}"
-    compileOnly "org.projectlombok:lombok:${lombok}"
+    implementation "org.projectlombok:lombok:${lombok}"
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"

@@ -1,14 +1,17 @@
 package com.svydovets.bibirnate.session.impl;
 
-import com.svydovets.bibirnate.mapper.EntityMapperService;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import static com.svydovets.bibirnate.utils.EntityUtils.getFieldName;
+import static com.svydovets.bibirnate.utils.EntityUtils.getIdField;
+import static com.svydovets.bibirnate.utils.EntityUtils.getTableName;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.util.Optional;
 
-import static com.svydovets.bibirnate.utils.EntityUtils.*;
+import com.svydovets.bibirnate.mapper.EntityMapperService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 
 @RequiredArgsConstructor
 public class JdbcEntityDao {

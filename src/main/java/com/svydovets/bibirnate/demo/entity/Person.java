@@ -4,6 +4,7 @@ import com.svydovets.bibirnate.annotation.Column;
 import com.svydovets.bibirnate.annotation.Entity;
 import com.svydovets.bibirnate.annotation.Id;
 import com.svydovets.bibirnate.annotation.Table;
+
 import lombok.Data;
 
 @Data
