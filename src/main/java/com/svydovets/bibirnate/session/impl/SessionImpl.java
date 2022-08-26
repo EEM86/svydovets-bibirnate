@@ -1,7 +1,7 @@
 package com.svydovets.bibirnate.session.impl;
 
-import javax.sql.DataSource;
 import java.util.Optional;
+import javax.sql.DataSource;
 
 import com.svydovets.bibirnate.session.Session;
 

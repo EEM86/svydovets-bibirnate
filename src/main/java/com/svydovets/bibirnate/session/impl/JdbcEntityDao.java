@@ -4,9 +4,9 @@ import static com.svydovets.bibirnate.utils.EntityUtils.getFieldName;
 import static com.svydovets.bibirnate.utils.EntityUtils.getIdField;
 import static com.svydovets.bibirnate.utils.EntityUtils.getTableName;
 
-import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.util.Optional;
+import javax.sql.DataSource;
 
 import com.svydovets.bibirnate.mapper.EntityMapperService;
 

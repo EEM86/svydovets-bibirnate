@@ -1,7 +1,7 @@
 package com.svydovets.bibirnate.demo;
 
-import javax.sql.DataSource;
 import java.util.Optional;
+import javax.sql.DataSource;
 
 import org.postgresql.ds.PGSimpleDataSource;
 
@@ -21,15 +21,16 @@ public class DemoApp {
 
         Optional<Person> person = session.findById(22, Person.class);
         person.ifPresentOrElse(
-          System.out::println,
-          () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
+            System.out::println,
+            () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
 
     }
 
     @SneakyThrows
     private static DataSource initializeDataSource() {
-        PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/postgres?");
+        var dataSource = new PGSimpleDataSource();
+        dataSource.setUrl("jdbc:postgresql://localhost:5432/postgres");
+
         return dataSource;
     }
 
