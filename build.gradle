@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'checkstyle'
+    id 'org.sonarqube' version '3.4.0.2513'
 }
 
 group 'com.svydovets'
@@ -54,4 +55,12 @@ checkstyleMain {
     print "${project.rootDir}"
     enabled = gradle.startParameter.taskNames.contains('checkstyleMain')
     source = 'src/main/java'
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "svydovets-bibernate"
+        property "sonar.organization", "svydovets-bibernate"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
 }
