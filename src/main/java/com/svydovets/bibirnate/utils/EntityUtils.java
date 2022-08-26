@@ -2,6 +2,8 @@ package com.svydovets.bibirnate.utils;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 import com.svydovets.bibirnate.annotation.Column;
 import com.svydovets.bibirnate.annotation.ManyToOne;
@@ -33,7 +35,7 @@ public final class EntityUtils {
     }
 
     /**
-     * Checks if the entity field is a custom object with any to one relations.
+     * Checks if the entity field is a custom object with any to one relation.
      *
      * @param field - mapped entity's field.
      * @return true if the field is a custom object, otherwise - false
@@ -58,9 +60,10 @@ public final class EntityUtils {
      * @param field - mapped entity's field
      */
     public static String getFieldName(Field field) {
-        return field.isAnnotationPresent(Column.class)
-            && !field.getAnnotation(Column.class).name().isEmpty()
-            ? field.getAnnotation(Column.class).name() : field.getName();
+        return Optional.ofNullable(field.getAnnotation(Column.class))
+          .map(Column::name)
+          .filter(Predicate.not(String::isEmpty))
+          .orElse(field.getName());
     }
 
     private static boolean isJavaType(Field field) {
