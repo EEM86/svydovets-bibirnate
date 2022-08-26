@@ -1,9 +1,7 @@
 package com.svydovets.bibirnate.exceptions;
 
-import com.svydovets.bibirnate.annotation.Entity;
-
 /**
- * Exception thrown in case there are some problems while converting sql to object or visa verse.
+ * Exception thrown in case there are some problems while converting sql to object or vica verse.
  */
 public class EntityMappingException extends RuntimeException {
 

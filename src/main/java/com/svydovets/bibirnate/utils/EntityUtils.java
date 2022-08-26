@@ -6,6 +6,7 @@ import java.util.Collection;
 import com.svydovets.bibirnate.annotation.Column;
 import com.svydovets.bibirnate.annotation.ManyToOne;
 import com.svydovets.bibirnate.annotation.OneToMany;
+import com.svydovets.bibirnate.annotation.OneToOne;
 
 /**
  * Utility class with different entity-related helper methods.
@@ -38,7 +39,7 @@ public final class EntityUtils {
      * @return true if the field is a custom object, otherwise - false
      */
     public static boolean isEntityField(Field field) {
-        return field.isAnnotationPresent(ManyToOne.class);
+        return field.isAnnotationPresent(ManyToOne.class) || field.isAnnotationPresent(OneToOne.class);
     }
 
     /**
@@ -64,10 +65,6 @@ public final class EntityUtils {
 
     private static boolean isJavaType(Field field) {
         return field.getType().isPrimitive()
-            || field.getType().getName().startsWith("java.lang")
-            || field.getType().getName().startsWith("java.math")
-            || field.getType().getName().startsWith("java.util")
-            || field.getType().getName().startsWith("java.sql")
-            || field.getType().getName().startsWith("java.time");
+            || field.getType().getName().startsWith("java");
     }
 }

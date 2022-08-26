@@ -3,7 +3,7 @@ package com.svydovets.bibirnate.mapper;
 import java.lang.reflect.Field;
 
 /**
- * Interface responsible for converting SQL result to Object and visa verse.
+ * Interface responsible for converting SQL result to Object and vica verse.
  */
 public interface EntityFieldMapper {
 
