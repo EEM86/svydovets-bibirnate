@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'checkstyle'
     id 'org.sonarqube' version '3.4.0.2513'
+    id 'jacoco'
 }
 
 group 'com.svydovets'
@@ -72,5 +73,14 @@ sonarqube {
         property "sonar.projectKey", "svydovets-bibernate"
         property "sonar.organization", "svydovets-bibernate"
         property "sonar.host.url", "https://sonarcloud.io"
+    }
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
     }
 }
