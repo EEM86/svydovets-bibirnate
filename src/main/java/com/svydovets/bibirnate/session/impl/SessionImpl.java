@@ -1,5 +1,7 @@
 package com.svydovets.bibirnate.session.impl;
 
+import static com.svydovets.bibirnate.session.impl.JdbcEntityDaoFactory.createJdbcEntityDao;
+
 import java.util.Optional;
 import javax.sql.DataSource;
 
@@ -12,7 +14,7 @@ public class SessionImpl implements Session {
     private final JdbcEntityDao jdbcEntityDao;
 
     public SessionImpl(DataSource dataSource) {
-        this.jdbcEntityDao = new JdbcEntityDao(dataSource);
+        this.jdbcEntityDao = createJdbcEntityDao(dataSource);
     }
 
     @Override
