@@ -28,7 +28,8 @@ public class JdbcEntityDao {
         try (var connection = dataSource.getConnection()) {
             var tableName = getTableName(type);
             var columnName = getFieldName(field);
-            String selectSql = String.format(SELECT_FROM_TABLE_BY_COLUMN, tableName, columnName);
+            var selectSql = String.format(SELECT_FROM_TABLE_BY_COLUMN, tableName, columnName);
+
             try (var statement = connection.prepareStatement(selectSql)) {
                 statement.setObject(1, value);
                 var resultSet = statement.executeQuery();
@@ -37,8 +38,8 @@ public class JdbcEntityDao {
                     return Optional.empty();
                 }
 
-                T person = EntityMapperService.mapToObject(type, resultSet);
-                return Optional.of(person);
+                T entity = EntityMapperService.mapToObject(type, resultSet);
+                return Optional.of(entity);
             }
         }
     }
