@@ -16,7 +16,7 @@ jar {
 
 ext {
     junitVersion = '5.9.0'
-    mockitoVersion = '4.6.1'
+    mockitoVersion = '4.7.0'
     reflections = '0.10.2'
     lombok = '1.18.24'
     commonsLang3 = '3.12.0'
@@ -35,15 +35,18 @@ repositories {
 }
 
 dependencies {
-    implementation "org.projectlombok:lombok:${lombok}"
     annotationProcessor "org.projectlombok:lombok:${lombok}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombok}"
+    implementation "org.projectlombok:lombok:${lombok}"
+
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
-    compileOnly "org.projectlombok:lombok:${lombok}"
+    testImplementation "org.mockito:mockito-inline:${mockitoVersion}"
+
+    implementation 'org.postgresql:postgresql:42.5.0'
+
 }
 
 test {
@@ -82,5 +85,11 @@ jacocoTestReport {
         xml.required = true
         csv.required = false
         html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: 'com/svydovets/bibirnate/demo/**')
+        }))
     }
 }

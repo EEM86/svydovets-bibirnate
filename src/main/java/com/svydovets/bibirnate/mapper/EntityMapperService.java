@@ -25,7 +25,7 @@ public class EntityMapperService {
      * @throws DefaultConstructorNotFoundException in case no default constructor present in the result Entity class
      * @throws EntityMappingException              in case by some reason an instance of the Entity could not be created
      */
-    public <T> T mapToObject(Class<T> toClass, ResultSet resultSet) {
+    public static  <T> T mapToObject(Class<T> toClass, ResultSet resultSet) {
         try {
             var constructor = toClass.getConstructor();
             var instance = constructor.newInstance();
