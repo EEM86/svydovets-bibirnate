@@ -79,7 +79,7 @@ public final class EntityUtils {
     }
 
     /**
-     * Return fiend marked with annotation {@link Id}.
+     * Return field marked with annotation {@link Id}.
      * If entity does not have annotation {@link Id} {@link NoIdException} will be thrown.
      * if entity has more than one field annotated with {@link Id} {@link AmbiguousIdException} will be thrown.
      *
