@@ -7,9 +7,6 @@ import javax.sql.DataSource;
 
 import com.svydovets.bibirnate.session.Session;
 
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor
 public class SessionImpl implements Session {
     private final JdbcEntityDao jdbcEntityDao;
 
