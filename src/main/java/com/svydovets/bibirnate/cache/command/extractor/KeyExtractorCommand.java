@@ -1,10 +1,10 @@
 package com.svydovets.bibirnate.cache.command.extractor;
 
-import com.svydovets.bibirnate.cache.key.Key;
-import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
-
 import java.util.Map;
 import java.util.Optional;
+
+import com.svydovets.bibirnate.cache.key.Key;
+import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
 
 /**
  * This interface is the start contract for '{@link Key} extractor' commands.

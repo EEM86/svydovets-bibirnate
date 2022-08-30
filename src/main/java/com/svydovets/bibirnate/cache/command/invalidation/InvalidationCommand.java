@@ -1,8 +1,8 @@
 package com.svydovets.bibirnate.cache.command.invalidation;
 
-import com.svydovets.bibirnate.cache.key.Key;
-
 import java.util.Map;
+
+import com.svydovets.bibirnate.cache.key.Key;
 
 /**
  * This interface is start contract for 'cache invalidation' commands.

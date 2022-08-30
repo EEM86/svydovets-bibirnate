@@ -1,12 +1,6 @@
 package com.svydovets.bibirnate.cache.command;
 
-import com.svydovets.bibirnate.cache.Cache;
-import com.svydovets.bibirnate.cache.key.Key;
-import com.svydovets.bibirnate.cache.key.factory.KeyParamFactory;
-import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
-import com.svydovets.bibirnate.entity.BiberEntity;
-import com.svydovets.bibirnate.entity.BoboEntity;
-import com.svydovets.bibirnate.entity.TestEntity;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.ONE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +8,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.svydovets.bibirnate.cache.command.CacheConstant.ONE;
+import com.svydovets.bibirnate.cache.Cache;
+import com.svydovets.bibirnate.cache.key.Key;
+import com.svydovets.bibirnate.cache.key.factory.KeyParamFactory;
+import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
+import com.svydovets.bibirnate.entity.BiberEntity;
+import com.svydovets.bibirnate.entity.BoboEntity;
+import com.svydovets.bibirnate.entity.TestEntity;
 
 public final class CacheProvider {
 
@@ -41,17 +41,17 @@ public final class CacheProvider {
 
 
             Key<TestEntity> testEntityKey = new Key<>(
-                    KeyParamFactory.generateKeyParam(TestEntity.class, CacheConstant.SELECT + i, List.class));
+              KeyParamFactory.generateKeyParam(TestEntity.class, CacheConstant.SELECT + i, List.class));
             testEntityKeyList.add(testEntityKey);
             cacheMap.put(testEntityKey, TEST_ENTITY_LIST);
 
             Key<BoboEntity> boboEntityKey = new Key<>(
-                    KeyParamFactory.generateKeyParam(BoboEntity.class, CacheConstant.SELECT + i, Set.class));
+              KeyParamFactory.generateKeyParam(BoboEntity.class, CacheConstant.SELECT + i, Set.class));
             boboEntityKeyList.add(boboEntityKey);
             cacheMap.put(boboEntityKey, BOBO_ENTITY_SET);
 
             Key<BiberEntity> biberEntityKey = new Key<>(
-                    KeyParamFactory.generateKeyParam(BiberEntity.class, CacheConstant.SELECT + i, List.class));
+              KeyParamFactory.generateKeyParam(BiberEntity.class, CacheConstant.SELECT + i, List.class));
             biberEntityKeyList.add(biberEntityKey);
             cacheMap.put(biberEntityKey, BIBER_ENTITY_LIST);
         }
@@ -63,7 +63,7 @@ public final class CacheProvider {
         return cacheMap;
     }
 
-    public static Cache provide(){
+    public static Cache provide() {
         Cache cache = new Cache(50_000);
 
         for (int i = 1; i < 5000; i++) {
@@ -72,15 +72,15 @@ public final class CacheProvider {
             cache.put(KeyParamFactory.generateKeyParam(BiberEntity.class, i), new BiberEntity(i));
 
             AbstractKeyParam<TestEntity> testEntityAbstractKeyParam =
-                    KeyParamFactory.generateKeyParam(TestEntity.class, CacheConstant.SELECT + i, List.class);
+              KeyParamFactory.generateKeyParam(TestEntity.class, CacheConstant.SELECT + i, List.class);
             cache.put(testEntityAbstractKeyParam, List.of(new TestEntity(i)));
 
             AbstractKeyParam<BoboEntity> boboEntityAbstractKeyParam =
-                    KeyParamFactory.generateKeyParam(BoboEntity.class, CacheConstant.SELECT + i, Set.class);
+              KeyParamFactory.generateKeyParam(BoboEntity.class, CacheConstant.SELECT + i, Set.class);
             cache.put(boboEntityAbstractKeyParam, Set.of(new BoboEntity(i)));
 
             AbstractKeyParam<BiberEntity> biberEntityAbstractKeyParam =
-                    KeyParamFactory.generateKeyParam(BiberEntity.class, CacheConstant.SELECT + i, List.class);
+              KeyParamFactory.generateKeyParam(BiberEntity.class, CacheConstant.SELECT + i, List.class);
             cache.put(biberEntityAbstractKeyParam, List.of(new BiberEntity(i)));
         }
 

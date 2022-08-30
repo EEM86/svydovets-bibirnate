@@ -1,18 +1,19 @@
 package com.svydovets.bibirnate.cache.key.factory;
 
-import com.svydovets.bibirnate.cache.key.parameters.EntityKeyParam;
-import com.svydovets.bibirnate.cache.key.parameters.QueryKeyParam;
-import com.svydovets.bibirnate.entity.TestEntity;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import com.svydovets.bibirnate.cache.key.parameters.EntityKeyParam;
+import com.svydovets.bibirnate.cache.key.parameters.QueryKeyParam;
+import com.svydovets.bibirnate.entity.TestEntity;
 
 public class KeyParamFactoryTest {
 
@@ -22,7 +23,7 @@ public class KeyParamFactoryTest {
     private static final Class<List> collectionClass = List.class;
     private static final EntityKeyParam<TestEntity> testEntityKeyParam = new EntityKeyParam<>(testEntityClass, ONE);
     private static final QueryKeyParam<TestEntity> testQueryKeyParam =
-            new QueryKeyParam<>(testEntityClass, QUERY, collectionClass);
+      new QueryKeyParam<>(testEntityClass, QUERY, collectionClass);
 
     @ParameterizedTest
     @MethodSource("provideParamsForNullPointerForEntityKeyParam")
@@ -41,10 +42,9 @@ public class KeyParamFactoryTest {
     @MethodSource("provideParamsForNullPointerForQueryKeyParam")
     void generateQueryKeyParam_throwsNullPointerExceptionIfOneFromPassedParametersIsNull(Class<?> entityType,
                                                                                          String query,
-                                                                                         Class<? extends Collection>
-                                                                                                 collectionType) {
+                                                                                         Class<? extends Collection> collectionType) {
         assertThrows(NullPointerException.class,
-                () -> KeyParamFactory.generateKeyParam(entityType, query, collectionType));
+          () -> KeyParamFactory.generateKeyParam(entityType, query, collectionType));
     }
 
     @ParameterizedTest
@@ -56,10 +56,7 @@ public class KeyParamFactoryTest {
     }
 
     private static Stream<Arguments> provideParamsForNullPointerForEntityKeyParam() {
-        return Stream.of(
-                Arguments.of(null, null),
-                Arguments.of(testEntityClass, null),
-                Arguments.of(null, ONE));
+        return Stream.of(Arguments.of(null, null), Arguments.of(testEntityClass, null), Arguments.of(null, ONE));
     }
 
     private static Stream<Arguments> provideParamsForCreationEntityKeyParam() {
@@ -67,13 +64,9 @@ public class KeyParamFactoryTest {
     }
 
     private static Stream<Arguments> provideParamsForNullPointerForQueryKeyParam() {
-        return Stream.of(
-                Arguments.of(null, null, null),
-                Arguments.of(testEntityClass, null, null),
-                Arguments.of(testEntityClass, QUERY, null),
-                Arguments.of(testEntityClass, null, collectionClass),
-                Arguments.of(null, QUERY, collectionClass),
-                Arguments.of(null, null, collectionClass));
+        return Stream.of(Arguments.of(null, null, null), Arguments.of(testEntityClass, null, null),
+          Arguments.of(testEntityClass, QUERY, null), Arguments.of(testEntityClass, null, collectionClass),
+          Arguments.of(null, QUERY, collectionClass), Arguments.of(null, null, collectionClass));
     }
 
     private static Stream<Arguments> provideParamsForCreationQueryKeyParam() {

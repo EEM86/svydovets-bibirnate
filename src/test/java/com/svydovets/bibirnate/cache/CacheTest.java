@@ -1,29 +1,5 @@
 package com.svydovets.bibirnate.cache;
 
-import com.svydovets.bibirnate.cache.command.CacheProvider;
-import com.svydovets.bibirnate.cache.command.extractor.KeyExtractorCommand;
-import com.svydovets.bibirnate.cache.command.extractor.impl.EntityKeyExtractorCommand;
-import com.svydovets.bibirnate.cache.command.extractor.impl.QueryKeyExtractorCommand;
-import com.svydovets.bibirnate.cache.command.invalidation.InvalidationCommand;
-import com.svydovets.bibirnate.cache.command.invalidation.impl.EntityKeyInvalidationCommand;
-import com.svydovets.bibirnate.cache.command.invalidation.impl.QueryKeyInvalidationCommand;
-import com.svydovets.bibirnate.cache.key.factory.KeyParamFactory;
-import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
-import com.svydovets.bibirnate.entity.BiberEntity;
-import com.svydovets.bibirnate.entity.BoboEntity;
-import com.svydovets.bibirnate.entity.TestEntity;
-import com.svydovets.bibirnate.exception.CacheOverloadException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Stream;
-
 import static com.svydovets.bibirnate.cache.command.CacheConstant.BIBER_ENTITY_KEY_PARAM;
 import static com.svydovets.bibirnate.cache.command.CacheConstant.BIBER_ENTITY_LIST;
 import static com.svydovets.bibirnate.cache.command.CacheConstant.BIBER_ENTITY_VALUE;
@@ -49,6 +25,31 @@ import static com.svydovets.bibirnate.cache.command.CacheConstant.TEST_VALUE;
 import static com.svydovets.bibirnate.cache.key.factory.KeyParamFactory.generateKeyParam;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import com.svydovets.bibirnate.cache.command.CacheProvider;
+import com.svydovets.bibirnate.cache.command.extractor.KeyExtractorCommand;
+import com.svydovets.bibirnate.cache.command.extractor.impl.EntityKeyExtractorCommand;
+import com.svydovets.bibirnate.cache.command.extractor.impl.QueryKeyExtractorCommand;
+import com.svydovets.bibirnate.cache.command.invalidation.InvalidationCommand;
+import com.svydovets.bibirnate.cache.command.invalidation.impl.EntityKeyInvalidationCommand;
+import com.svydovets.bibirnate.cache.command.invalidation.impl.QueryKeyInvalidationCommand;
+import com.svydovets.bibirnate.cache.key.factory.KeyParamFactory;
+import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
+import com.svydovets.bibirnate.entity.BiberEntity;
+import com.svydovets.bibirnate.entity.BoboEntity;
+import com.svydovets.bibirnate.entity.TestEntity;
+import com.svydovets.bibirnate.exception.CacheOverloadException;
 
 public class CacheTest {
 
@@ -122,7 +123,7 @@ public class CacheTest {
                                                                                    Class<? extends KeyExtractorCommand> extractCommandType,
                                                                                    Class<? extends InvalidationCommand> invalidationCommandType) {
         assertThrows(NullPointerException.class, () -> cache.invalidateRelated(keyParam, extractCommandType,
-                invalidationCommandType));
+          invalidationCommandType));
     }
 
     @ParameterizedTest
@@ -171,64 +172,64 @@ public class CacheTest {
 
     private static Stream<Arguments> put_provideProvideCorrectParams() {
         return Stream.of(
-                Arguments.of(TEST_KEY_PARAM, TEST_VALUE, EntityKeyExtractorCommand.class),
-                Arguments.of(BOBO_KEY_PARAM, BOBO_VALUE, QueryKeyExtractorCommand.class),
-                Arguments.of(BIBER_KEY_PARAM, BIBER_VALUE, QueryKeyExtractorCommand.class));
+          Arguments.of(TEST_KEY_PARAM, TEST_VALUE, EntityKeyExtractorCommand.class),
+          Arguments.of(BOBO_KEY_PARAM, BOBO_VALUE, QueryKeyExtractorCommand.class),
+          Arguments.of(BIBER_KEY_PARAM, BIBER_VALUE, QueryKeyExtractorCommand.class));
     }
 
     private static Stream<Arguments> get_provideNullParamsForNullPointer() {
         return Stream.of(Arguments.of(null, null),
-                Arguments.of(TEST_KEY_PARAM, null),
-                Arguments.of(null, QueryKeyExtractorCommand.class));
+          Arguments.of(TEST_KEY_PARAM, null),
+          Arguments.of(null, QueryKeyExtractorCommand.class));
     }
 
     private static Stream<Arguments> get_provideParamsForOptionalEmpty() {
         return Stream.of(Arguments.of(TEST_KEY_PARAM, EntityKeyExtractorCommand.class),
-                Arguments.of(BOBO_KEY_PARAM, QueryKeyExtractorCommand.class),
-                Arguments.of(BIBER_KEY_PARAM, QueryKeyExtractorCommand.class));
+          Arguments.of(BOBO_KEY_PARAM, QueryKeyExtractorCommand.class),
+          Arguments.of(BIBER_KEY_PARAM, QueryKeyExtractorCommand.class));
     }
 
     private static Stream<Arguments> get_provideParamsForOptionalOf() {
         return Stream.of(
-                Arguments.of(generateKeyParam(TestEntity.class, TEST_ENTITY_VERSION), EntityKeyExtractorCommand.class,
-                        TEST_ENTITY_VALUE),
-                Arguments.of(generateKeyParam(BoboEntity.class, BOBO_ENTITY_VERSION), EntityKeyExtractorCommand.class,
-                        BOBO_ENTITY_VALUE),
-                Arguments.of(generateKeyParam(BiberEntity.class, BIBER_ENTITY_VERSION), EntityKeyExtractorCommand.class,
-                        BIBER_ENTITY_VALUE),
-                Arguments.of(generateKeyParam(TestEntity.class, SELECT + TEST_ENTITY_VERSION, List.class),
-                        QueryKeyExtractorCommand.class, List.of(TEST_ENTITY_VALUE)),
-                Arguments.of(generateKeyParam(BoboEntity.class, SELECT + BOBO_ENTITY_VERSION, Set.class),
-                        QueryKeyExtractorCommand.class, Set.of(BOBO_ENTITY_VALUE)),
-                Arguments.of(generateKeyParam(BiberEntity.class, SELECT + BIBER_ENTITY_VERSION, List.class),
-                        QueryKeyExtractorCommand.class, List.of(BIBER_ENTITY_VALUE)));
+          Arguments.of(generateKeyParam(TestEntity.class, TEST_ENTITY_VERSION), EntityKeyExtractorCommand.class,
+            TEST_ENTITY_VALUE),
+          Arguments.of(generateKeyParam(BoboEntity.class, BOBO_ENTITY_VERSION), EntityKeyExtractorCommand.class,
+            BOBO_ENTITY_VALUE),
+          Arguments.of(generateKeyParam(BiberEntity.class, BIBER_ENTITY_VERSION), EntityKeyExtractorCommand.class,
+            BIBER_ENTITY_VALUE),
+          Arguments.of(generateKeyParam(TestEntity.class, SELECT + TEST_ENTITY_VERSION, List.class),
+            QueryKeyExtractorCommand.class, List.of(TEST_ENTITY_VALUE)),
+          Arguments.of(generateKeyParam(BoboEntity.class, SELECT + BOBO_ENTITY_VERSION, Set.class),
+            QueryKeyExtractorCommand.class, Set.of(BOBO_ENTITY_VALUE)),
+          Arguments.of(generateKeyParam(BiberEntity.class, SELECT + BIBER_ENTITY_VERSION, List.class),
+            QueryKeyExtractorCommand.class, List.of(BIBER_ENTITY_VALUE)));
     }
 
     private static Stream<Arguments> invalidateRelated_provideNullParamsForNullPointer() {
         return Stream.of(Arguments.of(null, null, null),
-                Arguments.of(TEST_KEY_PARAM, null, null),
-                Arguments.of(TEST_KEY_PARAM, QueryKeyExtractorCommand.class, null),
-                Arguments.of(null, QueryKeyExtractorCommand.class, null),
-                Arguments.of(null, QueryKeyExtractorCommand.class, QueryKeyInvalidationCommand.class),
-                Arguments.of(TEST_KEY_PARAM, null, QueryKeyInvalidationCommand.class),
-                Arguments.of(null, null, QueryKeyInvalidationCommand.class));
+          Arguments.of(TEST_KEY_PARAM, null, null),
+          Arguments.of(TEST_KEY_PARAM, QueryKeyExtractorCommand.class, null),
+          Arguments.of(null, QueryKeyExtractorCommand.class, null),
+          Arguments.of(null, QueryKeyExtractorCommand.class, QueryKeyInvalidationCommand.class),
+          Arguments.of(TEST_KEY_PARAM, null, QueryKeyInvalidationCommand.class),
+          Arguments.of(null, null, QueryKeyInvalidationCommand.class));
     }
 
     private static Stream<Arguments> invalidateRelated_provideCorrectParams() {
         return Stream.of(Arguments.of(TEST_ENTITY_KEY_PARAM, EntityKeyExtractorCommand.class,
-                        EntityKeyInvalidationCommand.class, TEST_ENTITY_VALUE, TEST_QUERY_KEY_PARAM,
-                        QueryKeyExtractorCommand.class, TEST_ENTITY_LIST),
-                Arguments.of(BOBO_ENTITY_KEY_PARAM, EntityKeyExtractorCommand.class, EntityKeyInvalidationCommand.class,
-                        BOBO_ENTITY_VALUE, BOBO_QUERY_ENTITY_KEY_PARAM, QueryKeyExtractorCommand.class, BOBO_ENTITY_SET),
-                Arguments.of(BIBER_ENTITY_KEY_PARAM, EntityKeyExtractorCommand.class, EntityKeyInvalidationCommand.class,
-                        BIBER_ENTITY_VALUE, BIBER_QUERY_KEY_PARAM, QueryKeyExtractorCommand.class, BIBER_ENTITY_LIST),
+            EntityKeyInvalidationCommand.class, TEST_ENTITY_VALUE, TEST_QUERY_KEY_PARAM,
+            QueryKeyExtractorCommand.class, TEST_ENTITY_LIST),
+          Arguments.of(BOBO_ENTITY_KEY_PARAM, EntityKeyExtractorCommand.class, EntityKeyInvalidationCommand.class,
+            BOBO_ENTITY_VALUE, BOBO_QUERY_ENTITY_KEY_PARAM, QueryKeyExtractorCommand.class, BOBO_ENTITY_SET),
+          Arguments.of(BIBER_ENTITY_KEY_PARAM, EntityKeyExtractorCommand.class, EntityKeyInvalidationCommand.class,
+            BIBER_ENTITY_VALUE, BIBER_QUERY_KEY_PARAM, QueryKeyExtractorCommand.class, BIBER_ENTITY_LIST),
 
-                Arguments.of(TEST_QUERY_KEY_PARAM, QueryKeyExtractorCommand.class, QueryKeyInvalidationCommand.class,
-                        TEST_ENTITY_LIST, TEST_ENTITY_KEY_PARAM, EntityKeyExtractorCommand.class, TEST_ENTITY_VALUE),
-                Arguments.of(BOBO_QUERY_ENTITY_KEY_PARAM, QueryKeyExtractorCommand.class, QueryKeyInvalidationCommand.class,
-                        BOBO_ENTITY_SET, BOBO_ENTITY_KEY_PARAM, EntityKeyExtractorCommand.class, BOBO_ENTITY_VALUE),
-                Arguments.of(BIBER_QUERY_KEY_PARAM, QueryKeyExtractorCommand.class, QueryKeyInvalidationCommand.class,
-                        BIBER_ENTITY_LIST, BIBER_ENTITY_KEY_PARAM, EntityKeyExtractorCommand.class, BIBER_ENTITY_VALUE));
+          Arguments.of(TEST_QUERY_KEY_PARAM, QueryKeyExtractorCommand.class, QueryKeyInvalidationCommand.class,
+            TEST_ENTITY_LIST, TEST_ENTITY_KEY_PARAM, EntityKeyExtractorCommand.class, TEST_ENTITY_VALUE),
+          Arguments.of(BOBO_QUERY_ENTITY_KEY_PARAM, QueryKeyExtractorCommand.class, QueryKeyInvalidationCommand.class,
+            BOBO_ENTITY_SET, BOBO_ENTITY_KEY_PARAM, EntityKeyExtractorCommand.class, BOBO_ENTITY_VALUE),
+          Arguments.of(BIBER_QUERY_KEY_PARAM, QueryKeyExtractorCommand.class, QueryKeyInvalidationCommand.class,
+            BIBER_ENTITY_LIST, BIBER_ENTITY_KEY_PARAM, EntityKeyExtractorCommand.class, BIBER_ENTITY_VALUE));
     }
 
 }
