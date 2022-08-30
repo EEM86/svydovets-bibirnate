@@ -1,16 +1,16 @@
 package com.svydovets.bibirnate.cache.command.invalidation.impl;
 
-import com.svydovets.bibirnate.cache.command.invalidation.InvalidationCommand;
-import com.svydovets.bibirnate.cache.key.Key;
-import com.svydovets.bibirnate.cache.key.parameters.EntityKeyParam;
+import static com.svydovets.bibirnate.cache.command.util.CommandUtil.checkOnIsAssignableTo;
+import static com.svydovets.bibirnate.cache.command.util.CommandUtil.checkPassedParametersOnNull;
+import static com.svydovets.bibirnate.cache.command.util.CommandUtil.removeAllCacheWithQueryKeyRelated;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.svydovets.bibirnate.cache.command.util.CommandUtil.checkOnIsAssignableTo;
-import static com.svydovets.bibirnate.cache.command.util.CommandUtil.checkPassedParametersOnNull;
-import static com.svydovets.bibirnate.cache.command.util.CommandUtil.removeAllCacheWithQueryKeyRelated;
+import com.svydovets.bibirnate.cache.command.invalidation.InvalidationCommand;
+import com.svydovets.bibirnate.cache.key.Key;
+import com.svydovets.bibirnate.cache.key.parameters.EntityKeyParam;
 
 /**
  * This is the realization of the {@link InvalidationCommand} that makes invalidation for caches related to passed
@@ -27,7 +27,7 @@ public class EntityKeyInvalidationCommand implements InvalidationCommand {
         checkPassedParametersOnNull(cacheMap, key);
 
         EntityKeyParam<?> entityKeyParam = (EntityKeyParam<?>) checkOnIsAssignableTo(key.getKeyParam(),
-                EntityKeyParam.class);
+          EntityKeyParam.class);
         Class<?> entityType = entityKeyParam.getEntityType();
 
         removeCacheByEntityKeyWithSameId(cacheMap, entityKeyParam, entityType);
@@ -38,10 +38,10 @@ public class EntityKeyInvalidationCommand implements InvalidationCommand {
                                                   Class<?> entityType) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         cacheMap.keySet().stream()
-                .filter(k -> k.getKeyParam().getClass().isAssignableFrom(EntityKeyParam.class))
-                .filter(k -> k.getKeyParam().getEntityType().isAssignableFrom(entityType))
-                .filter(k -> ((EntityKeyParam<?>) k.getKeyParam()).getId().equals(entityKeyParam.getId()))
-                .forEach(cacheMap::remove);
+          .filter(k -> k.getKeyParam().getClass().isAssignableFrom(EntityKeyParam.class))
+          .filter(k -> k.getKeyParam().getEntityType().isAssignableFrom(entityType))
+          .filter(k -> ((EntityKeyParam<?>) k.getKeyParam()).getId().equals(entityKeyParam.getId()))
+          .forEach(cacheMap::remove);
 
         executorService.shutdown();
     }

@@ -1,13 +1,13 @@
 package com.svydovets.bibirnate.cache.key.factory;
 
-import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
-import com.svydovets.bibirnate.cache.key.parameters.EntityKeyParam;
-import com.svydovets.bibirnate.cache.key.parameters.QueryKeyParam;
+import static com.svydovets.bibirnate.cache.constant.CacheConstant.PARAMETER_CANNOT_BE_NULL;
 
 import java.util.Collection;
 import java.util.Objects;
 
-import static com.svydovets.bibirnate.cache.constant.CacheConstant.PARAMETER_CANNOT_BE_NULL;
+import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
+import com.svydovets.bibirnate.cache.key.parameters.EntityKeyParam;
+import com.svydovets.bibirnate.cache.key.parameters.QueryKeyParam;
 
 /**
  * Provides overloaded methods for creating instances of the {@link AbstractKeyParam}.

@@ -18,10 +18,13 @@ public abstract class AbstractKeyParam<T> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AbstractKeyParam)) return false;
-        AbstractKeyParam<?> that = (AbstractKeyParam<?>) o;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof AbstractKeyParam<?> that)) {
+            return false;
+        }
         return getEntityType().equals(that.getEntityType());
     }
 

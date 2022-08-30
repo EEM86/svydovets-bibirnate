@@ -27,11 +27,16 @@ public class QueryKeyParam<T> extends AbstractKeyParam<T> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof QueryKeyParam)) return false;
-        if (!super.equals(o)) return false;
-        QueryKeyParam<?> that = (QueryKeyParam<?>) o;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof QueryKeyParam<?> that)) {
+            return false;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
         return getQuery().equals(that.getQuery()) && getCollectionType().equals(that.getCollectionType());
     }
 

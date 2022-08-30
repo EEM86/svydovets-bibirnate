@@ -1,15 +1,7 @@
 package com.svydovets.bibirnate.cache;
 
 
-import com.svydovets.bibirnate.cache.command.extractor.KeyExtractorCommand;
-import com.svydovets.bibirnate.cache.command.extractor.impl.EntityKeyExtractorCommand;
-import com.svydovets.bibirnate.cache.command.extractor.impl.QueryKeyExtractorCommand;
-import com.svydovets.bibirnate.cache.command.invalidation.InvalidationCommand;
-import com.svydovets.bibirnate.cache.command.invalidation.impl.EntityKeyInvalidationCommand;
-import com.svydovets.bibirnate.cache.command.invalidation.impl.QueryKeyInvalidationCommand;
-import com.svydovets.bibirnate.cache.key.Key;
-import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
-import com.svydovets.bibirnate.exception.CacheOverloadException;
+import static com.svydovets.bibirnate.cache.constant.CacheConstant.PARAMETER_CANNOT_BE_NULL;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -20,7 +12,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.svydovets.bibirnate.cache.constant.CacheConstant.PARAMETER_CANNOT_BE_NULL;
+import com.svydovets.bibirnate.cache.command.extractor.KeyExtractorCommand;
+import com.svydovets.bibirnate.cache.command.extractor.impl.EntityKeyExtractorCommand;
+import com.svydovets.bibirnate.cache.command.extractor.impl.QueryKeyExtractorCommand;
+import com.svydovets.bibirnate.cache.command.invalidation.InvalidationCommand;
+import com.svydovets.bibirnate.cache.command.invalidation.impl.EntityKeyInvalidationCommand;
+import com.svydovets.bibirnate.cache.command.invalidation.impl.QueryKeyInvalidationCommand;
+import com.svydovets.bibirnate.cache.key.Key;
+import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
+import com.svydovets.bibirnate.exception.CacheOverloadException;
 
 /**
  * This class is LRU cache realization.
@@ -52,8 +52,8 @@ public class Cache {
     public Cache(int cacheSize) {
         if (cacheSize < MIN_CACHE_SIZE || cacheSize > MAX_CACHE_SIZE) {
             throw new IllegalArgumentException(
-                    String.format("Inappropriate cacheSize. cacheSize cannot be less then %s or more than %s",
-                            MAX_CACHE_SIZE, MAX_CACHE_SIZE));
+              String.format("Inappropriate cacheSize. cacheSize cannot be less then %s or more than %s", MAX_CACHE_SIZE,
+                MAX_CACHE_SIZE));
         }
 
         CACHE_SIZE = cacheSize;
@@ -81,17 +81,16 @@ public class Cache {
         return key.map(cacheMap::get);
     }
 
-        public void invalidateRelated(AbstractKeyParam<?> keyParam,
-                                      Class<? extends KeyExtractorCommand> extractCommandType,
-                                      Class<? extends InvalidationCommand> invalidationCommandType) {
+    public void invalidateRelated(AbstractKeyParam<?> keyParam, Class<? extends KeyExtractorCommand> extractCommandType,
+                                  Class<? extends InvalidationCommand> invalidationCommandType) {
         Objects.requireNonNull(keyParam, String.format(PARAMETER_CANNOT_BE_NULL, keyParam));
         Objects.requireNonNull(extractCommandType, String.format(PARAMETER_CANNOT_BE_NULL, extractCommandType));
-        Objects.requireNonNull(invalidationCommandType, String.format(PARAMETER_CANNOT_BE_NULL, invalidationCommandType));
+        Objects.requireNonNull(invalidationCommandType,
+          String.format(PARAMETER_CANNOT_BE_NULL, invalidationCommandType));
 
 
-        getKey(keyParam, extractCommandType)
-                .ifPresent(value -> invalidationCommandMap.get(invalidationCommandType)
-                        .executeInvalidate(cacheMap, value));
+        getKey(keyParam, extractCommandType).ifPresent(
+          value -> invalidationCommandMap.get(invalidationCommandType).executeInvalidate(cacheMap, value));
     }
 
     /**
@@ -101,7 +100,7 @@ public class Cache {
         cacheMap.clear();
     }
 
-    public int size(){
+    public int size() {
         return this.cacheMap.size();
     }
 
@@ -129,6 +128,7 @@ public class Cache {
         invalidationCommandMap.put(QueryKeyInvalidationCommand.class, new QueryKeyInvalidationCommand());
     }
 
+    @SuppressWarnings("checkstyle:OperatorWrap")
     private void autoClean() {
         if ((Float.valueOf(cacheMap.size()) / Float.valueOf(CACHE_SIZE)) * ONE_HUNDRED > MAX_CACHE_SIZE_PERCENTAGE) {
             if (Duration.between(lastClean, LocalDateTime.now()).toHours() <= TWO_HOURS) {
@@ -138,19 +138,17 @@ public class Cache {
                         MAX_CACHE_SIZE);
             } else if (Duration.between(lastClean, LocalDateTime.now()).toDays() >= ONE_DAY) {
                 ExecutorService executorService = Executors.newSingleThreadExecutor();
-                executorService.execute(() ->
-                        cacheMap.keySet().parallelStream()
-                                .filter(key -> Duration.between(key.getUpdated(), LocalDateTime.now()).toDays() > ONE_DAY)
-                                .forEach(cacheMap::remove));
+                executorService.execute(() -> cacheMap.keySet().parallelStream()
+                  .filter(key -> Duration.between(key.getUpdated(), LocalDateTime.now()).toDays() > ONE_DAY)
+                  .forEach(cacheMap::remove));
 
                 lastClean = LocalDateTime.now();
                 executorService.shutdown();
             } else if (Duration.between(lastClean, LocalDateTime.now()).toDays() == ZERO_DAYS) {
                 ExecutorService executorService = Executors.newSingleThreadExecutor();
-                executorService.execute(() ->
-                        cacheMap.keySet().parallelStream()
-                                .filter(key -> Duration.between(key.getUpdated(), LocalDateTime.now()).toHours() > ONE_HOUR)
-                                .forEach(cacheMap::remove));
+                executorService.execute(() -> cacheMap.keySet().parallelStream()
+                  .filter(key -> Duration.between(key.getUpdated(), LocalDateTime.now()).toHours() > ONE_HOUR)
+                  .forEach(cacheMap::remove));
 
                 lastClean = LocalDateTime.now();
                 executorService.shutdown();
@@ -158,7 +156,8 @@ public class Cache {
         }
     }
 
-    private Optional<Key<?>> getKey(AbstractKeyParam<?> abstractKeyParam, Class<? extends KeyExtractorCommand> commandType) {
+    private Optional<Key<?>> getKey(AbstractKeyParam<?> abstractKeyParam,
+                                    Class<? extends KeyExtractorCommand> commandType) {
         return keyExtractorCommandMap.get(commandType).executeExtract(cacheMap, abstractKeyParam);
     }
 

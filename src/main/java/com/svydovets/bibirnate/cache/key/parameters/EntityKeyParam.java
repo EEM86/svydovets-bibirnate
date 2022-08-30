@@ -19,11 +19,16 @@ public class EntityKeyParam<T> extends AbstractKeyParam<T> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof EntityKeyParam)) return false;
-        if (!super.equals(o)) return false;
-        EntityKeyParam<?> that = (EntityKeyParam<?>) o;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof EntityKeyParam<?> that)) {
+            return false;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
         return getId().equals(that.getId());
     }
 
