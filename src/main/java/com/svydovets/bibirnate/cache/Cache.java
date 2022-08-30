@@ -29,7 +29,7 @@ import static com.svydovets.bibirnate.cache.constant.CacheConstant.PARAMETER_CAN
 public class Cache {
 
     private static final int DEFAULT_CACHE_SIZE = 10_000;
-    private static final int MIN_CACHE_SIZE = 100;
+    private static final int MIN_CACHE_SIZE = 20;
     private static final int MAX_CACHE_SIZE = 50_000;
     private static final int ZERO_DAYS = 0;
     private static final int ONE_DAY = 1;
@@ -66,8 +66,6 @@ public class Cache {
 
     public void put(AbstractKeyParam<?> keyParam, Object value) {
         Objects.requireNonNull(keyParam, String.format(PARAMETER_CANNOT_BE_NULL, keyParam));
-        Objects.requireNonNull(value, String.format(PARAMETER_CANNOT_BE_NULL, value));
-
 
         cacheMap.put(new Key<>(keyParam), value);
 
@@ -88,6 +86,7 @@ public class Cache {
                                       Class<? extends InvalidationCommand> invalidationCommandType) {
         Objects.requireNonNull(keyParam, String.format(PARAMETER_CANNOT_BE_NULL, keyParam));
         Objects.requireNonNull(extractCommandType, String.format(PARAMETER_CANNOT_BE_NULL, extractCommandType));
+        Objects.requireNonNull(invalidationCommandType, String.format(PARAMETER_CANNOT_BE_NULL, invalidationCommandType));
 
 
         getKey(keyParam, extractCommandType)
@@ -102,7 +101,7 @@ public class Cache {
         cacheMap.clear();
     }
 
-    public int cacheSize(){
+    public int size(){
         return this.cacheMap.size();
     }
 

@@ -26,8 +26,8 @@ public class CommandUtil {
      * @param keyParam instance of the {@link AbstractKeyParam}
      */
     public static void checkPassedParametersOnNull(Map<Key<?>, Object> cacheMap, AbstractKeyParam<?> keyParam) {
-        Objects.requireNonNull(cacheMap, String.format(PARAMETER_CANNOT_BE_NULL, cacheMap));
-        Objects.requireNonNull(keyParam, String.format(PARAMETER_CANNOT_BE_NULL, keyParam));
+        Objects.requireNonNull(cacheMap, String.format(PARAMETER_CANNOT_BE_NULL, "cacheMap"));
+        Objects.requireNonNull(keyParam, String.format(PARAMETER_CANNOT_BE_NULL, "keyParam"));
     }
 
     /**
@@ -37,8 +37,8 @@ public class CommandUtil {
      * @param key      {@link Key}
      */
     public static void checkPassedParametersOnNull(Map<Key<?>, Object> cacheMap, Key<?> key) {
-        Objects.requireNonNull(cacheMap, String.format(PARAMETER_CANNOT_BE_NULL, cacheMap));
-        Objects.requireNonNull(key, String.format(PARAMETER_CANNOT_BE_NULL, key));
+        Objects.requireNonNull(cacheMap, String.format(PARAMETER_CANNOT_BE_NULL, "cacheMap"));
+        Objects.requireNonNull(key, String.format(PARAMETER_CANNOT_BE_NULL, "key"));
     }
 
     /**

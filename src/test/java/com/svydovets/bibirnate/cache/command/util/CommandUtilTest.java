@@ -2,34 +2,26 @@ package com.svydovets.bibirnate.cache.command.util;
 
 import com.svydovets.bibirnate.cache.command.CacheProvider;
 import com.svydovets.bibirnate.cache.key.Key;
-import com.svydovets.bibirnate.cache.key.factory.KeyParamFactory;
 import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
 import com.svydovets.bibirnate.cache.key.parameters.EntityKeyParam;
 import com.svydovets.bibirnate.cache.key.parameters.QueryKeyParam;
-import com.svydovets.bibirnate.entity.BoboEntity;
 import com.svydovets.bibirnate.entity.TestEntity;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
-import static com.svydovets.bibirnate.cache.command.CacheConstant.ONE;
-import static com.svydovets.bibirnate.cache.command.CacheConstant.QUERY;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_KEY_PARAM;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.TEST_KEY_PARAM;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CommandUtilTest {
-
-    private static final AbstractKeyParam<TestEntity> TEST_KEY_PARAM =
-            KeyParamFactory.generateKeyParam(TestEntity.class, ONE);
-    private static final AbstractKeyParam<BoboEntity> BOBO_KEY_PARAM =
-            KeyParamFactory.generateKeyParam(BoboEntity.class, QUERY, List.class);
 
     @ParameterizedTest
     @MethodSource("provideParamsForNullPointerForMapAndAbstractKeyParam")
