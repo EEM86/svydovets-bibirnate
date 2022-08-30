@@ -19,11 +19,11 @@ import static com.svydovets.bibirnate.cache.command.CacheConstant.ONE;
 public final class CacheProvider {
 
     private static final List<TestEntity> TEST_ENTITY_LIST = List.of(new TestEntity(ONE), new TestEntity());
-    public static final List<Key<TestEntity>> TEST_ENTITY_KEY_LIST = new ArrayList<>();
-    private static final List<BoboEntity> BOBO_ENTITY_LIST = new ArrayList<>();
-    public static final List<Key<BoboEntity>> BOBO_ENTITY_KEY_LIST = new ArrayList<>();
+    public static List<Key<TestEntity>> TEST_ENTITY_KEY_LIST = new ArrayList<>();
+    private static final Set<BoboEntity> BOBO_ENTITY_SET = Set.of(new BoboEntity(), new BoboEntity(ONE));
+    public static List<Key<BoboEntity>> BOBO_ENTITY_KEY_LIST = new ArrayList<>();
     private static final List<BiberEntity> BIBER_ENTITY_LIST = List.of(new BiberEntity(ONE), new BiberEntity());
-    public static final List<Key<BiberEntity>> BIBER_ENTITY_KEY_LIST = new ArrayList<>();
+    public static List<Key<BiberEntity>> BIBER_ENTITY_KEY_LIST = new ArrayList<>();
 
     private CacheProvider() {
     }
@@ -31,6 +31,9 @@ public final class CacheProvider {
     public static Map<Key<?>, Object> provideCacheMap() {
         Map<Key<?>, Object> cacheMap = new ConcurrentHashMap<>(10_000);
 
+        List<Key<TestEntity>> testEntityKeyList = new ArrayList<>();
+        List<Key<BoboEntity>> boboEntityKeyList = new ArrayList<>();
+        List<Key<BiberEntity>> biberEntityKeyList = new ArrayList<>();
         for (int i = 1; i < 1500; i++) {
             cacheMap.put(new Key<>(KeyParamFactory.generateKeyParam(TestEntity.class, i)), new TestEntity(i));
             cacheMap.put(new Key<>(KeyParamFactory.generateKeyParam(BoboEntity.class, i)), new BoboEntity(i));
@@ -39,19 +42,23 @@ public final class CacheProvider {
 
             Key<TestEntity> testEntityKey = new Key<>(
                     KeyParamFactory.generateKeyParam(TestEntity.class, CacheConstant.SELECT + i, List.class));
-            TEST_ENTITY_KEY_LIST.add(testEntityKey);
+            testEntityKeyList.add(testEntityKey);
             cacheMap.put(testEntityKey, TEST_ENTITY_LIST);
 
             Key<BoboEntity> boboEntityKey = new Key<>(
-                    KeyParamFactory.generateKeyParam(BoboEntity.class, CacheConstant.SELECT + i, List.class));
-            BOBO_ENTITY_KEY_LIST.add(boboEntityKey);
-            cacheMap.put(boboEntityKey, BOBO_ENTITY_LIST);
+                    KeyParamFactory.generateKeyParam(BoboEntity.class, CacheConstant.SELECT + i, Set.class));
+            boboEntityKeyList.add(boboEntityKey);
+            cacheMap.put(boboEntityKey, BOBO_ENTITY_SET);
 
             Key<BiberEntity> biberEntityKey = new Key<>(
                     KeyParamFactory.generateKeyParam(BiberEntity.class, CacheConstant.SELECT + i, List.class));
-            BIBER_ENTITY_KEY_LIST.add(biberEntityKey);
+            biberEntityKeyList.add(biberEntityKey);
             cacheMap.put(biberEntityKey, BIBER_ENTITY_LIST);
         }
+
+        TEST_ENTITY_KEY_LIST = testEntityKeyList;
+        BOBO_ENTITY_KEY_LIST = boboEntityKeyList;
+        BIBER_ENTITY_KEY_LIST = biberEntityKeyList;
 
         return cacheMap;
     }

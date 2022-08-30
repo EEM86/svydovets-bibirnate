@@ -42,7 +42,7 @@ public class Key<T> {
         if (this == o) return true;
         if (!(o instanceof Key)) return false;
         Key<?> key = (Key<?>) o;
-        return abstractKeyParam.equals(key.abstractKeyParam) && getUpdated().equals(key.getUpdated());
+        return abstractKeyParam.equals(key.abstractKeyParam);
     }
 
     @Override

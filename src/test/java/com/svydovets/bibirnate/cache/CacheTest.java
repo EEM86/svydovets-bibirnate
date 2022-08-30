@@ -24,10 +24,28 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static com.svydovets.bibirnate.cache.command.CacheConstant.BIBER_ENTITY_KEY_PARAM;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.BIBER_ENTITY_LIST;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.BIBER_ENTITY_VALUE;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.BIBER_ENTITY_VERSION;
 import static com.svydovets.bibirnate.cache.command.CacheConstant.BIBER_KEY_PARAM;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.BIBER_QUERY_KEY_PARAM;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.BIBER_VALUE;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_ENTITY_KEY_PARAM;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_ENTITY_SET;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_ENTITY_VALUE;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_ENTITY_VERSION;
 import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_KEY_PARAM;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_QUERY_ENTITY_KEY_PARAM;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_VALUE;
 import static com.svydovets.bibirnate.cache.command.CacheConstant.SELECT;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.TEST_ENTITY_KEY_PARAM;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.TEST_ENTITY_LIST;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.TEST_ENTITY_VALUE;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.TEST_ENTITY_VERSION;
 import static com.svydovets.bibirnate.cache.command.CacheConstant.TEST_KEY_PARAM;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.TEST_QUERY_KEY_PARAM;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.TEST_VALUE;
 import static com.svydovets.bibirnate.cache.key.factory.KeyParamFactory.generateKeyParam;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -37,32 +55,6 @@ public class CacheTest {
     private static final Long ZERO = 0L;
     private static final Long ONE = 1L;
     private static final Long TWO = 2L;
-    private static final Integer TEST_ENTITY_VERSION = 228;
-    private static final Integer BOBO_ENTITY_VERSION = 777;
-    private static final Integer BIBER_ENTITY_VERSION = 555;
-    private static final String TEST_VALUE = "test value";
-    private static final String BOBO_VALUE = "bobo value";
-    private static final String BIBER_VALUE = "biber value";
-    private static final TestEntity TEST_ENTITY_VALUE = new TestEntity(TEST_ENTITY_VERSION);
-    private static final BoboEntity BOBO_ENTITY_VALUE = new BoboEntity(BOBO_ENTITY_VERSION);
-    private static final BiberEntity BIBER_ENTITY_VALUE = new BiberEntity(BIBER_ENTITY_VERSION);
-    private static final AbstractKeyParam<TestEntity> TEST_ENTITY_KEY_PARAM =
-            generateKeyParam(TestEntity.class, TEST_ENTITY_VERSION);
-    private static final AbstractKeyParam<BoboEntity> BOBO_ENTITY_KEY_PARAM =
-            generateKeyParam(BoboEntity.class, BOBO_ENTITY_VERSION);
-    private static final AbstractKeyParam<BiberEntity> BIBER_ENTITY_KEY_PARAM =
-            generateKeyParam(BiberEntity.class, BIBER_ENTITY_VERSION);
-
-    private static final AbstractKeyParam<TestEntity> TEST_QUERY_KEY_PARAM =
-            generateKeyParam(TestEntity.class, SELECT + TEST_ENTITY_VERSION, List.class);
-    private static final AbstractKeyParam<BoboEntity> BOBO_QUERY_ENTITY_KEY_PARAM =
-            generateKeyParam(BoboEntity.class, SELECT + BOBO_ENTITY_VERSION, Set.class);
-    private static final AbstractKeyParam<BiberEntity> BIBER_QUERY_KEY_PARAM =
-            generateKeyParam(BiberEntity.class, SELECT + BIBER_ENTITY_VERSION, List.class);
-    private static final List<TestEntity> TEST_ENTITY_LIST = List.of(TEST_ENTITY_VALUE);
-    private static final Set<BoboEntity> BOBO_ENTITY_SET = Set.of(BOBO_ENTITY_VALUE);
-    private static final List<BiberEntity> BIBER_ENTITY_LIST = List.of(BIBER_ENTITY_VALUE);
-
 
     private static Cache cache;
 
@@ -127,8 +119,8 @@ public class CacheTest {
     @ParameterizedTest
     @MethodSource("invalidateRelated_provideNullParamsForNullPointer")
     void invalidateRelated_throwNullPointerExceptionInCaseIfSomeOfParametersIsNull(AbstractKeyParam<?> keyParam,
-                                                                        Class<? extends KeyExtractorCommand> extractCommandType,
-                                                                        Class<? extends InvalidationCommand> invalidationCommandType) {
+                                                                                   Class<? extends KeyExtractorCommand> extractCommandType,
+                                                                                   Class<? extends InvalidationCommand> invalidationCommandType) {
         assertThrows(NullPointerException.class, () -> cache.invalidateRelated(keyParam, extractCommandType,
                 invalidationCommandType));
     }
