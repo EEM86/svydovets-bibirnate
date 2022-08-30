@@ -5,10 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * This annotation marks entity field as identifier.
- */
-@Target(ElementType.FIELD)
+//todo: add javadoc in scope of BIB-12
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Id {
+@Target(ElementType.FIELD)
+public @interface ManyToOne {
 }

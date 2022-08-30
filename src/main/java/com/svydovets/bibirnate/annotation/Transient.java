@@ -5,10 +5,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
 /**
- * This annotation marks entity field as identifier.
+ * This annotation marks {@link Entity} field to be ignored by the mapper.
+ * and any integration with a DB.
  */
-@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Id {
+@Target(ElementType.FIELD)
+public @interface Transient {
 }

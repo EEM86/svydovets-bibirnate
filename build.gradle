@@ -1,5 +1,8 @@
 plugins {
     id 'java'
+    id 'checkstyle'
+    id 'org.sonarqube' version '3.4.0.2513'
+    id 'jacoco'
 }
 
 group 'com.svydovets'
@@ -12,8 +15,8 @@ jar {
 }
 
 ext {
-    junitVersion = '5.8.2'
-    mockitoVersion = '4.6.1'
+    junitVersion = '5.9.0'
+    mockitoVersion = '4.7.0'
     reflections = '0.10.2'
     lombok = '1.18.24'
     commonsLang3 = '3.12.0'
@@ -21,19 +24,73 @@ ext {
     log4j = '2.18.0'
 }
 
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    annotationProcessor "org.projectlombok:lombok:${lombok}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombok}"
+    implementation "org.projectlombok:lombok:${lombok}"
+
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testImplementation "org.mockito:mockito-inline:${mockitoVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
-    compileOnly "org.projectlombok:lombok:${lombok}"
+
+    implementation 'org.postgresql:postgresql:42.5.0'
     implementation "org.apache.commons:commons-lang3:${commonsLang3}"
 
 }
 
 test {
     useJUnitPlatform()
+}
+
+checkstyle {
+    toolVersion "${checkstyle}"
+    configFile file("${project.rootDir}/src/main/resources/config/checkstyle.xml")
+    ignoreFailures = false
+    maxWarnings = 0
+}
+
+checkstyleMain {
+    print "${project.rootDir}"
+    enabled = gradle.startParameter.taskNames.contains('checkstyleMain')
+    source = 'src/main/java'
+}
+
+checkstyleTest {
+    enabled = gradle.startParameter.taskNames.contains('checkstyleTest')
+    source = 'src/test/java'
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "svydovets-bibernate"
+        property "sonar.organization", "svydovets-bibernate"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: 'com/svydovets/bibirnate/demo/**')
+        }))
+    }
 }
