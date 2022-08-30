@@ -6,6 +6,7 @@ import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
 import com.svydovets.bibirnate.cache.key.parameters.EntityKeyParam;
 import com.svydovets.bibirnate.cache.key.parameters.QueryKeyParam;
 import com.svydovets.bibirnate.entity.TestEntity;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -53,18 +54,24 @@ public class CommandUtilTest {
         assertEquals(keyParamResult, CommandUtil.checkOnIsAssignableTo(keyParam, keyParamType));
     }
 
-    @ParameterizedTest
-    @MethodSource("provideCacheMapAndEntityType")
-    void removeAllCacheWithQueryKeyRelated_RemoveRelatedCaches(Map<Key<?>, Object> cacheMap, Class<?> entityType) {
-        //WHEN
+    @Test
+    void removeAllCacheWithQueryKeyRelated_RemoveRelatedCaches() {
+        Map<Key<?>, Object> cacheMap = CacheProvider.provideCacheMap();
+        Class<?> entityType = TestEntity.class;
+        for (int i = 1; i < 1200; i++) {
+
+        }
+
+        assertNotNull(cacheMap.get(CacheProvider.TEST_ENTITY_KEY_LIST.get(10)));
+        assertNotNull(cacheMap.get(CacheProvider.BOBO_ENTITY_KEY_LIST.get(10)));
+        assertNotNull(cacheMap.get(CacheProvider.BIBER_ENTITY_KEY_LIST.get(10)));
+
         CommandUtil.removeAllCacheWithQueryKeyRelated(cacheMap, entityType);
 
-        //THEN
         for (int i = 1; i < 1200; i++) {
-            assertNull(cacheMap.get(CacheProvider.TEST_ENTITY_KEY_LIST.get(i)));
-            assertNotNull(cacheMap.get(CacheProvider.BOBO_ENTITY_KEY_LIST.get(i)));
-            assertNotNull(cacheMap.get(CacheProvider.BIBER_ENTITY_KEY_LIST.get(i)));
+
         }
+        assertNull(cacheMap.get(CacheProvider.TEST_ENTITY_KEY_LIST.get(10)));
     }
 
     private static Stream<Arguments> provideParamsForNullPointerForMapAndAbstractKeyParam() {
@@ -91,11 +98,6 @@ public class CommandUtilTest {
         return Stream.of(
                 Arguments.of(BOBO_KEY_PARAM, BOBO_KEY_PARAM, QueryKeyParam.class),
                 Arguments.of(TEST_KEY_PARAM, TEST_KEY_PARAM, EntityKeyParam.class));
-    }
-
-    private static Stream<Arguments> provideCacheMapAndEntityType() {
-        return Stream.of(
-                Arguments.of(CacheProvider.provideCacheMap(), TestEntity.class));
     }
 
 }

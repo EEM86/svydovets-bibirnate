@@ -1,18 +1,40 @@
 package com.svydovets.bibirnate.demo;
 
+import java.util.Optional;
+import javax.sql.DataSource;
+
+import org.postgresql.ds.PGSimpleDataSource;
+
+import com.svydovets.bibirnate.demo.entity.Person;
+import com.svydovets.bibirnate.session.Session;
+import com.svydovets.bibirnate.session.SessionFactory;
+import com.svydovets.bibirnate.session.impl.SessionFactoryImpl;
+
 import lombok.SneakyThrows;
 
 public class DemoApp {
-    @SneakyThrows
     public static void main(String[] args) {
-//        Key<Ent> s = new QueryKey<>(Ent.class, "s", List.class);
-//        Key<Ent> s1 = new QueryKey<>(Ent.class, "s", List.class);
+        initDB();
 
-//        System.out.println(s == s1);
-//        System.out.println(s.equals(s1));
+        SessionFactory sessionFactory = new SessionFactoryImpl(initializeDataSource());
+        Session session = sessionFactory.openSession();
 
-//        System.out.println(s.getClass().getDeclaredField("query").getType().isAssignableFrom(Object.class));
+        Optional<Person> person = session.findById(22, Person.class);
+        person.ifPresentOrElse(
+            System.out::println,
+            () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
 
-        // session.find("s * f p")
+    }
+
+    @SneakyThrows
+    private static DataSource initializeDataSource() {
+        var dataSource = new PGSimpleDataSource();
+        dataSource.setUrl("jdbc:postgresql://localhost:5432/postgres");
+
+        return dataSource;
+    }
+
+    private static void initDB() {
+        //todo: init db
     }
 }
