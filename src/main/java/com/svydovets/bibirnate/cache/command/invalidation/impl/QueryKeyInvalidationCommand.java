@@ -35,16 +35,9 @@ public class QueryKeyInvalidationCommand implements InvalidationCommand {
         QueryKeyParam<?> queryKeyParam = (QueryKeyParam<?>) checkOnIsAssignableTo(key.getKeyParam(), QueryKeyParam.class);
 
         Class<?> entityType = queryKeyParam.getEntityType();
-        String query = queryKeyParam.getQuery();
 
-        if (!StringUtils.containsIgnoreCase(query, SELECT)) {
-            if (StringUtils.containsIgnoreCase(query, INSERT)) {
-                removeAllCacheWithQueryKeyRelated(cacheMap, entityType);
-            } else {
-                removeAllCacheWithQueryKeyRelated(cacheMap, entityType);
-                removeAllCacheWithEntityKeyRelatedToEntityType(cacheMap, entityType);
-            }
-        }
+        removeAllCacheWithQueryKeyRelated(cacheMap, entityType);
+        removeAllCacheWithEntityKeyRelatedToEntityType(cacheMap, entityType);
     }
 
     private void removeAllCacheWithEntityKeyRelatedToEntityType(Map<Key<?>, Object> cacheMap, Class<?> entityType) {
