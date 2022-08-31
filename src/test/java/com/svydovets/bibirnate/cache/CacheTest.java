@@ -12,7 +12,7 @@ import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_ENTITY_SE
 import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_ENTITY_VALUE;
 import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_ENTITY_VERSION;
 import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_KEY_PARAM;
-import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_QUERY_ENTITY_KEY_PARAM;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_QUERY_KEY_PARAM;
 import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_VALUE;
 import static com.svydovets.bibirnate.cache.command.CacheConstant.SELECT;
 import static com.svydovets.bibirnate.cache.command.CacheConstant.TEST_ENTITY_KEY_PARAM;
@@ -220,13 +220,13 @@ public class CacheTest {
             EntityKeyInvalidationCommand.class, TEST_ENTITY_VALUE, TEST_QUERY_KEY_PARAM,
             QueryKeyExtractorCommand.class, TEST_ENTITY_LIST),
           Arguments.of(BOBO_ENTITY_KEY_PARAM, EntityKeyExtractorCommand.class, EntityKeyInvalidationCommand.class,
-            BOBO_ENTITY_VALUE, BOBO_QUERY_ENTITY_KEY_PARAM, QueryKeyExtractorCommand.class, BOBO_ENTITY_SET),
+            BOBO_ENTITY_VALUE, BOBO_QUERY_KEY_PARAM, QueryKeyExtractorCommand.class, BOBO_ENTITY_SET),
           Arguments.of(BIBER_ENTITY_KEY_PARAM, EntityKeyExtractorCommand.class, EntityKeyInvalidationCommand.class,
             BIBER_ENTITY_VALUE, BIBER_QUERY_KEY_PARAM, QueryKeyExtractorCommand.class, BIBER_ENTITY_LIST),
 
           Arguments.of(TEST_QUERY_KEY_PARAM, QueryKeyExtractorCommand.class, QueryKeyInvalidationCommand.class,
             TEST_ENTITY_LIST, TEST_ENTITY_KEY_PARAM, EntityKeyExtractorCommand.class, TEST_ENTITY_VALUE),
-          Arguments.of(BOBO_QUERY_ENTITY_KEY_PARAM, QueryKeyExtractorCommand.class, QueryKeyInvalidationCommand.class,
+          Arguments.of(BOBO_QUERY_KEY_PARAM, QueryKeyExtractorCommand.class, QueryKeyInvalidationCommand.class,
             BOBO_ENTITY_SET, BOBO_ENTITY_KEY_PARAM, EntityKeyExtractorCommand.class, BOBO_ENTITY_VALUE),
           Arguments.of(BIBER_QUERY_KEY_PARAM, QueryKeyExtractorCommand.class, QueryKeyInvalidationCommand.class,
             BIBER_ENTITY_LIST, BIBER_ENTITY_KEY_PARAM, EntityKeyExtractorCommand.class, BIBER_ENTITY_VALUE));

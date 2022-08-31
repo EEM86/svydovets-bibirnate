@@ -2,7 +2,7 @@ package com.svydovets.bibirnate.cache.command.extractor;
 
 import static com.svydovets.bibirnate.cache.command.CacheConstant.BIBER_QUERY_KEY_PARAM;
 import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_KEY_PARAM;
-import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_QUERY_ENTITY_KEY_PARAM;
+import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_QUERY_KEY_PARAM;
 import static com.svydovets.bibirnate.cache.command.CacheConstant.ONE;
 import static com.svydovets.bibirnate.cache.command.CacheConstant.SELECT;
 import static com.svydovets.bibirnate.cache.command.CacheConstant.TEST_QUERY_KEY_PARAM;
@@ -85,7 +85,7 @@ public class QueryKeyExtractorCommandTest {
     private static Stream<Arguments> provideParamsExtraction() {
         return Stream.of(
           Arguments.of(cacheMap, TEST_QUERY_KEY_PARAM, new Key<>(TEST_QUERY_KEY_PARAM)),
-          Arguments.of(cacheMap, BOBO_QUERY_ENTITY_KEY_PARAM, new Key<>(BOBO_QUERY_ENTITY_KEY_PARAM)),
+          Arguments.of(cacheMap, BOBO_QUERY_KEY_PARAM, new Key<>(BOBO_QUERY_KEY_PARAM)),
           Arguments.of(cacheMap, BIBER_QUERY_KEY_PARAM, new Key<>(BIBER_QUERY_KEY_PARAM)));
     }
 

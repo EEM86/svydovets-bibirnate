@@ -29,16 +29,17 @@ import com.svydovets.bibirnate.exception.CacheOverloadException;
 public class Cache {
 
     private static final int DEFAULT_CACHE_SIZE = 10_000;
-    private static final int MIN_CACHE_SIZE = 20;
-    private static final int MAX_CACHE_SIZE = 50_000;
+    private static final int DEFAULT_MIN_CACHE_SIZE = 20;
+    private static final int DEFAULT_MAX_CACHE_SIZE = 50_000;
     private static final int ZERO_DAYS = 0;
     private static final int ONE_DAY = 1;
     private static final int ONE_HOUR = 1;
     private static final int TWO_HOURS = 2;
     private static final int ONE_HUNDRED = 100;
     private static final int MAX_CACHE_SIZE_PERCENTAGE = 80;
-    private static int CACHE_SIZE;
-
+    private final int cacheSize;
+    private final int minCacheSize;
+    private final int maxCacheSize;
     private final Map<Key<?>, Object> cacheMap;
     private Map<Class<? extends KeyExtractorCommand>, KeyExtractorCommand> keyExtractorCommandMap;
     private Map<Class<? extends InvalidationCommand>, InvalidationCommand> invalidationCommandMap;
@@ -50,16 +51,22 @@ public class Cache {
     }
 
     public Cache(int cacheSize) {
-        if (cacheSize < MIN_CACHE_SIZE || cacheSize > MAX_CACHE_SIZE) {
+        this(cacheSize, DEFAULT_MIN_CACHE_SIZE, DEFAULT_MAX_CACHE_SIZE);
+    }
+
+    public Cache(int cacheSize, int minCacheSize, int maxCacheSize) {
+        if (cacheSize < minCacheSize || cacheSize > maxCacheSize) {
             throw new IllegalArgumentException(
-              String.format("Inappropriate cacheSize. cacheSize cannot be less then %s or more than %s", MAX_CACHE_SIZE,
-                MAX_CACHE_SIZE));
+              String.format("Inappropriate cacheSize. cacheSize cannot be less then %s or more than %s", maxCacheSize,
+                maxCacheSize));
         }
 
-        CACHE_SIZE = cacheSize;
-        lastClean = LocalDateTime.now();
+        this.cacheSize = cacheSize;
+        this.minCacheSize = minCacheSize;
+        this.maxCacheSize = maxCacheSize;
+        this.lastClean = LocalDateTime.now();
+        this.cacheMap = new ConcurrentHashMap<>(this.cacheSize);
 
-        cacheMap = new ConcurrentHashMap<>(CACHE_SIZE);
         initializeKeyExtractorCommandMap();
         initializeInvalidationCommandMap();
     }
@@ -128,14 +135,15 @@ public class Cache {
         invalidationCommandMap.put(QueryKeyInvalidationCommand.class, new QueryKeyInvalidationCommand());
     }
 
-    @SuppressWarnings("checkstyle:OperatorWrap")
     private void autoClean() {
-        if ((Float.valueOf(cacheMap.size()) / Float.valueOf(CACHE_SIZE)) * ONE_HUNDRED > MAX_CACHE_SIZE_PERCENTAGE) {
+        if ((Float.valueOf(cacheMap.size()) / Float.valueOf(cacheSize)) * ONE_HUNDRED > MAX_CACHE_SIZE_PERCENTAGE) {
             if (Duration.between(lastClean, LocalDateTime.now()).toHours() <= TWO_HOURS) {
-                throw new CacheOverloadException("Biberante Cache is overloaded! " +
-                        "Please check your settings and review if second level cache is enabled or what kind of " +
-                        "requests can overload it. Also, check the cacheSize, you can extend this amount up to" +
-                        MAX_CACHE_SIZE);
+                var sb = new StringBuilder();
+                sb.append("Biberante Cache is overloaded! ")
+                  .append("Please check your settings and review if second level cache is enabled or what kind of ")
+                  .append("requests can overload it. Also, check the cacheSize, you can extend this amount up to ")
+                  .append(maxCacheSize);
+                throw new CacheOverloadException(sb.toString());
             } else if (Duration.between(lastClean, LocalDateTime.now()).toDays() >= ONE_DAY) {
                 ExecutorService executorService = Executors.newSingleThreadExecutor();
                 executorService.execute(() -> cacheMap.keySet().parallelStream()
