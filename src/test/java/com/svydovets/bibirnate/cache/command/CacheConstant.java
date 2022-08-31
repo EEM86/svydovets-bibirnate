@@ -5,6 +5,7 @@ import static com.svydovets.bibirnate.cache.key.factory.KeyParamFactory.generate
 import java.util.List;
 import java.util.Set;
 
+import com.svydovets.bibirnate.cache.key.Key;
 import com.svydovets.bibirnate.cache.key.factory.KeyParamFactory;
 import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
 import com.svydovets.bibirnate.entity.BiberEntity;
@@ -36,16 +37,22 @@ public class CacheConstant {
     public static final BiberEntity BIBER_ENTITY_VALUE = new BiberEntity(BIBER_ENTITY_VERSION);
     public static final AbstractKeyParam<TestEntity> TEST_ENTITY_KEY_PARAM =
       generateKeyParam(TestEntity.class, TEST_ENTITY_VERSION);
+    public static final Key<TestEntity> TEST_ENTITY_KEY = new Key<>(TEST_ENTITY_KEY_PARAM);
     public static final AbstractKeyParam<BoboEntity> BOBO_ENTITY_KEY_PARAM =
       generateKeyParam(BoboEntity.class, BOBO_ENTITY_VERSION);
+    public static final Key<BoboEntity> BOBO_ENTITY_KEY = new Key<>(BOBO_ENTITY_KEY_PARAM);
     public static final AbstractKeyParam<BiberEntity> BIBER_ENTITY_KEY_PARAM =
       generateKeyParam(BiberEntity.class, BIBER_ENTITY_VERSION);
+    public static final Key<BiberEntity> BIBER_ENTITY_KEY = new Key<>(BIBER_ENTITY_KEY_PARAM);
     public static final AbstractKeyParam<TestEntity> TEST_QUERY_KEY_PARAM =
       generateKeyParam(TestEntity.class, SELECT + TEST_ENTITY_VERSION, List.class);
-    public static final AbstractKeyParam<BoboEntity> BOBO_QUERY_ENTITY_KEY_PARAM =
+    public static final Key<TestEntity> TEST_QUERY_KEY = new Key<>(TEST_QUERY_KEY_PARAM);
+    public static final AbstractKeyParam<BoboEntity> BOBO_QUERY_KEY_PARAM =
       generateKeyParam(BoboEntity.class, SELECT + BOBO_ENTITY_VERSION, Set.class);
+    public static final Key<BoboEntity> BOBO_QUERY_KEY = new Key<>(BOBO_QUERY_KEY_PARAM);
     public static final AbstractKeyParam<BiberEntity> BIBER_QUERY_KEY_PARAM =
       generateKeyParam(BiberEntity.class, SELECT + BIBER_ENTITY_VERSION, List.class);
+    public static final Key<BiberEntity> BIBER_QUERY_KEY = new Key<>(BIBER_QUERY_KEY_PARAM);
     public static final List<TestEntity> TEST_ENTITY_LIST = List.of(TEST_ENTITY_VALUE);
     public static final Set<BoboEntity> BOBO_ENTITY_SET = Set.of(BOBO_ENTITY_VALUE);
     public static final List<BiberEntity> BIBER_ENTITY_LIST = List.of(BIBER_ENTITY_VALUE);
