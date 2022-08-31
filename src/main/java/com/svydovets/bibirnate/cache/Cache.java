@@ -24,7 +24,7 @@ import com.svydovets.bibirnate.exception.CacheOverloadException;
 
 /**
  * This class is LRU cache realization.
- * It provides
+ *
  */
 public class Cache {
 
