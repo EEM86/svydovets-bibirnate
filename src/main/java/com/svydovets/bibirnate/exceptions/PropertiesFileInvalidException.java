@@ -2,7 +2,8 @@ package com.svydovets.bibirnate.exceptions;
 
 
 /**
- * Exception is thrown if configuration properties file is can't be parsed due to invalid properties or invalid YAML structure.
+ * Exception is thrown if configuration properties file is can't be parsed due to invalid properties
+ * or invalid YAML structure.
  */
 
 public class PropertiesFileInvalidException extends RuntimeException {

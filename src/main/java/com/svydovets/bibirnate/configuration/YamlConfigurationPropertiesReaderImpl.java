@@ -1,18 +1,19 @@
 package com.svydovets.bibirnate.configuration;
 
+import java.io.IOException;
+import java.io.InputStream;
 
-import com.svydovets.bibirnate.exceptions.PropertiesFileInvalidException;
-import com.svydovets.bibirnate.exceptions.PropertiesFileMissingException;
-import com.svydovets.bibirnate.utils.ValidationUtils;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.error.YAMLException;
 
-import java.io.IOException;
-import java.io.InputStream;
+import com.svydovets.bibirnate.exceptions.PropertiesFileInvalidException;
+import com.svydovets.bibirnate.exceptions.PropertiesFileMissingException;
+import com.svydovets.bibirnate.utils.ValidationUtils;
+
 
 /**
- * Implementation of @ConfigurationPropertiesReader to read configuration properties from YAML file
+ * Implementation of @ConfigurationPropertiesReader to read configuration properties from YAML file.
  * */
 public class YamlConfigurationPropertiesReaderImpl implements ConfigurationPropertiesReader {
 
@@ -26,11 +27,10 @@ public class YamlConfigurationPropertiesReaderImpl implements ConfigurationPrope
             ConfigurationProperties properties = yaml.load(inputStream);
             ValidationUtils.validateNotNullFields(ConfigurationProperties.class, properties);
             return properties;
-        } catch (YAMLException e) {
+        } catch (YAMLException ex) {
             throw new PropertiesFileInvalidException(filename);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
     }
 }

@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to mark field mandatory for configuration
+ * Annotation to mark field mandatory for configuration.
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

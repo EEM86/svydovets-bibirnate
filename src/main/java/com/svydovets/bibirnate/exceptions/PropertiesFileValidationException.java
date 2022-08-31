@@ -1,7 +1,7 @@
 package com.svydovets.bibirnate.exceptions;
 
 /**
- * Exception is thrown if configuration properties values fails @NotNull validation
+ * Exception is thrown if configuration properties values fails @NotNull validation.
  */
 
 public class PropertiesFileValidationException extends RuntimeException {

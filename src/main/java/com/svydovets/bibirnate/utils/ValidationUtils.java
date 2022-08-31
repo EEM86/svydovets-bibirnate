@@ -1,11 +1,11 @@
 package com.svydovets.bibirnate.utils;
 
-import com.svydovets.bibirnate.configuration.NotNull;
-import com.svydovets.bibirnate.exceptions.PropertiesFileValidationException;
-
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
+
+import com.svydovets.bibirnate.configuration.NotNull;
+import com.svydovets.bibirnate.exceptions.PropertiesFileValidationException;
 
 public class ValidationUtils {
 
@@ -14,12 +14,13 @@ public class ValidationUtils {
                 .filter(f -> {
                     try {
                         return f.isAnnotationPresent(NotNull.class) && f.get(instance) == null;
-                    } catch (IllegalAccessException e) {
-                        throw new PropertiesFileValidationException(e);
+                    } catch (IllegalAccessException ex) {
+                        throw new PropertiesFileValidationException(ex);
                     }
                 }).toList();
         if (!collect.isEmpty()) {
-            throw new PropertiesFileValidationException(String.join(",", collect.stream().map(Field::getName).toList()));
+            throw new PropertiesFileValidationException(String.join(",",
+              collect.stream().map(Field::getName).toList()));
         }
     }
 }
