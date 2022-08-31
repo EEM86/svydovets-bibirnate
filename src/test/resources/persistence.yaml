@@ -1,0 +1,4 @@
+databaseUser: user
+databaseDriverName: databaseDriver
+databasePassword: pass
+databaseUrl: url
