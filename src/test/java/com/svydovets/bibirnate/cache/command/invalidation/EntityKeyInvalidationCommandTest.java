@@ -6,7 +6,6 @@ import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_ENTITY_KE
 import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_QUERY_KEY;
 import static com.svydovets.bibirnate.cache.command.CacheConstant.SELECT;
 import static com.svydovets.bibirnate.cache.command.CacheConstant.TEST_ENTITY_KEY;
-import static com.svydovets.bibirnate.cache.command.CacheConstant.TEST_KEY_PARAM;
 import static com.svydovets.bibirnate.cache.command.CacheConstant.TEST_QUERY_KEY;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -39,8 +38,7 @@ public class EntityKeyInvalidationCommandTest {
 
     @ParameterizedTest
     @MethodSource("provideParamsForNullPointer")
-    void executeInvalidate_throwsNullPointerInCaseIfSomeOfParamsIsNull(Map<Key<?>, Object> cacheMap,
-                                                                       Key<?> key) {
+    void executeInvalidate_throwsNullPointerInCaseIfSomeOfParamsIsNull(Map<Key<?>, Object> cacheMap, Key<?> key) {
         assertThrows(NullPointerException.class,
           () -> new EntityKeyInvalidationCommand().executeInvalidate(cacheMap, key));
     }
@@ -48,14 +46,13 @@ public class EntityKeyInvalidationCommandTest {
     @Test
     void executeInvalidate_throwsIllegalArgumentExceptionInCaseIfNotAssignable() {
         assertThrows(IllegalArgumentException.class,
-          () -> new EntityKeyInvalidationCommand().executeInvalidate(cacheMap,
-            new Key<>(KeyParamFactory.generateKeyParam(TestEntity.class, SELECT, List.class))));
+          () -> new EntityKeyInvalidationCommand().executeInvalidate(cacheMap,TEST_QUERY_KEY));
     }
 
 
     @ParameterizedTest
     @MethodSource("provideParamsForInvalidation")
-    void executeInvalidate_ExtractsKeyIfExists(Key<?> key, Key<?> relatedKey, Key<?> notRelatedKey) {
+    void executeInvalidate_invalidateIfExists(Key<?> key, Key<?> relatedKey, Key<?> notRelatedKey) {
         assertNotNull(cacheMap.get(key));
         assertNotNull(cacheMap.get(relatedKey));
         assertNotNull(cacheMap.get(notRelatedKey));
@@ -71,7 +68,7 @@ public class EntityKeyInvalidationCommandTest {
         return Stream.of(
           Arguments.of(null, null),
           Arguments.of(cacheMap, null),
-          Arguments.of(null, new Key<>(TEST_KEY_PARAM)));
+          Arguments.of(null, TEST_ENTITY_KEY));
     }
 
     private static Stream<Arguments> provideParamsForInvalidation() {

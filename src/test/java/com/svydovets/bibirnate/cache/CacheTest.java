@@ -24,6 +24,9 @@ import static com.svydovets.bibirnate.cache.command.CacheConstant.TEST_QUERY_KEY
 import static com.svydovets.bibirnate.cache.command.CacheConstant.TEST_VALUE;
 import static com.svydovets.bibirnate.cache.key.factory.KeyParamFactory.generateKeyParam;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
@@ -62,6 +65,12 @@ public class CacheTest {
     @BeforeEach
     void beforeEach() {
         cache = new Cache();
+    }
+
+    @Test
+    void createCache_throwsIllegalArgumentExceptionInCaseIfNotValidParameters() {
+        assertThrows(IllegalArgumentException.class, () -> new Cache(1, 2));
+        assertThrows(IllegalArgumentException.class, () -> new Cache(100, 2));
     }
 
     @ParameterizedTest
@@ -157,13 +166,35 @@ public class CacheTest {
     }
 
     @Test
-    void addKeyExtractorCommand_makeClearForCache() {
+    void addKeyExtractorCommand_throwNullPointerExceptionInCaseIfParameterIsNull() {
         assertThrows(NullPointerException.class, () -> cache.addKeyExtractorCommand(null));
     }
 
     @Test
-    void addCacheInvalidationCommand_makeClearForCache() {
+    void addKeyExtractorCommand_addCommand() {
+        int initialSize = cache.getKeyExtractorCommandMap().size();
+        assertNull(cache.getKeyExtractorCommandMap().get(TestKeyExtractorCommand.class));
+
+        cache.addKeyExtractorCommand(new TestKeyExtractorCommand());
+
+        assertNotEquals(initialSize, cache.getKeyExtractorCommandMap().size());
+        assertNotNull(cache.getKeyExtractorCommandMap().get(TestKeyExtractorCommand.class));
+    }
+
+    @Test
+    void addCacheInvalidationCommand_throwNullPointerExceptionInCaseIfParameterIsNull() {
         assertThrows(NullPointerException.class, () -> cache.addCacheInvalidationCommand(null));
+    }
+
+    @Test
+    void addKeyInvalidationCommand_addCommand() {
+        int initialSize = cache.getInvalidationCommandMap().size();
+        assertNull(cache.getInvalidationCommandMap().get(TestKeyInvalidationCommand.class));
+
+        cache.addCacheInvalidationCommand(new TestKeyInvalidationCommand());
+
+        assertNotEquals(initialSize, cache.getInvalidationCommandMap().size());
+        assertNotNull(cache.getInvalidationCommandMap().get(TestKeyInvalidationCommand.class));
     }
 
     private static Stream<Arguments> put_provideNullParamsForNullPointer() {

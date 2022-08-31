@@ -29,7 +29,7 @@ import com.svydovets.bibirnate.exception.CacheOverloadException;
 public class Cache {
 
     private static final int DEFAULT_CACHE_SIZE = 10_000;
-    private static final int DEFAULT_MIN_CACHE_SIZE = 20;
+    private static final int MIN_CACHE_SIZE = 20;
     private static final int DEFAULT_MAX_CACHE_SIZE = 50_000;
     private static final int ZERO_DAYS = 0;
     private static final int ONE_DAY = 1;
@@ -38,7 +38,6 @@ public class Cache {
     private static final int ONE_HUNDRED = 100;
     private static final int MAX_CACHE_SIZE_PERCENTAGE = 80;
     private final int cacheSize;
-    private final int minCacheSize;
     private final int maxCacheSize;
     private final Map<Key<?>, Object> cacheMap;
     private Map<Class<? extends KeyExtractorCommand>, KeyExtractorCommand> keyExtractorCommandMap;
@@ -51,18 +50,17 @@ public class Cache {
     }
 
     public Cache(int cacheSize) {
-        this(cacheSize, DEFAULT_MIN_CACHE_SIZE, DEFAULT_MAX_CACHE_SIZE);
+        this(cacheSize, DEFAULT_MAX_CACHE_SIZE);
     }
 
-    public Cache(int cacheSize, int minCacheSize, int maxCacheSize) {
-        if (cacheSize < minCacheSize || cacheSize > maxCacheSize) {
+    public Cache(int cacheSize, int maxCacheSize) {
+        if ((maxCacheSize < MIN_CACHE_SIZE * 2) || cacheSize < MIN_CACHE_SIZE || cacheSize > maxCacheSize) {
             throw new IllegalArgumentException(
-              String.format("Inappropriate cacheSize. cacheSize cannot be less then %s or more than %s", maxCacheSize,
-                maxCacheSize));
+              String.format("Inappropriate [cacheSize]. [cacheSize] cannot be less then %s or more than %s",
+                maxCacheSize, maxCacheSize));
         }
 
         this.cacheSize = cacheSize;
-        this.minCacheSize = minCacheSize;
         this.maxCacheSize = maxCacheSize;
         this.lastClean = LocalDateTime.now();
         this.cacheMap = new ConcurrentHashMap<>(this.cacheSize);
@@ -121,6 +119,14 @@ public class Cache {
         Objects.requireNonNull(invalidationCommand, String.format(PARAMETER_CANNOT_BE_NULL, invalidationCommand));
 
         invalidationCommandMap.put(invalidationCommand.getClass(), invalidationCommand);
+    }
+
+    public Map<Class<? extends KeyExtractorCommand>, KeyExtractorCommand> getKeyExtractorCommandMap() {
+        return keyExtractorCommandMap;
+    }
+
+    public Map<Class<? extends InvalidationCommand>, InvalidationCommand> getInvalidationCommandMap() {
+        return invalidationCommandMap;
     }
 
     private void initializeKeyExtractorCommandMap() {
