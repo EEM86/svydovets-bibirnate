@@ -24,7 +24,6 @@ import com.svydovets.bibirnate.exceptions.CacheOverloadException;
 
 /**
  * This class is LRU cache realization.
- *
  */
 public class Cache {
 
@@ -167,6 +166,16 @@ public class Cache {
                 lastClean = LocalDateTime.now();
                 executorService.shutdown();
             }
+        }
+    }
+
+    private void checkIfDurationOfLastCleanLessTwoHours() {
+        if (Duration.between(lastClean, LocalDateTime.now()).toHours() <= TWO_HOURS) {
+            String firstPart = "Biberante Cache is overloaded! \n";
+            String secondPart =
+              "Please check your settings and review if second level cache is enabled or what kind of ";
+            String thirdPart = "requests can overload it. Also, check the cacheSize, you can extend this amount up to ";
+            throw new RuntimeException(firstPart + secondPart + thirdPart + maxCacheSize);
         }
     }
 

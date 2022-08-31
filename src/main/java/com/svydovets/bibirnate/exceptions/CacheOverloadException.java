@@ -6,8 +6,4 @@ public class CacheOverloadException extends RuntimeException {
         super(message);
     }
 
-    public CacheOverloadException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
 }

@@ -91,8 +91,8 @@ public class CacheTest {
     }
 
     @Test
-    void put_throwsCacheOverloadExceptionWhenCacheOverloaded() {
-        Cache cacheOverloaded = new Cache(51);
+    void put_throwsRuntimeExceptionWhenCacheOverloaded() {
+        Cache cacheOverloaded = new Cache(21);
 
         try {
             for (int i = 0; i < cacheOverloaded.size(); i++) {
