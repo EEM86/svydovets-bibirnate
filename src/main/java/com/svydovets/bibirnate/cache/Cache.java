@@ -20,7 +20,7 @@ import com.svydovets.bibirnate.cache.command.invalidation.impl.EntityKeyInvalida
 import com.svydovets.bibirnate.cache.command.invalidation.impl.QueryKeyInvalidationCommand;
 import com.svydovets.bibirnate.cache.key.Key;
 import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
-import com.svydovets.bibirnate.exception.CacheOverloadException;
+import com.svydovets.bibirnate.exceptions.CacheOverloadException;
 
 /**
  * This class is LRU cache realization.

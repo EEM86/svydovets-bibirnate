@@ -1,4 +1,4 @@
-package com.svydovets.bibirnate.exception;
+package com.svydovets.bibirnate.exceptions;
 
 public class CacheOverloadException extends RuntimeException {
 
