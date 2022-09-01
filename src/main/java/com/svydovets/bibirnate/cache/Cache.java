@@ -20,11 +20,10 @@ import com.svydovets.bibirnate.cache.command.invalidation.impl.EntityKeyInvalida
 import com.svydovets.bibirnate.cache.command.invalidation.impl.QueryKeyInvalidationCommand;
 import com.svydovets.bibirnate.cache.key.Key;
 import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
-import com.svydovets.bibirnate.exception.CacheOverloadException;
+import com.svydovets.bibirnate.exceptions.CacheOverloadException;
 
 /**
  * This class is LRU cache realization.
- * It provides
  */
 public class Cache {
 
@@ -54,7 +53,7 @@ public class Cache {
     }
 
     public Cache(int cacheSize, int maxCacheSize) {
-        if ((maxCacheSize < MIN_CACHE_SIZE * 2) || cacheSize < MIN_CACHE_SIZE || cacheSize > maxCacheSize) {
+        if ((maxCacheSize < MIN_CACHE_SIZE * 2) || cacheSize < MIN_CACHE_SIZE || cacheSize > maxCacheSize)              {
             throw new IllegalArgumentException(
               String.format("Inappropriate [cacheSize]. [cacheSize] cannot be less then %s or more than %s",
                 maxCacheSize, maxCacheSize));
@@ -167,6 +166,16 @@ public class Cache {
                 lastClean = LocalDateTime.now();
                 executorService.shutdown();
             }
+        }
+    }
+
+    private void checkIfDurationOfLastCleanLessTwoHours() {
+        if (Duration.between(lastClean, LocalDateTime.now()).toHours() <= TWO_HOURS) {
+            String firstPart = "Biberante Cache is overloaded! \n";
+            String secondPart =
+              "Please check your settings and review if second level cache is enabled or what kind of ";
+            String thirdPart = "requests can overload it. Also, check the cacheSize, you can extend this amount up to ";
+            throw new RuntimeException(firstPart + secondPart + thirdPart + maxCacheSize);
         }
     }
 

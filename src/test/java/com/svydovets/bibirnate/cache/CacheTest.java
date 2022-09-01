@@ -52,7 +52,7 @@ import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
 import com.svydovets.bibirnate.entity.BiberEntity;
 import com.svydovets.bibirnate.entity.BoboEntity;
 import com.svydovets.bibirnate.entity.TestEntity;
-import com.svydovets.bibirnate.exception.CacheOverloadException;
+import com.svydovets.bibirnate.exceptions.CacheOverloadException;
 
 public class CacheTest {
 
@@ -91,8 +91,8 @@ public class CacheTest {
     }
 
     @Test
-    void put_throwsCacheOverloadExceptionWhenCacheOverloaded() {
-        Cache cacheOverloaded = new Cache(51);
+    void put_throwsRuntimeExceptionWhenCacheOverloaded() {
+        Cache cacheOverloaded = new Cache(21);
 
         try {
             for (int i = 0; i < cacheOverloaded.size(); i++) {
