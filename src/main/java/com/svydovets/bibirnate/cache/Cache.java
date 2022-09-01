@@ -53,7 +53,7 @@ public class Cache {
     }
 
     public Cache(int cacheSize, int maxCacheSize) {
-        if ((maxCacheSize < MIN_CACHE_SIZE * 2) || cacheSize < MIN_CACHE_SIZE || cacheSize > maxCacheSize) {
+        if ((maxCacheSize < MIN_CACHE_SIZE * 2) || cacheSize < MIN_CACHE_SIZE || cacheSize > maxCacheSize)              {
             throw new IllegalArgumentException(
               String.format("Inappropriate [cacheSize]. [cacheSize] cannot be less then %s or more than %s",
                 maxCacheSize, maxCacheSize));
