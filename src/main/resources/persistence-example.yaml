@@ -1,0 +1,5 @@
+database:
+  url: url
+  user: user
+  driverName: databaseDriver
+  password: pass
