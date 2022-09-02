@@ -1,4 +1,3 @@
-#databaseUser: user
-databaseDriverName: databaseDriver
-#databasePassword: pass
-databaseUrl: url
+database:
+  user: user
+  driverName: databaseDriver

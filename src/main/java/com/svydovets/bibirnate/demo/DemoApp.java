@@ -32,9 +32,9 @@ public class DemoApp {
         var configurationProperties = new YamlConfigurationPropertiesReaderImpl()
           .readProperties("persistence-example.yaml");
         var dataSource = new PGSimpleDataSource();
-        dataSource.setUrl(configurationProperties.getDatabaseUrl());
-        dataSource.setUser(configurationProperties.getDatabaseUser());
-        dataSource.setPassword(configurationProperties.getDatabasePassword());
+        dataSource.setUrl(configurationProperties.getDatabase().getUrl());
+        dataSource.setUser(configurationProperties.getDatabase().getUser());
+        dataSource.setPassword(configurationProperties.getDatabase().getPassword());
 
         return dataSource;
     }

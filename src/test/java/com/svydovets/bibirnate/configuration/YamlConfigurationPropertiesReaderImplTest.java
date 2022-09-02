@@ -17,10 +17,10 @@ public class YamlConfigurationPropertiesReaderImplTest {
     @Test
     public void testReadYamlPropertiesSuccess() {
         configurationProperties = reader.readProperties("persistence.yaml");
-        assertEquals("url", configurationProperties.getDatabaseUrl());
-        assertEquals("user", configurationProperties.getDatabaseUser());
-        assertEquals("pass", configurationProperties.getDatabasePassword());
-        assertEquals("databaseDriver", configurationProperties.getDatabaseDriverName());
+        assertEquals("url", configurationProperties.getDatabase().getUrl());
+        assertEquals("user", configurationProperties.getDatabase().getUser());
+        assertEquals("pass", configurationProperties.getDatabase().getPassword());
+        assertEquals("databaseDriver", configurationProperties.getDatabase().getDriverName());
     }
 
     @Test
