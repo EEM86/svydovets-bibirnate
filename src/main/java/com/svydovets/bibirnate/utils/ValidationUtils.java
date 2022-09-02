@@ -10,6 +10,9 @@ import com.svydovets.bibirnate.exceptions.PropertiesFileValidationException;
 
 public class ValidationUtils {
 
+    private ValidationUtils() {
+    }
+
     public static <T> void validateNotNullDatabaseFields(Class<T> entityType, T instance) {
         var collect = Arrays.stream(entityType.getDeclaredFields())
                 .peek(AccessibleObject::trySetAccessible)

@@ -1,5 +1,11 @@
 database:
   url: url
   user: user
-  driverName: databaseDriver
   password: pass
+  driverName: org.postgresql.Driver
+
+connectionPool:
+  maxPoolSize: 10
+  minIdle: 5
+  maxLifetime: 1800000
+  connectionTimeout: 30000

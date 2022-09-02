@@ -3,7 +3,8 @@ package com.svydovets.bibirnate.demo;
 import java.util.Optional;
 import javax.sql.DataSource;
 
-import org.postgresql.ds.PGSimpleDataSource;
+import com.svydovets.bibirnate.utils.HikariConfigUtils;
+import com.zaxxer.hikari.HikariDataSource;
 
 import com.svydovets.bibirnate.configuration.YamlConfigurationPropertiesReaderImpl;
 import com.svydovets.bibirnate.demo.entity.Person;
@@ -31,12 +32,9 @@ public class DemoApp {
     private static DataSource initializeDataSource() {
         var configurationProperties = new YamlConfigurationPropertiesReaderImpl()
           .readProperties("persistence-example.yaml");
-        var dataSource = new PGSimpleDataSource();
-        dataSource.setUrl(configurationProperties.getDatabase().getUrl());
-        dataSource.setUser(configurationProperties.getDatabase().getUser());
-        dataSource.setPassword(configurationProperties.getDatabase().getPassword());
+        var hikariConfig = HikariConfigUtils.createHikariConfig(configurationProperties);
 
-        return dataSource;
+        return new HikariDataSource(hikariConfig);
     }
 
     private static void initDB() {
