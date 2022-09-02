@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Predicate;
 
 import com.svydovets.bibirnate.cache.command.extractor.KeyExtractorCommand;
 import com.svydovets.bibirnate.cache.command.extractor.impl.EntityKeyExtractorCommand;
@@ -212,24 +213,22 @@ public class Cache {
                       .append(maxCacheSize);
                     throw new CacheOverloadException(sb.toString());
                 } else if (Duration.between(lastClean, LocalDateTime.now()).toDays() >= ONE_DAY) {
-                    ExecutorService executorService = Executors.newSingleThreadExecutor();
-                    executorService.execute(() -> cacheMap.keySet().parallelStream()
-                      .filter(key -> Duration.between(key.getUpdated(), LocalDateTime.now()).toDays() > ONE_DAY)
-                      .forEach(cacheMap::remove));
-
-                    lastClean = LocalDateTime.now();
-                    executorService.shutdown();
+                    clean(key -> Duration.between(key.getUpdated(), LocalDateTime.now()).toDays() > ONE_DAY);
                 } else if (Duration.between(lastClean, LocalDateTime.now()).toDays() == ZERO_DAYS) {
-                    ExecutorService executorService = Executors.newSingleThreadExecutor();
-                    executorService.execute(() -> cacheMap.keySet().parallelStream()
-                      .filter(key -> Duration.between(key.getUpdated(), LocalDateTime.now()).toHours() > ONE_HOUR)
-                      .forEach(cacheMap::remove));
-
-                    lastClean = LocalDateTime.now();
-                    executorService.shutdown();
+                    clean(key -> Duration.between(key.getUpdated(), LocalDateTime.now()).toHours() > ONE_HOUR);
                 }
             }
         }
+    }
+
+    private void clean(Predicate<? super Key<?>> predicate) {
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.execute(() -> cacheMap.keySet().parallelStream()
+          .filter(predicate)
+          .forEach(cacheMap::remove));
+
+        lastClean = LocalDateTime.now();
+        executorService.shutdown();
     }
 
     private Optional<Key<?>> getKey(AbstractKeyParam<?> abstractKeyParam,
