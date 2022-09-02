@@ -40,13 +40,14 @@ dependencies {
     testAnnotationProcessor "org.projectlombok:lombok:${lombok}"
     implementation "org.projectlombok:lombok:${lombok}"
 
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testImplementation "org.mockito:mockito-inline:${mockitoVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
-    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
-    testImplementation "org.mockito:mockito-inline:${mockitoVersion}"
 
-    implementation "org.postgresql:postgresql:42.5.0"
+    implementation 'org.postgresql:postgresql:42.5.0'
+    implementation "org.apache.commons:commons-lang3:${commonsLang3}"
     implementation "org.yaml:snakeyaml:${snakeyamlVersion}"
 }
 
