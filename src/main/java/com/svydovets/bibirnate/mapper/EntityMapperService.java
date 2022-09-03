@@ -28,16 +28,16 @@ public class EntityMapperService {
     public static  <T> T mapToObject(Class<T> toClass, ResultSet resultSet) {
         try {
             var constructor = toClass.getConstructor();
-            var instance = constructor.newInstance();
+            var entity = constructor.newInstance();
             for (Field field : toClass.getDeclaredFields()) {
                 if (!field.isAnnotationPresent(Transient.class)) {
-                    var fieldName = EntityUtils.getFieldName(field);
+                    var fieldName = EntityUtils.getColumnName(field);
                     var dbValue = resultSet.getObject(fieldName);
                     var mapper = EntityFieldMapperFactory.getFieldMapper(field);
-                    mapper.mapField(field, instance, dbValue);
+                    mapper.mapField(field, entity, dbValue);
                 }
             }
-            return instance;
+            return entity;
         } catch (NoSuchMethodException ex) {
             throw new DefaultConstructorNotFoundException(
               String.format("Entity class: %s should contain default empty constructor", toClass.getSimpleName()), ex);

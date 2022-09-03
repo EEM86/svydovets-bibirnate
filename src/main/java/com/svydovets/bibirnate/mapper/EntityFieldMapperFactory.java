@@ -29,7 +29,7 @@ public class EntityFieldMapperFactory {
         if (EntityUtils.isRegularField(field)) {
             return new RegularFieldMapper();
         } else if (EntityUtils.isEntityField(field)) {
-            return new ToOneFieldMapper();
+            return new ToOneFieldMapper(null);
         } else if (EntityUtils.isEntityCollectionField(field)) {
             return new ToManyFieldMapper();
         } else {

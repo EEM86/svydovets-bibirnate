@@ -1,6 +1,6 @@
 package com.svydovets.bibirnate.session.impl;
 
-import static com.svydovets.bibirnate.utils.EntityUtils.getFieldName;
+import static com.svydovets.bibirnate.utils.EntityUtils.getColumnName;
 import static com.svydovets.bibirnate.utils.EntityUtils.getIdField;
 import static com.svydovets.bibirnate.utils.EntityUtils.getTableName;
 
@@ -27,7 +27,7 @@ public class JdbcEntityDao {
     public <T> Optional<T> findBy(Field field, Object value, Class<T> type) {
         try (var connection = dataSource.getConnection()) {
             var tableName = getTableName(type);
-            var columnName = getFieldName(field);
+            var columnName = getColumnName(field);
             var selectSql = String.format(SELECT_FROM_TABLE_BY_COLUMN, tableName, columnName);
 
             try (var statement = connection.prepareStatement(selectSql)) {
