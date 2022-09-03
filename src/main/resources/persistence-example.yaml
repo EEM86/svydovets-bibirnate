@@ -1,7 +1,7 @@
 database:
-  url: url
-  user: user
-  password: pass
+  url: jdbc:postgresql://localhost:5432/bibernate
+  user: maingroon
+  password: password
   driverName: org.postgresql.Driver
 
 connectionPool:

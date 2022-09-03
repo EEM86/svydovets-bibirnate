@@ -46,10 +46,6 @@ public class ConnectionPoolProperties {
      */
     String poolName = DEFAULT_POOL_NAME;
     /**
-     * The DriverClassName of the JDBC driver to use.
-     */
-    String driverClassName;
-    /**
      * The DataSource class name.
      */
     String dataSourceClassName;
@@ -58,7 +54,8 @@ public class ConnectionPoolProperties {
      */
     String dataSourceJndiName;
     /**
-     * The SQL string that will be executed on all new connections when they are created, before they are added to the pool.
+     * The SQL string that will be executed on all new connections when they are created,
+     * before they are added to the pool.
      */
     String connectionInitSql;
     /**
@@ -107,13 +104,14 @@ public class ConnectionPoolProperties {
     /**
      * The property controls the minimum number of idle connections that HikariCP tries to maintain in the pool,
      * including both idle and in-use connections.
-     * <p>
      * If the idle connections dip below this value, HikariCP will make the best effort
      * to restore them quickly and efficiently.
      */
     int minIdle = DEFAULT_MIN_IDLE;
     /**
-     *
+     * the maximum number of milliseconds that a client will wait for a connection from the pool.
+     * If this time is exceeded without a connection becoming available,
+     * a SQLException will be thrown from javax.sql.DataSource.getConnection().
      */
     long connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
     /**
@@ -124,7 +122,6 @@ public class ConnectionPoolProperties {
      * This property controls the maximum amount of time (in milliseconds) that a connection
      * is allowed to sit idle in the pool. Whether a connection is retired as idle or not is subject
      * to a maximum variation of +30 seconds, and average variation of +15 seconds.
-     * <p>
      * A connection will never be retired as idle before this timeout.
      * A value of 0 means that idle connections are never removed from the pool.
      */
@@ -132,7 +129,6 @@ public class ConnectionPoolProperties {
     /**
      * This property controls the amount of time that a connection can be out of the pool before a message
      * is logged indicating a possible connection leak.
-     * <p>
      * A value of 0 means leak detection is disabled.
      */
     long leakDetectionThreshold = DEFAULT_LEAK_DETECTION_THRESHOLD;

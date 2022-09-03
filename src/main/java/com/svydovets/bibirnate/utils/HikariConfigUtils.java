@@ -4,7 +4,7 @@ import com.svydovets.bibirnate.configuration.ConfigurationProperties;
 import com.zaxxer.hikari.HikariConfig;
 
 /**
- * Utility class for create {@link HikariConfig} from own configuration
+ * Utility class for create {@link HikariConfig} from own configuration.
  */
 public class HikariConfigUtils {
 

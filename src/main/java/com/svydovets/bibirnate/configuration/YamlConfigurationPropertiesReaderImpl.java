@@ -2,18 +2,18 @@ package com.svydovets.bibirnate.configuration;
 
 import java.io.IOException;
 
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.error.YAMLException;
-
 import com.svydovets.bibirnate.exceptions.PropertiesFileInvalidException;
 import com.svydovets.bibirnate.exceptions.PropertiesFileMissingException;
 import com.svydovets.bibirnate.exceptions.PropertiesFileValidationException;
 import com.svydovets.bibirnate.utils.ValidationUtils;
 
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.error.YAMLException;
+
 /**
  * Implementation of @ConfigurationPropertiesReader to read configuration properties from YAML file.
- * */
+ */
 public class YamlConfigurationPropertiesReaderImpl implements ConfigurationPropertiesReader {
 
     @Override
