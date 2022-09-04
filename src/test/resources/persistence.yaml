@@ -1,5 +1,30 @@
 database:
   url: url
   user: user
-  driverName: databaseDriver
   password: pass
+  driverName: databaseDriver
+
+connectionPool:
+  catalog: catalog
+  schema: schema
+  poolName: poolName
+  dataSourceClassName: dataSourceClassName
+  dataSourceJndiName: dataSourceJndiClass
+  connectionInitSql: connectionInitSql
+  connectionTestQuery: connectionTestQuery
+  transactionIsolationName: transactionIsolationName
+  exceptionOverrideClassName: exceptionOverrideClassName
+  autoCommit: true
+  readOnly: false
+  isolateInternalQueries: true
+  registerMbeans: false
+  allowPoolSuspension: true
+  maxPoolSize: 1
+  minIdle: 2
+  connectionTimeout: 3
+  validationTimeout: 4
+  idleTimeout: 5
+  leakDetectionThreshold: 6
+  maxLifetime: 7
+  initializationFailTimeout: 8
+  keepaliveTime: 9

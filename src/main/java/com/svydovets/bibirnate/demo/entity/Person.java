@@ -12,7 +12,7 @@ import lombok.Data;
 @Table(name = "persons")
 public class Person {
     @Id
-    private Integer id;
+    private Long id;
 
     @Column(name = "first_name")
     private String firstName;
