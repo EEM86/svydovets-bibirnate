@@ -18,10 +18,13 @@ public interface Session extends Closeable {
      */
     <T> T findById(Object id, Class<T> type);
 
+    void remove(Object entity);
+
     /**
      * Checks if session is already closed.
      *
      * @return is the session closed
      */
     boolean isClosed();
+
 }

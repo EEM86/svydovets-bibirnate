@@ -61,4 +61,9 @@ public class SessionImpl implements Session {
     public boolean isClosed() {
         return closed;
     }
+
+    @Override
+    public void remove(Object entity) {
+
+    }
 }
