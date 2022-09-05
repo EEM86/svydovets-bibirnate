@@ -68,4 +68,9 @@ public class SessionImpl implements Session {
     public void remove(Object entity) {
         jdbcEntityDao.remove(entity);
     }
+
+    @Override
+    public void remove(Object entity) {
+
+    }
 }
