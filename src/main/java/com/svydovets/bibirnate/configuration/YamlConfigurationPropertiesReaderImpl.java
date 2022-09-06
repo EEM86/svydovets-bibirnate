@@ -13,7 +13,7 @@ import com.svydovets.bibirnate.utils.ValidationUtils;
 
 /**
  * Implementation of @ConfigurationPropertiesReader to read configuration properties from YAML file.
- * */
+ */
 public class YamlConfigurationPropertiesReaderImpl implements ConfigurationPropertiesReader {
 
     @Override
