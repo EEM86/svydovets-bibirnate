@@ -20,9 +20,10 @@ public class DemoApp {
         SessionFactory sessionFactory = new SessionFactoryImpl(initializeDataSource());
         Session session = sessionFactory.openSession();
 
-        Optional<Person> person = session.findById(22, Person.class);
-        person.ifPresentOrElse(
-                System.out::println,
+        Person person = session.findById(22, Person.class);
+
+        Optional.ofNullable(person)
+          .ifPresentOrElse(System.out::println,
                 () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
 
     }

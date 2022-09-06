@@ -2,18 +2,25 @@ package com.svydovets.bibirnate.entity;
 
 import java.util.Objects;
 
+import com.svydovets.bibirnate.annotation.Cacheable;
+import com.svydovets.bibirnate.annotation.Entity;
+import com.svydovets.bibirnate.annotation.Id;
+
+@Entity
+@Cacheable
 public class BoboEntity {
-    private long version;
+    @Id
+    private long id;
 
     public BoboEntity() {
     }
 
-    public BoboEntity(long version) {
-        this.version = version;
+    public BoboEntity(long id) {
+        this.id = id;
     }
 
-    public long getVersion() {
-        return version;
+    public long getId() {
+        return id;
     }
 
     @Override
@@ -21,11 +28,11 @@ public class BoboEntity {
         if (this == o) return true;
         if (!(o instanceof BoboEntity)) return false;
         BoboEntity that = (BoboEntity) o;
-        return getVersion() == that.getVersion();
+        return getId() == that.getId();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getVersion());
+        return Objects.hash(getId());
     }
 }
