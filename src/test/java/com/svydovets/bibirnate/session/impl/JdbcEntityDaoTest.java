@@ -49,7 +49,7 @@ class JdbcEntityDaoTest {
         when(dataSource.getConnection()).thenReturn(connection);
         when(resultSet.next()).thenReturn(false);
 
-        var jdbcEntityDao = new JdbcEntityDao(dataSource);
+        var jdbcEntityDao = new JdbcEntityDao(connection);
         var idField = EntityPrimitives.class.getDeclaredField("id");
 
         assertEquals(Optional.empty(), jdbcEntityDao.findBy(idField, ID, EntityPrimitives.class));
@@ -71,7 +71,7 @@ class JdbcEntityDaoTest {
         when(dataSource.getConnection()).thenReturn(connection);
         when(resultSet.next()).thenReturn(true);
 
-        var jdbcEntityDao = new JdbcEntityDao(dataSource);
+        var jdbcEntityDao = new JdbcEntityDao(connection);
         var idField = EntityPrimitives.class.getDeclaredField("id");
 
         try (var entityMapperService = mockStatic(EntityMapperService.class)) {

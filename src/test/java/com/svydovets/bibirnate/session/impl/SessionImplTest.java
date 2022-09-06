@@ -20,7 +20,7 @@ class SessionImplTest {
         try (var factory = mockStatic(JdbcEntityDaoFactory.class)) {
             var jdbcEntityDao = mock(JdbcEntityDao.class);
             factory.when(() -> JdbcEntityDaoFactory.createJdbcEntityDao(any())).thenReturn(jdbcEntityDao);
-            var session = new SessionImpl(new PGSimpleDataSource());
+            var session = new SessionImpl(any());
             session.findById(12L, EntityPrimitives.class);
             verify(jdbcEntityDao).findById(12L, EntityPrimitives.class);
         }
