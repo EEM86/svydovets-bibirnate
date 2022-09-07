@@ -1,12 +1,13 @@
 package com.svydovets.bibirnate.session.impl;
 
-import static com.svydovets.bibirnate.session.impl.JdbcEntityDaoFactory.createJdbcEntityDao;
+import static com.svydovets.bibirnate.jdbc.JdbcEntityDaoFactory.createJdbcEntityDao;
 
 import java.util.Optional;
 import javax.sql.DataSource;
 
 import com.svydovets.bibirnate.cache.CacheContainer;
 import com.svydovets.bibirnate.cache.CacheUtils;
+import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
 import com.svydovets.bibirnate.session.Session;
 
 public class SessionImpl implements Session {
@@ -14,7 +15,7 @@ public class SessionImpl implements Session {
     private final CacheContainer cacheContainer;
 
     public SessionImpl(DataSource dataSource, CacheContainer cacheContainer) {
-        this.jdbcEntityDao = createJdbcEntityDao(dataSource);
+        this.jdbcEntityDao = createJdbcEntityDao(dataSource); // toDo should we create session without factory?
         this.cacheContainer = cacheContainer;
     }
 

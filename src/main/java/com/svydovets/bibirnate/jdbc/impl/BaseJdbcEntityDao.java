@@ -1,4 +1,4 @@
-package com.svydovets.bibirnate.session.impl;
+package com.svydovets.bibirnate.jdbc.impl;
 
 import static com.svydovets.bibirnate.utils.EntityUtils.getFieldName;
 import static com.svydovets.bibirnate.utils.EntityUtils.getIdField;
@@ -8,22 +8,25 @@ import java.lang.reflect.Field;
 import java.util.Optional;
 import javax.sql.DataSource;
 
+import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
 import com.svydovets.bibirnate.mapper.EntityMapperService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 @RequiredArgsConstructor
-public class JdbcEntityDao {
+public class BaseJdbcEntityDao implements JdbcEntityDao {
     public static final String SELECT_FROM_TABLE_BY_COLUMN = "select * from %s where %s = ?";
     private final DataSource dataSource;
 
+    @Override
     public <T> Optional<T> findById(Object id, Class<T> type) {
         var field = getIdField(type);
         return findBy(field, id, type);
     }
 
     @SneakyThrows
+    @Override
     public <T> Optional<T> findBy(Field field, Object value, Class<T> type) {
         try (var connection = dataSource.getConnection()) {
             var tableName = getTableName(type);

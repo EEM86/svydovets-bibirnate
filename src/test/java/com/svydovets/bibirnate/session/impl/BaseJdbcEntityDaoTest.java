@@ -1,25 +1,25 @@
 package com.svydovets.bibirnate.session.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Optional;
-
-import org.junit.jupiter.api.Test;
+import javax.sql.DataSource;
 
 import com.svydovets.bibirnate.entities.EntityPrimitives;
+import com.svydovets.bibirnate.jdbc.impl.BaseJdbcEntityDao;
 import com.svydovets.bibirnate.mapper.EntityMapperService;
-
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.Test;
 
-class JdbcEntityDaoTest {
+class BaseJdbcEntityDaoTest {
 
     private static final long ID = 13L;
 
@@ -27,7 +27,7 @@ class JdbcEntityDaoTest {
     @SneakyThrows
     void findById_shouldCallFindBy() {
         var idField = EntityPrimitives.class.getDeclaredField("id");
-        var mock = mock(JdbcEntityDao.class);
+        var mock = mock(BaseJdbcEntityDao.class);
 
         var foundEntity = Optional.of( new EntityPrimitives());
         when(mock.findBy(idField, ID, EntityPrimitives.class)).thenReturn(foundEntity);
@@ -49,7 +49,7 @@ class JdbcEntityDaoTest {
         when(dataSource.getConnection()).thenReturn(connection);
         when(resultSet.next()).thenReturn(false);
 
-        var jdbcEntityDao = new JdbcEntityDao(dataSource);
+        var jdbcEntityDao = new BaseJdbcEntityDao(dataSource);
         var idField = EntityPrimitives.class.getDeclaredField("id");
 
         assertEquals(Optional.empty(), jdbcEntityDao.findBy(idField, ID, EntityPrimitives.class));
@@ -71,7 +71,7 @@ class JdbcEntityDaoTest {
         when(dataSource.getConnection()).thenReturn(connection);
         when(resultSet.next()).thenReturn(true);
 
-        var jdbcEntityDao = new JdbcEntityDao(dataSource);
+        var jdbcEntityDao = new BaseJdbcEntityDao(dataSource);
         var idField = EntityPrimitives.class.getDeclaredField("id");
 
         try (var entityMapperService = mockStatic(EntityMapperService.class)) {
