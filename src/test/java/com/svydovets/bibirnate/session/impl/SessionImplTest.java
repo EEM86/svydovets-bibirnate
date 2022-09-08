@@ -1,14 +1,20 @@
 package com.svydovets.bibirnate.session.impl;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 
+import java.sql.Connection;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.postgresql.ds.PGSimpleDataSource;
 
 import com.svydovets.bibirnate.entities.EntityPrimitives;
+import com.svydovets.bibirnate.exceptions.JdbcException;
+import com.svydovets.bibirnate.session.Session;
 
 import lombok.SneakyThrows;
 
@@ -24,6 +30,25 @@ class SessionImplTest {
             session.findById(12L, EntityPrimitives.class);
             verify(jdbcEntityDao).findById(12L, EntityPrimitives.class);
         }
+    }
+
+    @Test
+    @SneakyThrows
+    void findById_shouldThrowJdbcExceptionIfSessionAlreadyClosed() {
+        Connection connection = mock(Connection.class);
+        Session session = new SessionImpl(connection);
+        session.close();
+        Assertions.assertThrows(JdbcException.class, () -> session.findById(12L, EntityPrimitives.class));
+    }
+
+    @Test
+    @SneakyThrows
+    void close_shouldCloseSession() {
+        Connection connection = mock(Connection.class);
+        Session session = new SessionImpl(connection);
+        session.close();
+
+        assertTrue(session.isClosed());
     }
 
 }

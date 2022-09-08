@@ -16,4 +16,11 @@ public interface Session extends Closeable {
      * @return found entity wrapped in optional
      */
     <T> Optional<T> findById(Object id, Class<T> type);
+
+    /**
+     * Checks if session is already closed.
+     *
+     * @return is the session closed
+     */
+    boolean isClosed();
 }

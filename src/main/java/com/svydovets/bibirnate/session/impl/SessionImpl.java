@@ -14,6 +14,8 @@ public class SessionImpl implements Session {
 
     private final Connection connection;
 
+    private boolean closed;
+
     public SessionImpl(Connection connection) {
         this.jdbcEntityDao = createJdbcEntityDao(connection);
         this.connection = connection;
@@ -21,15 +23,27 @@ public class SessionImpl implements Session {
 
     @Override
     public <T> Optional<T> findById(Object id, Class<T> type) {
+        if (closed) {
+            throw new JdbcException("Session is already closed");
+        }
         return jdbcEntityDao.findById(id, type);
     }
 
     @Override
     public void close() {
+        if (closed) {
+            return;
+        }
+        closed = true;
         try {
             connection.close();
         } catch (SQLException ex) {
             throw new JdbcException(ex.getMessage(), ex);
         }
+    }
+
+    @Override
+    public boolean isClosed() {
+        return closed;
     }
 }
