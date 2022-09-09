@@ -1,14 +1,17 @@
 package com.svydovets.bibirnate.session.impl;
 
+import static com.svydovets.bibirnate.session.query.CrudOperation.DELETE;
 import static com.svydovets.bibirnate.utils.EntityUtils.getFieldName;
 import static com.svydovets.bibirnate.utils.EntityUtils.getIdField;
 import static com.svydovets.bibirnate.utils.EntityUtils.getTableName;
 
+import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.util.Optional;
 
 import com.svydovets.bibirnate.mapper.EntityMapperService;
+import com.svydovets.bibirnate.session.query.processor.QueryProcessorFactory;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -40,5 +43,11 @@ public class JdbcEntityDao {
             T entity = EntityMapperService.mapToObject(type, resultSet);
             return Optional.of(entity);
         }
+    }
+
+    @SneakyThrows
+    public void remove(Object entity) {
+        var queryProcessor = QueryProcessorFactory.defineQueryProcessor(DELETE, entity, dataSource.getConnection());
+        queryProcessor.execute();
     }
 }

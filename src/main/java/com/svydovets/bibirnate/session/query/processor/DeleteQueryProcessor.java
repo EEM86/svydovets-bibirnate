@@ -1,39 +1,83 @@
 package com.svydovets.bibirnate.session.query.processor;
 
+import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Arrays;
+
+import com.svydovets.bibirnate.exceptions.PersistenceException;
 import com.svydovets.bibirnate.session.query.CascadeType;
+import com.svydovets.bibirnate.session.query.EntityRelation;
+
+import lombok.SneakyThrows;
 
 public class DeleteQueryProcessor extends QueryProcessor {
 
-    public DeleteQueryProcessor(Object entity) {
-        super(entity);
+    private static final String DELETE_TEMPLATE = "DELETE FROM %s WHERE %S = %s";
+
+    public DeleteQueryProcessor(Object entity, Connection connection) {
+        super(entity, connection);
+    }
+    public DeleteQueryProcessor(Object entity, Connection connection, Field parentId) {
+        super(entity, connection, parentId);
     }
 
-    @Override
-    public CascadeType getOperationCascadeType() {
-        return CascadeType.DELETE;
-    }
-
+    @SneakyThrows
     @Override
     public String generateQuery() {
-        return null;
+        if (!hasParent()) {
+            var idField = this.getId();
+            idField.setAccessible(true);
+            return String.format(DELETE_TEMPLATE, this.getTableName(), idField.getName(),
+              idField.get(this.getPersistentObject()));
+        } else {
+//            todo: handle child deletion
+            return String.format(DELETE_TEMPLATE, this.getTableName(), "parent field", getParentId());
+        }
+
     }
 
+    @SneakyThrows
     @Override
     public void execute() {
-
-        if (hasToManyRelations()){
+        try (var statement = getConnection().createStatement()) {
+            if (hasToManyRelations()) {
 //            todo: handle OneToMany biDir + uniDir
-        }
-
-        if (hasToOneRelations()){
-//            todo: handle
+                handleToManyRelations();
+            }
+            if (hasToOneRelations()) {
+//            todo: will be handled in relations ticket
 //                      OneToOne biDir + uniDir
 //                      ManyToOne biDir + uniDir
+            }
+            String sql = generateQuery();
+            statement.execute(sql);
+        } catch (SQLException e) {
+            throw new PersistenceException("Could not Execute DELETE statement", e);
+        } finally {
+            getConnection().close();
         }
-
-//        DELETE FROM TABLE_NAME WHERE ID = :id
-
     }
 
-    private
+    private void handleToManyRelations() {
+        getToManyRelations().forEach(
+          toManyRelation -> {
+              if (hasCascadeRelation(toManyRelation)) {
+//                  todo: will be done in RELATIONS ticket
+                  DeleteQueryProcessor innerProcessor = new DeleteQueryProcessor(
+                    toManyRelation.getRelatedEntities().get(0).getClass(), getConnection(), getId());
+                  innerProcessor.execute();
+              } else {
+//                  todo: only set parent id to null
+              }
+          }
+        );
+    }
+
+    private <T extends EntityRelation> boolean hasCascadeRelation(T relation) {
+        var cList = Arrays.stream(relation.getCascade()).toList();
+        return cList.contains(CascadeType.ALL) || cList.contains(CascadeType.DELETE);
+    }
+
+
 }

@@ -4,13 +4,14 @@ import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import com.svydovets.bibirnate.annotation.ManyToOne;
 import com.svydovets.bibirnate.annotation.OneToMany;
 import com.svydovets.bibirnate.annotation.OneToOne;
 import com.svydovets.bibirnate.annotation.Transient;
+import com.svydovets.bibirnate.session.Session;
 import com.svydovets.bibirnate.session.query.CascadeType;
-import com.svydovets.bibirnate.session.query.EntityRelation;
 import com.svydovets.bibirnate.session.query.FetchType;
 import com.svydovets.bibirnate.session.query.ToManyRelation;
 import com.svydovets.bibirnate.session.query.ToOneRelation;
@@ -36,8 +37,22 @@ public abstract class QueryProcessor {
 
     private List<ToOneRelation> toOneRelations;
 
+    private Object persistentObject;
+
+    private Object parentId;
+
     public QueryProcessor(Object entity, Connection connection) {
+        initialize(entity, connection, null);
+    }
+
+    public QueryProcessor(Object entity, Connection connection, Field parentId) {
+        initialize(entity, connection, parentId);
+    }
+
+    private void initialize(Object entity, Connection connection, Field parentId) {
 //        todo: validate Entity?
+//         check isAnnotated with @Entity and has @Id
+        persistentObject = entity;
         var entityClass = entity.getClass();
         this.connection = connection;
         this.tableName = EntityUtils.getTableName(entityClass);
@@ -48,28 +63,28 @@ public abstract class QueryProcessor {
 //        todo: handle uniDirectional
         this.toManyRelations = entityFields.stream()
           .filter(field -> field.isAnnotationPresent(OneToMany.class))
-          .map(field -> createToManyRelation(entity, field))
+          .map(field -> wrapToToManyRelationObject(entity, field))
           .toList();
 //        todo: handle uniDirectional
         this.toOneRelations = entityFields.stream()
           .filter(field -> field.isAnnotationPresent(OneToOne.class) || field.isAnnotationPresent(ManyToOne.class))
-          .map(field -> createToOneRelation(entity, field))
+          .map(field -> wrapToToOneRelationObject(entity, field))
           .toList();
-
+        this.parentId = parentId;
     }
 
     @SneakyThrows
-    private ToManyRelation createToManyRelation(Object entity, Field toManyField) {
+    private ToManyRelation wrapToToManyRelationObject(Object entity, Field toManyField) {
         var fieldValue = toManyField.get(entity);
         var annotation = toManyField.getAnnotation(OneToMany.class);
         return new ToManyRelation(annotation.fetch(), annotation.cascade(), (List<Object>) fieldValue);
     }
 
     @SneakyThrows
-    private ToOneRelation createToOneRelation(Object entity, Field toManyField) {
+    private ToOneRelation wrapToToOneRelationObject(Object entity, Field toManyField) {
         var fieldValue = toManyField.get(entity);
-        FetchType fetch = null;
-        CascadeType[] cascadeType = new CascadeType[0];
+        FetchType fetch;
+        CascadeType[] cascadeType;
         try {
             fetch = toManyField.getAnnotation(OneToMany.class).fetch();
             cascadeType = toManyField.getAnnotation(OneToMany.class).cascade();
@@ -77,34 +92,22 @@ public abstract class QueryProcessor {
             fetch = toManyField.getAnnotation(OneToOne.class).fetch();
             cascadeType = toManyField.getAnnotation(OneToOne.class).cascade();
         }
-
         return new ToOneRelation(fetch, cascadeType, fieldValue);
     }
 
-//    {
-//        return new ToManyRelation(annotation.fetch(), annotation.cascade(), (List<Object>) fieldValue);
-//    }
-
     public boolean hasToManyRelations() {
-        return hasRelations(getToManyRelations());
+        return !toManyRelations.isEmpty();
     }
 
     public boolean hasToOneRelations() {
-        return hasRelations(getToOneRelations());
+        return !toOneRelations.isEmpty();
     }
 
-    public abstract CascadeType[] getOperationCascadeType();
+    public boolean hasParent() {
+        return !Objects.isNull(this.parentId);
+    }
 
     public abstract String generateQuery();
 
     public abstract void execute();
-
-    private <T extends EntityRelation> boolean hasRelations(List<T> relations) {
-        return !relations.isEmpty() &&
-          relations.stream()
-            .anyMatch(rel -> {
-                var cList = Arrays.stream(rel.getCascade()).toList();
-                return cList.contains(CascadeType.ALL) || cList.contains(CascadeType.DELETE);
-            });
-    }
 }

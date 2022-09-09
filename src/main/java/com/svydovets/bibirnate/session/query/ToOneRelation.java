@@ -1,11 +1,15 @@
 package com.svydovets.bibirnate.session.query;
 
+import lombok.Data;
+
+@Data
 public class ToOneRelation extends EntityRelation {
 
     private Object relatedEntity;
 
     public ToOneRelation(FetchType fetch, CascadeType[] cascade, Object relatedEntity) {
-        super(fetch, cascade);
+        setFetch(fetch);
+        setCascade(cascade);
         this.relatedEntity = relatedEntity;
     }
 }

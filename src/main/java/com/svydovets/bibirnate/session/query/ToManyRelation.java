@@ -11,7 +11,8 @@ public class ToManyRelation extends EntityRelation {
     List<Object> relatedEntities;
 
     public ToManyRelation(FetchType fetch, CascadeType[] cascade, List<Object> relatedEntities) {
-        super(fetch, cascade);
+        setFetch(fetch);
+        setCascade(cascade);
         this.relatedEntities = relatedEntities;
     }
 }
