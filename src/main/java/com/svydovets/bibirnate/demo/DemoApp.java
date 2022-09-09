@@ -23,7 +23,7 @@ public class DemoApp {
             Person person = session.findById(22, Person.class);
             Optional.ofNullable(person)
                     .ifPresentOrElse(System.out::println,
-                    () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
+                      () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
         }
 
     }

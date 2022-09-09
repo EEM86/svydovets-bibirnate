@@ -6,34 +6,28 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Optional;
 
-import com.svydovets.bibirnate.exceptions.JdbcException;
 import com.svydovets.bibirnate.cache.CacheContainer;
 import com.svydovets.bibirnate.cache.CacheUtils;
+import com.svydovets.bibirnate.exceptions.JdbcException;
 import com.svydovets.bibirnate.session.Session;
 
 public class SessionImpl implements Session {
     private final JdbcEntityDao jdbcEntityDao;
     private final CacheContainer cacheContainer;
 
-    public SessionImpl(DataSource dataSource, CacheContainer cacheContainer) {
-        this.jdbcEntityDao = createJdbcEntityDao(dataSource);
-        this.cacheContainer = cacheContainer;
     private final Connection connection;
 
     private boolean closed;
 
-    public SessionImpl(Connection connection) {
+    public SessionImpl(Connection connection, CacheContainer cacheContainer) {
         this.jdbcEntityDao = createJdbcEntityDao(connection);
+        this.cacheContainer = cacheContainer;
         this.connection = connection;
     }
 
     @Override
-    public <T> Optional<T> findById(Object id, Class<T> type) {
-        if (closed) {
-            throw new JdbcException("Session is already closed");
-        }
-        return jdbcEntityDao.findById(id, type);
     public <T> T findById(Object id, Class<T> type) {
+        checkIfSessionClosed();
         Optional<T> result = CacheUtils.extract(cacheContainer, type, id);
 
         if (result.isEmpty()) {
@@ -42,6 +36,12 @@ public class SessionImpl implements Session {
         }
 
         return result.orElse(null);
+    }
+
+    private void checkIfSessionClosed() {
+        if (closed) {
+            throw new JdbcException("Session is already closed");
+        }
     }
 
     @Override
@@ -53,7 +53,7 @@ public class SessionImpl implements Session {
         try {
             connection.close();
         } catch (SQLException ex) {
-            throw new JdbcException(ex.getMessage(), ex);
+            throw new JdbcException("Cannot close session. The purpose is " + ex.getMessage(), ex);
         }
     }
 

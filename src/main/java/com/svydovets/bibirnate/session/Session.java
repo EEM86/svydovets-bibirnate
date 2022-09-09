@@ -1,6 +1,7 @@
 package com.svydovets.bibirnate.session;
 
 import java.io.Closeable;
+
 import com.svydovets.bibirnate.annotation.Entity;
 
 /**
