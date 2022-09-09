@@ -15,6 +15,7 @@ import com.svydovets.bibirnate.session.query.CascadeType;
 import com.svydovets.bibirnate.session.query.FetchType;
 import com.svydovets.bibirnate.session.query.ToManyRelation;
 import com.svydovets.bibirnate.session.query.ToOneRelation;
+import com.svydovets.bibirnate.session.validation.ValidationService;
 import com.svydovets.bibirnate.utils.EntityUtils;
 
 import lombok.Data;
@@ -41,24 +42,25 @@ public abstract class QueryProcessor {
 
     private Object parentId;
 
-    public QueryProcessor(Object entity, Connection connection) {
+    private ValidationService validationService = new ValidationService();
+
+    protected QueryProcessor(Object entity, Connection connection) {
         initialize(entity, connection, null);
     }
 
-    public QueryProcessor(Object entity, Connection connection, Field parentId) {
+    protected QueryProcessor(Object entity, Connection connection, Field parentId) {
         initialize(entity, connection, parentId);
     }
 
     private void initialize(Object entity, Connection connection, Field parentId) {
-//        todo: validate Entity?
-//         check isAnnotated with @Entity and has @Id
+        validationService.validateEntity(entity);
         persistentObject = entity;
         var entityClass = entity.getClass();
         this.connection = connection;
         this.tableName = EntityUtils.getTableName(entityClass);
         this.id = EntityUtils.getIdField(entityClass);
-        this.entityFields = Arrays.stream(entityClass.getFields())
-          .filter(field -> field.isAnnotationPresent(Transient.class))
+        this.entityFields = Arrays.stream(entityClass.getDeclaredFields())
+          .filter(field -> !field.isAnnotationPresent(Transient.class))
           .toList();
 //        todo: handle uniDirectional
         this.toManyRelations = entityFields.stream()

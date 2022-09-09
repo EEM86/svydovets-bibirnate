@@ -13,7 +13,7 @@ import lombok.SneakyThrows;
 
 public class DeleteQueryProcessor extends QueryProcessor {
 
-    private static final String DELETE_TEMPLATE = "DELETE FROM %s WHERE %S = %s";
+    private static final String DELETE_TEMPLATE = "DELETE FROM %s WHERE %s = %s";
 
     public DeleteQueryProcessor(Object entity, Connection connection) {
         super(entity, connection);
@@ -34,7 +34,6 @@ public class DeleteQueryProcessor extends QueryProcessor {
 //            todo: handle child deletion
             return String.format(DELETE_TEMPLATE, this.getTableName(), "parent field", getParentId());
         }
-
     }
 
     @SneakyThrows
