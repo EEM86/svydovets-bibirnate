@@ -2,13 +2,24 @@ package com.svydovets.bibirnate.session.query.processor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.svydovets.bibirnate.entities.PersonSimpleEntity;
+import com.svydovets.bibirnate.entities.PersonSimpleInvalidEntity;
+import com.svydovets.bibirnate.entities.PersonSimpleInvalidEntityNoId;
+import com.svydovets.bibirnate.exceptions.EntityValidationException;
+import com.svydovets.bibirnate.exceptions.PersistenceException;
 
 import lombok.SneakyThrows;
 
@@ -34,6 +45,48 @@ class DeleteQueryProcessorTest {
     }
 
     @Test
+    void generateQueryValidationNoEntityAnnotationException() {
+        Connection connection = Mockito.mock(Connection.class);
+        var person = new PersonSimpleInvalidEntity(1L, "name", "last_name", "blindValue");
+        Exception exception = assertThrows(EntityValidationException.class,
+          () -> new DeleteQueryProcessor(person, connection));
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains("Persistent Class should be annotated with @Entity annotation"));
+    }
+
+    @Test
+    void generateQueryValidatioNoIdField() {
+        Connection connection = Mockito.mock(Connection.class);
+        var person = new PersonSimpleInvalidEntityNoId(1L, "name", "last_name", "blindValue");
+        Exception exception = assertThrows(EntityValidationException.class,
+          () -> new DeleteQueryProcessor(person, connection));
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains("Entity class should have id field annotated with @Id annotation"));
+    }
+
+    @SneakyThrows
+    @Test
     void execute() {
+        Connection connection = Mockito.mock(Connection.class);
+        var person = new PersonSimpleEntity(1L, "name", "last_name", "blindValue");
+        var processor = new DeleteQueryProcessor(person, connection);
+        var stmt = Mockito.mock(Statement.class);
+        when(connection.createStatement()).thenReturn(stmt);
+        processor.execute();
+        verify(stmt).execute(anyString());
+    }
+
+    @Test
+    void executeThrowsPersistentException() throws SQLException {
+        Connection connection = Mockito.mock(Connection.class);
+        var person = new PersonSimpleEntity(1L, "name", "last_name", "blindValue");
+        var processor = new DeleteQueryProcessor(person, connection);
+        var stmt = Mockito.mock(Statement.class);
+        when(connection.createStatement()).thenReturn(stmt);
+        when(stmt.execute(anyString())).thenThrow(SQLException.class);
+        Exception exception = assertThrows(PersistenceException.class, processor::execute);
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains("Could not Execute DELETE statement"));
+
     }
 }
