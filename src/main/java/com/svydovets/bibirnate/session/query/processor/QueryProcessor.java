@@ -24,8 +24,6 @@ import lombok.SneakyThrows;
 @Data
 public abstract class QueryProcessor {
 
-//    private Session session;
-
     private Connection connection;
 
     private String tableName;
@@ -62,12 +60,12 @@ public abstract class QueryProcessor {
         this.entityFields = Arrays.stream(entityClass.getDeclaredFields())
           .filter(field -> !field.isAnnotationPresent(Transient.class))
           .toList();
-//        todo: handle uniDirectional
+        //todo: handle uniDirectional
         this.toManyRelations = entityFields.stream()
           .filter(field -> field.isAnnotationPresent(OneToMany.class))
           .map(field -> wrapToToManyRelationObject(entity, field))
           .toList();
-//        todo: handle uniDirectional
+        //todo: handle uniDirectional
         this.toOneRelations = entityFields.stream()
           .filter(field -> field.isAnnotationPresent(OneToOne.class) || field.isAnnotationPresent(ManyToOne.class))
           .map(field -> wrapToToOneRelationObject(entity, field))

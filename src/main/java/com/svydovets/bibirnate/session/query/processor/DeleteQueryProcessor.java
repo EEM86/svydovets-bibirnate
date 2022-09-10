@@ -18,6 +18,7 @@ public class DeleteQueryProcessor extends QueryProcessor {
     public DeleteQueryProcessor(Object entity, Connection connection) {
         super(entity, connection);
     }
+
     public DeleteQueryProcessor(Object entity, Connection connection, Field parentId) {
         super(entity, connection, parentId);
     }
@@ -31,7 +32,7 @@ public class DeleteQueryProcessor extends QueryProcessor {
             return String.format(DELETE_TEMPLATE, this.getTableName(), idField.getName(),
               idField.get(this.getPersistentObject()));
         } else {
-//            todo: handle child deletion
+            //todo: handle child deletion
             return String.format(DELETE_TEMPLATE, this.getTableName(), "parent field", getParentId());
         }
     }
@@ -41,18 +42,18 @@ public class DeleteQueryProcessor extends QueryProcessor {
     public void execute() {
         try (var statement = getConnection().createStatement()) {
             if (hasToManyRelations()) {
-//            todo: handle OneToMany biDir + uniDir
+                //todo: handle OneToMany biDir + uniDir
                 handleToManyRelations();
             }
             if (hasToOneRelations()) {
-//            todo: will be handled in relations ticket
-//                      OneToOne biDir + uniDir
-//                      ManyToOne biDir + uniDir
+            //todo: will be handled in relations ticket
+            //          OneToOne biDir + uniDir
+            //          ManyToOne biDir + uniDir
             }
             String sql = generateQuery();
             statement.execute(sql);
-        } catch (SQLException e) {
-            throw new PersistenceException("Could not Execute DELETE statement", e);
+        } catch (SQLException ex) {
+            throw new PersistenceException("Could not Execute DELETE statement", ex);
         } finally {
             getConnection().close();
         }
@@ -62,20 +63,20 @@ public class DeleteQueryProcessor extends QueryProcessor {
         getToManyRelations().forEach(
           toManyRelation -> {
               if (hasCascadeRelation(toManyRelation)) {
-//                  todo: will be done in RELATIONS ticket
+                  //todo: will be done in RELATIONS ticket
                   DeleteQueryProcessor innerProcessor = new DeleteQueryProcessor(
                     toManyRelation.getRelatedEntities().get(0).getClass(), getConnection(), getId());
                   innerProcessor.execute();
               } else {
-//                  todo: only set parent id to null
+                  //todo: only set parent id to null
               }
           }
         );
     }
 
     private <T extends EntityRelation> boolean hasCascadeRelation(T relation) {
-        var cList = Arrays.stream(relation.getCascade()).toList();
-        return cList.contains(CascadeType.ALL) || cList.contains(CascadeType.DELETE);
+        var cascadeList = Arrays.stream(relation.getCascade()).toList();
+        return cascadeList.contains(CascadeType.ALL) || cascadeList.contains(CascadeType.DELETE);
     }
 
 

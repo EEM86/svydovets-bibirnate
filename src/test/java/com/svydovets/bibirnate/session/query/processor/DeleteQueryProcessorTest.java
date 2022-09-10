@@ -1,6 +1,7 @@
 package com.svydovets.bibirnate.session.query.processor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -42,6 +43,9 @@ class DeleteQueryProcessorTest {
         assertEquals(persistent_fields_count, processor.getEntityFields().size());
         assertNull(processor.getParentId());
         assertEquals(expected_sql_query, deleteQuery);
+        assertFalse(processor.hasToOneRelations());
+        assertFalse(processor.hasToManyRelations());
+        assertFalse(processor.hasParent());
     }
 
     @Test
