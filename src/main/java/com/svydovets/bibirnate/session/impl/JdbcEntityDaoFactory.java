@@ -1,9 +1,9 @@
 package com.svydovets.bibirnate.session.impl;
 
-import javax.sql.DataSource;
+import java.sql.Connection;
 
 public class JdbcEntityDaoFactory {
-    public static JdbcEntityDao createJdbcEntityDao(DataSource dataSource) {
-        return new JdbcEntityDao(dataSource);
+    public static JdbcEntityDao createJdbcEntityDao(Connection connection) {
+        return new JdbcEntityDao(connection);
     }
 }

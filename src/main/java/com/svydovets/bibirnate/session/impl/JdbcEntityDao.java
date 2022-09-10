@@ -5,8 +5,8 @@ import static com.svydovets.bibirnate.utils.EntityUtils.getIdField;
 import static com.svydovets.bibirnate.utils.EntityUtils.getTableName;
 
 import java.lang.reflect.Field;
+import java.sql.Connection;
 import java.util.Optional;
-import javax.sql.DataSource;
 
 import com.svydovets.bibirnate.mapper.EntityMapperService;
 
@@ -16,7 +16,7 @@ import lombok.SneakyThrows;
 @RequiredArgsConstructor
 public class JdbcEntityDao {
     public static final String SELECT_FROM_TABLE_BY_COLUMN = "select * from %s where %s = ?";
-    private final DataSource dataSource;
+    private final Connection connection;
 
     public <T> Optional<T> findById(Object id, Class<T> type) {
         var field = getIdField(type);
@@ -25,22 +25,20 @@ public class JdbcEntityDao {
 
     @SneakyThrows
     public <T> Optional<T> findBy(Field field, Object value, Class<T> type) {
-        try (var connection = dataSource.getConnection()) {
-            var tableName = getTableName(type);
-            var columnName = getColumnName(field);
-            var selectSql = String.format(SELECT_FROM_TABLE_BY_COLUMN, tableName, columnName);
+        var tableName = getTableName(type);
+        var columnName = getColumnName(field);
+        var selectSql = String.format(SELECT_FROM_TABLE_BY_COLUMN, tableName, columnName);
 
-            try (var statement = connection.prepareStatement(selectSql)) {
-                statement.setObject(1, value);
-                var resultSet = statement.executeQuery();
+        try (var statement = connection.prepareStatement(selectSql)) {
+            statement.setObject(1, value);
+            var resultSet = statement.executeQuery();
 
-                if (!resultSet.next()) {
-                    return Optional.empty();
-                }
-
-                T entity = EntityMapperService.mapToObject(type, resultSet);
-                return Optional.of(entity);
+            if (!resultSet.next()) {
+                return Optional.empty();
             }
+
+            T entity = EntityMapperService.mapToObject(type, resultSet);
+            return Optional.of(entity);
         }
     }
 }
