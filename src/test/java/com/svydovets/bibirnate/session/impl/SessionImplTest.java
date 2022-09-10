@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import com.svydovets.bibirnate.cache.Cache;
 import com.svydovets.bibirnate.cache.CacheContainer;
 import com.svydovets.bibirnate.entities.EntityPrimitives;
+import com.svydovets.bibirnate.entities.PersonSimpleEntity;
 import com.svydovets.bibirnate.exceptions.JdbcException;
 import com.svydovets.bibirnate.session.Session;
 
@@ -52,6 +53,17 @@ class SessionImplTest {
         session.close();
 
         assertTrue(session.isClosed());
+    }
+
+    @Test
+    void remove() {
+        try (var factory = mockStatic(JdbcEntityDaoFactory.class)) {
+            var jdbcEntityDao = mock(JdbcEntityDao.class);
+            factory.when(() -> JdbcEntityDaoFactory.createJdbcEntityDao(any())).thenReturn(jdbcEntityDao);
+            var session = new SessionImpl(any(), new CacheContainer(new Cache(40_000), false));
+            session.remove(new PersonSimpleEntity());
+            verify(jdbcEntityDao).remove(any(PersonSimpleEntity.class));
+        }
     }
 
 }
