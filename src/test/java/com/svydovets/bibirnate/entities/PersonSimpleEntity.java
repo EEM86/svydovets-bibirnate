@@ -7,11 +7,13 @@ import com.svydovets.bibirnate.annotation.Transient;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "persons")
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class PersonSimpleEntity {
 
     @Id

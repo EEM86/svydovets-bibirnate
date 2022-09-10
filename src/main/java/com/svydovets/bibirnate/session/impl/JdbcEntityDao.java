@@ -8,7 +8,6 @@ import static com.svydovets.bibirnate.utils.EntityUtils.getTableName;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.util.Optional;
-import javax.sql.DataSource;
 
 import com.svydovets.bibirnate.mapper.EntityMapperService;
 import com.svydovets.bibirnate.session.query.processor.QueryProcessorFactory;
@@ -47,7 +46,7 @@ public class JdbcEntityDao {
 
     @SneakyThrows
     public void remove(Object entity) {
-        var queryProcessor = QueryProcessorFactory.defineQueryProcessor(DELETE, entity, dataSource.getConnection());
+        var queryProcessor = QueryProcessorFactory.defineQueryProcessor(DELETE, entity, connection);
         queryProcessor.execute();
     }
 }

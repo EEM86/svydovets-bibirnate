@@ -46,16 +46,14 @@ public class DeleteQueryProcessor extends QueryProcessor {
                 handleToManyRelations();
             }
             if (hasToOneRelations()) {
-            //todo: will be handled in relations ticket
-            //          OneToOne biDir + uniDir
-            //          ManyToOne biDir + uniDir
+                //todo: will be handled in relations ticket
+                //          OneToOne biDir + uniDir
+                //          ManyToOne biDir + uniDir
             }
             String sql = generateQuery();
             statement.execute(sql);
         } catch (SQLException ex) {
             throw new PersistenceException("Could not Execute DELETE statement", ex);
-        } finally {
-            getConnection().close();
         }
     }
 

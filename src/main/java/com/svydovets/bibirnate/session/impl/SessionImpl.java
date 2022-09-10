@@ -10,8 +10,6 @@ import com.svydovets.bibirnate.cache.CacheContainer;
 import com.svydovets.bibirnate.cache.CacheUtils;
 import com.svydovets.bibirnate.exceptions.JdbcException;
 import com.svydovets.bibirnate.session.Session;
-import com.svydovets.bibirnate.session.query.processor.QueryProcessor;
-import com.svydovets.bibirnate.session.query.processor.QueryProcessorFactory;
 
 public class SessionImpl implements Session {
     private final JdbcEntityDao jdbcEntityDao;
@@ -67,10 +65,5 @@ public class SessionImpl implements Session {
     @Override
     public void remove(Object entity) {
         jdbcEntityDao.remove(entity);
-    }
-
-    @Override
-    public void remove(Object entity) {
-
     }
 }
