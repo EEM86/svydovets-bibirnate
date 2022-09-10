@@ -14,17 +14,17 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.SneakyThrows;
 
 public class DemoApp {
+    @SneakyThrows
     public static void main(String[] args) {
         initDB();
 
         SessionFactory sessionFactory = new SessionFactoryImpl(initializeDataSource());
-        Session session = sessionFactory.openSession();
-
-        Person person = session.findById(22, Person.class);
-
-        Optional.ofNullable(person)
-          .ifPresentOrElse(System.out::println,
-                () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
+        try (Session session = sessionFactory.openSession()) {
+            Person person = session.findById(22, Person.class);
+            Optional.ofNullable(person)
+                    .ifPresentOrElse(System.out::println,
+                      () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
+        }
 
     }
 
