@@ -1,5 +1,6 @@
 package com.svydovets.bibirnate.cache;
 
+import static com.svydovets.bibirnate.cache.command.CacheConstant.BOBO_ENTITY_VERSION;
 import static com.svydovets.bibirnate.cache.command.CacheConstant.SELECT;
 import static com.svydovets.bibirnate.cache.key.factory.KeyParamFactory.generateKeyParam;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -233,6 +234,45 @@ public class CacheUtilsTest {
 
         assertEquals(Optional.of(value),
           CacheUtils.extract(cacheContainer, TestEntity.class, SELECT + ONE_HUNDRED_THOUSANDS, List.class));
+    }
+
+    @Test
+    void invalidate_fromFirstCache() {
+        CacheContainer cacheContainer = new CacheContainer(secondLevelCache, false);
+
+        BoboEntity value = new BoboEntity(ONE_HUNDRED_THOUSANDS);
+
+        assertEquals(Optional.empty(), CacheUtils.extract(cacheContainer, BoboEntity.class, ONE_HUNDRED_THOUSANDS));
+
+        CacheUtils.put(cacheContainer, BoboEntity.class, ONE_HUNDRED_THOUSANDS, value);
+
+        assertEquals(Optional.of(value), CacheUtils.extract(cacheContainer, BoboEntity.class, ONE_HUNDRED_THOUSANDS));
+
+        CacheUtils.invalidate(cacheContainer, value);
+
+        assertEquals(Optional.empty(), CacheUtils.extract(cacheContainer, BoboEntity.class, ONE_HUNDRED_THOUSANDS));
+    }
+
+    @Test
+    void invalidate_fromSecondCache() {
+        CacheContainer cacheContainer = new CacheContainer(CacheProvider.provide(), true);
+
+        BoboEntity value = new BoboEntity(ONE_HUNDRED_THOUSANDS);
+        Set<BoboEntity> setValue = Set.of(new BoboEntity(BOBO_ENTITY_VERSION));
+
+        assertEquals(Optional.empty(), CacheUtils.extract(cacheContainer, BoboEntity.class, ONE_HUNDRED_THOUSANDS));
+
+        CacheUtils.put(cacheContainer, BoboEntity.class, ONE_HUNDRED_THOUSANDS, value);
+
+        assertEquals(Optional.of(value), CacheUtils.extract(cacheContainer, BoboEntity.class, ONE_HUNDRED_THOUSANDS));
+        assertEquals(Optional.of(setValue), CacheUtils.extract(cacheContainer, BoboEntity.class,
+          SELECT + BOBO_ENTITY_VERSION, Set.class));
+
+        CacheUtils.invalidate(cacheContainer, value);
+
+        assertEquals(Optional.empty(), CacheUtils.extract(cacheContainer, BoboEntity.class, ONE_HUNDRED_THOUSANDS));
+        assertEquals(Optional.empty(), CacheUtils.extract(cacheContainer, BoboEntity.class,
+          SELECT + BOBO_ENTITY_VERSION, Set.class));
     }
 
     private static Stream<Arguments> extract_provideEntity() {
