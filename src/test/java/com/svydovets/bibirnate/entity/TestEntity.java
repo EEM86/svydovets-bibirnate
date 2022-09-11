@@ -4,12 +4,12 @@ import java.util.Objects;
 
 public class TestEntity {
 
-    private long version;
+    private int version;
 
     public TestEntity() {
     }
 
-    public TestEntity(long version) {
+    public TestEntity(int version) {
         this.version = version;
     }
 

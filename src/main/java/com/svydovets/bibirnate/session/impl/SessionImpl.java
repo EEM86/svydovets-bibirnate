@@ -14,9 +14,7 @@ import com.svydovets.bibirnate.session.Session;
 public class SessionImpl implements Session {
     private final JdbcEntityDao jdbcEntityDao;
     private final CacheContainer cacheContainer;
-
     private final Connection connection;
-
     private boolean closed;
 
     public SessionImpl(Connection connection, CacheContainer cacheContainer) {
@@ -38,22 +36,22 @@ public class SessionImpl implements Session {
         return result.orElse(null);
     }
 
-    private void checkIfSessionClosed() {
-        if (closed) {
-            throw new JdbcException("Session is already closed");
-        }
+    @Override
+    public void remove(Object entity) {
+        checkIfSessionClosed();
+        jdbcEntityDao.remove(entity);
+        CacheUtils.invalidate(cacheContainer, entity);
     }
 
     @Override
     public void close() {
-        if (closed) {
-            return;
-        }
-        closed = true;
-        try {
-            connection.close();
-        } catch (SQLException ex) {
-            throw new JdbcException("Cannot close session. The purpose is " + ex.getMessage(), ex);
+        if (!closed) {
+            try {
+                connection.close();
+                closed = true;
+            } catch (SQLException ex) {
+                throw new JdbcException("Cannot close session. The purpose is " + ex.getMessage(), ex);
+            }
         }
     }
 
@@ -62,8 +60,10 @@ public class SessionImpl implements Session {
         return closed;
     }
 
-    @Override
-    public void remove(Object entity) {
-        jdbcEntityDao.remove(entity);
+    private void checkIfSessionClosed() {
+        if (closed) {
+            throw new JdbcException("Session is already closed");
+        }
     }
+
 }

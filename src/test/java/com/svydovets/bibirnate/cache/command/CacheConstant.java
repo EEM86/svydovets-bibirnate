@@ -13,7 +13,7 @@ import com.svydovets.bibirnate.entity.BoboEntity;
 import com.svydovets.bibirnate.entity.TestEntity;
 
 public class CacheConstant {
-    public static final Long ONE = 1L;
+    public static final int ONE = 1;
     public static final String QUERY = "SELECT * FROM products";
     public static final String SELECT = "SELECT ";
 
