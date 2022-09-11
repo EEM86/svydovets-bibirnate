@@ -54,6 +54,12 @@ class YamlConfigurationPropertiesReaderImplTest {
     }
 
     @Test
+    void testReadYamlCachePropertiesSuccess() {
+        configurationProperties = reader.readProperties("persistence.yaml");
+        assertTrue(configurationProperties.getCache().isSecondLevelCacheEnabled());
+    }
+
+    @Test
     void testReadYamlDatabasePropertiesThrowsPropertiesFileMissingException() {
         Assertions.assertThrows(PropertiesFileMissingException.class, () -> configurationProperties = reader.readProperties("non-existing-file.yaml"));
     }

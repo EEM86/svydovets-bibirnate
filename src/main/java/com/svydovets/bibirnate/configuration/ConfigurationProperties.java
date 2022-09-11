@@ -20,4 +20,6 @@ public class ConfigurationProperties {
      * Specifies the configuration parameters for connection pool.
      */
     ConnectionPoolProperties connectionPool;
+
+    CacheProperties cache;
 }

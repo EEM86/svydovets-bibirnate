@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 
+import com.svydovets.bibirnate.cache.CacheContainer;
 import org.junit.jupiter.api.Test;
 
 import com.svydovets.bibirnate.exceptions.JdbcException;
@@ -23,7 +24,7 @@ class SessionFactoryImplTest {
         var datasource = mock(DataSource.class);
         when(datasource.getConnection()).thenThrow(SQLException.class);
 
-        var sessionFactory = new SessionFactoryImpl(datasource);
+        var sessionFactory = new SessionFactoryImpl(datasource, new CacheContainer());
 
         assertThrows(JdbcException.class, sessionFactory::openSession);
     }
@@ -31,7 +32,7 @@ class SessionFactoryImplTest {
     @Test
     void openSessionShouldNotReturnNull() {
         var datasource = mock(DataSource.class);
-        SessionFactory sessionFactory = new SessionFactoryImpl(datasource);
+        SessionFactory sessionFactory = new SessionFactoryImpl(datasource, new CacheContainer());
         assertNotNull(sessionFactory.openSession());
     }
 }

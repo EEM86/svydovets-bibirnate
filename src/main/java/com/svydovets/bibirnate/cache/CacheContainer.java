@@ -8,6 +8,10 @@ public class CacheContainer {
     private final Cache secondLevelCache;
     private final boolean secondLevelCacheEnabled;
 
+    public CacheContainer() {
+        this(null, false);
+    }
+
     public CacheContainer(Cache secondLevelCache, boolean secondLevelCacheEnabled) {
         firstLevelCache = new Cache();
         this.secondLevelCache = secondLevelCache;

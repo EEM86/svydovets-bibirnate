@@ -28,3 +28,6 @@ connectionPool:
   maxLifetime: 7
   initializationFailTimeout: 8
   keepaliveTime: 9
+
+cache:
+  secondLevelCacheEnabled : true
