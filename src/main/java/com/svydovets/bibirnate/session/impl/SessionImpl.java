@@ -1,6 +1,6 @@
 package com.svydovets.bibirnate.session.impl;
 
-import static com.svydovets.bibirnate.session.impl.JdbcEntityDaoFactory.createJdbcEntityDao;
+import static com.svydovets.bibirnate.jdbc.JdbcEntityDaoFactory.createJdbcEntityDao;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -9,6 +9,7 @@ import java.util.Optional;
 import com.svydovets.bibirnate.cache.CacheContainer;
 import com.svydovets.bibirnate.cache.CacheUtils;
 import com.svydovets.bibirnate.exceptions.JdbcException;
+import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
 import com.svydovets.bibirnate.session.Session;
 
 public class SessionImpl implements Session {

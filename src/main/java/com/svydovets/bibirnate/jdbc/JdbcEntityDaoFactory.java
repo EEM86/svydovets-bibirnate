@@ -6,9 +6,9 @@ import static com.svydovets.bibirnate.jdbc.DbDriver.ORACLE;
 import static com.svydovets.bibirnate.jdbc.DbDriver.POSTGRES;
 import static java.sql.DriverManager.getDriver;
 
+import java.sql.Connection;
 import java.util.EnumMap;
 import java.util.Map;
-import javax.sql.DataSource;
 
 import com.svydovets.bibirnate.jdbc.impl.BaseJdbcEntityDao;
 import com.svydovets.bibirnate.jdbc.impl.H2JdbcEntityDao;
@@ -23,20 +23,21 @@ public class JdbcEntityDaoFactory {
     private static Map<DbDriver, JdbcEntityDao> driverToDao;
 
     @SneakyThrows
-    public static JdbcEntityDao createJdbcEntityDao(DataSource dataSource) {
-        initSupportedDriversMap(dataSource);
-        var driver = getDriver(dataSource.getConnection().getMetaData().getURL());
+    public static JdbcEntityDao createJdbcEntityDao(Connection connection) {
+        initSupportedDriversMap(connection);
+        final String url = connection.getMetaData().getURL();
+        var driver = getDriver(url);
         var driverName = driver.getClass().getName();
 
-        return driverToDao.getOrDefault(DbDriver.fromName(driverName), new BaseJdbcEntityDao(dataSource));
+        return driverToDao.getOrDefault(DbDriver.fromName(driverName), new BaseJdbcEntityDao(connection));
     }
 
-    private static void initSupportedDriversMap(DataSource dataSource) {
+    private static void initSupportedDriversMap(Connection connection) {
         driverToDao = new EnumMap<>(DbDriver.class);
-        driverToDao.put(H2, new H2JdbcEntityDao(dataSource));
-        driverToDao.put(MYSQL, new MysqlJdbcEntityDao(dataSource));
-        driverToDao.put(POSTGRES, new PostgresJdbcEntityDao(dataSource));
-        driverToDao.put(ORACLE, new OracleJdbcEntityDao(dataSource));
+        driverToDao.put(H2, new H2JdbcEntityDao(connection));
+        driverToDao.put(MYSQL, new MysqlJdbcEntityDao(connection));
+        driverToDao.put(POSTGRES, new PostgresJdbcEntityDao(connection));
+        driverToDao.put(ORACLE, new OracleJdbcEntityDao(connection));
     }
 
 }

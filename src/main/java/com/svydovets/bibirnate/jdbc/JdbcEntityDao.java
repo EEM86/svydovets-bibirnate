@@ -9,4 +9,6 @@ public interface JdbcEntityDao {
 
     <T> Optional<T> findBy(Field field, Object value, Class<T> type);
 
+    void remove(Object entity);
+
 }

@@ -5,6 +5,8 @@ import javax.sql.DataSource;
 
 import com.svydovets.bibirnate.configuration.YamlConfigurationPropertiesReaderImpl;
 import com.svydovets.bibirnate.demo.entity.Person;
+import com.svydovets.bibirnate.session.Session;
+import com.svydovets.bibirnate.session.SessionFactory;
 import com.svydovets.bibirnate.session.impl.SessionFactoryImpl;
 import com.svydovets.bibirnate.utils.HikariConfigUtils;
 import com.zaxxer.hikari.HikariDataSource;
@@ -12,6 +14,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.SneakyThrows;
 
 public class DemoApp {
+
     @SneakyThrows
     public static void main(String[] args) {
         initDB();

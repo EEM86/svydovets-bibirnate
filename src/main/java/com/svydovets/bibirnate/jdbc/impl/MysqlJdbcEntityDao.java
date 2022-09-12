@@ -1,10 +1,10 @@
 package com.svydovets.bibirnate.jdbc.impl;
 
-import javax.sql.DataSource;
+import java.sql.Connection;
 
 public class MysqlJdbcEntityDao extends BaseJdbcEntityDao {
 
-    public MysqlJdbcEntityDao(DataSource dataSource) {
-        super(dataSource);
+    public MysqlJdbcEntityDao(Connection connection) {
+        super(connection);
     }
 }

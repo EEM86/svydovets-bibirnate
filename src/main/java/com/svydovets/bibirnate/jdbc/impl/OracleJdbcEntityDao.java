@@ -1,10 +1,10 @@
 package com.svydovets.bibirnate.jdbc.impl;
 
-import javax.sql.DataSource;
+import java.sql.Connection;
 
 public class OracleJdbcEntityDao extends BaseJdbcEntityDao {
 
-    public OracleJdbcEntityDao(DataSource dataSource) {
-        super(dataSource);
+    public OracleJdbcEntityDao(Connection connection) {
+        super(connection);
     }
 }

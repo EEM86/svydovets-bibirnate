@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum DbDriver {
     H2("org.h2.Driver"),
-    MYSQL("com.mysql.jdbc.Driver"),
+    MYSQL("com.mysql.cj.jdbc.Driver"),
     POSTGRES("org.postgresql.Driver"),
     ORACLE("oracle.jdbc.driver.OracleDriver");
 

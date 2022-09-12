@@ -1,10 +1,10 @@
 package com.svydovets.bibirnate.jdbc.impl;
 
-import javax.sql.DataSource;
+import java.sql.Connection;
 
 public class PostgresJdbcEntityDao extends BaseJdbcEntityDao {
 
-    public PostgresJdbcEntityDao(DataSource dataSource) {
-        super(dataSource);
+    public PostgresJdbcEntityDao(Connection connection) {
+        super(connection);
     }
 }

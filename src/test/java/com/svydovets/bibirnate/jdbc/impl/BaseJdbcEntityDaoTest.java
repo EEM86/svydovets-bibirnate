@@ -1,29 +1,25 @@
-package com.svydovets.bibirnate.session.impl;
+package com.svydovets.bibirnate.jdbc.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import com.svydovets.bibirnate.entities.EntityPrimitives;
+import com.svydovets.bibirnate.entities.PersonSimpleEntity;
+import com.svydovets.bibirnate.mapper.EntityMapperService;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.Test;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Optional;
+import javax.sql.DataSource;
 
-import org.junit.jupiter.api.Test;
-
-import com.svydovets.bibirnate.entities.EntityPrimitives;
-import com.svydovets.bibirnate.entities.PersonSimpleEntity;
-import com.svydovets.bibirnate.mapper.EntityMapperService;
-
-import lombok.SneakyThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class BaseJdbcEntityDaoTest {
 
@@ -95,7 +91,7 @@ class BaseJdbcEntityDaoTest {
     void remove() {
         var connectionMock = mock(Connection.class);
         var statement = mock(Statement.class);
-        var dao = new JdbcEntityDao(connectionMock);
+        var dao = new BaseJdbcEntityDao(connectionMock);
         var person = new PersonSimpleEntity(1L, "name", "last_name", "blindValue");
         when(connectionMock.createStatement()).thenReturn(statement);
         dao.remove(person);
