@@ -10,7 +10,9 @@ import com.svydovets.bibirnate.session.query.CascadeType;
 import com.svydovets.bibirnate.session.query.EntityRelation;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class DeleteQueryProcessor extends QueryProcessor {
 
     private static final String DELETE_TEMPLATE = "DELETE FROM %s WHERE %s = %s";
@@ -53,8 +55,10 @@ public class DeleteQueryProcessor extends QueryProcessor {
             String sql = generateQuery();
             statement.execute(sql);
         } catch (SQLException ex) {
+            log.trace("Could not delete entity with id = {}", this.getId());
             throw new PersistenceException("Could not Execute DELETE statement", ex);
         }
+        log.trace("Successfully deleted entity with id = {}", this.getId());
     }
 
     private void handleToManyRelations() {
