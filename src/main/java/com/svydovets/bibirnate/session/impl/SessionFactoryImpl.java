@@ -1,9 +1,11 @@
 package com.svydovets.bibirnate.session.impl;
 
+import java.sql.SQLException;
 import javax.sql.DataSource;
 
 import com.svydovets.bibirnate.cache.Cache;
 import com.svydovets.bibirnate.cache.CacheContainer;
+import com.svydovets.bibirnate.exceptions.JdbcException;
 import com.svydovets.bibirnate.session.Session;
 import com.svydovets.bibirnate.session.SessionFactory;
 
@@ -19,7 +21,11 @@ public class SessionFactoryImpl implements SessionFactory {
 
     @Override
     public Session openSession() {
-        return new SessionImpl(dataSource, cacheContainer);
+        try {
+            return new SessionImpl(dataSource.getConnection(), cacheContainer);
+        } catch (SQLException ex) {
+            throw new JdbcException("Cannot open session. The purpose is " + ex.getMessage(), ex);
+        }
     }
 
     public void setEnabled(boolean enabled) {

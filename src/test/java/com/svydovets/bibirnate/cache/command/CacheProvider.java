@@ -34,7 +34,7 @@ public final class CacheProvider {
         List<Key<TestEntity>> testEntityKeyList = new ArrayList<>();
         List<Key<BoboEntity>> boboEntityKeyList = new ArrayList<>();
         List<Key<BiberEntity>> biberEntityKeyList = new ArrayList<>();
-        for (int i = 1; i < 1500; i++) {
+        for (int i = 2; i < 1500; i++) {
             cacheMap.put(new Key<>(KeyParamFactory.generateKeyParam(TestEntity.class, i)), new TestEntity(i));
             cacheMap.put(new Key<>(KeyParamFactory.generateKeyParam(BoboEntity.class, i)), new BoboEntity(i));
             cacheMap.put(new Key<>(KeyParamFactory.generateKeyParam(BiberEntity.class, i)), new BiberEntity(i));
@@ -66,7 +66,7 @@ public final class CacheProvider {
     public static Cache provide() {
         Cache cache = new Cache(50_000);
 
-        for (int i = 1; i < 5000; i++) {
+        for (int i = 2; i < 5000; i++) {
             cache.put(KeyParamFactory.generateKeyParam(TestEntity.class, i), new TestEntity(i));
             cache.put(KeyParamFactory.generateKeyParam(BoboEntity.class, i), new BoboEntity(i));
             cache.put(KeyParamFactory.generateKeyParam(BiberEntity.class, i), new BiberEntity(i));

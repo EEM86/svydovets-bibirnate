@@ -12,17 +12,18 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.SneakyThrows;
 
 public class DemoApp {
+    @SneakyThrows
     public static void main(String[] args) {
         initDB();
 
-        var sessionFactory = new SessionFactoryImpl(initializeDataSource("persistence-example.yaml"));
-        var session = sessionFactory.openSession();
+        SessionFactory sessionFactory = new SessionFactoryImpl(initializeDataSource("persistence-example.yaml"));
+        try (Session session = sessionFactory.openSession()) {
+            Person person = session.findById(22, Person.class);
+            Optional.ofNullable(person)
+                    .ifPresentOrElse(System.out::println,
+                      () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
+        }
 
-        Person person = session.findById(22, Person.class);
-
-        Optional.ofNullable(person)
-          .ifPresentOrElse(System.out::println,
-                () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
     }
 
     @SneakyThrows

@@ -10,12 +10,12 @@ import com.svydovets.bibirnate.annotation.Id;
 @Cacheable
 public class BoboEntity {
     @Id
-    private long id;
+    private int id;
 
     public BoboEntity() {
     }
 
-    public BoboEntity(long id) {
+    public BoboEntity(int id) {
         this.id = id;
     }
 
