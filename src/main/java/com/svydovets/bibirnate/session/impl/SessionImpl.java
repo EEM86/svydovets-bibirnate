@@ -10,17 +10,21 @@ import com.svydovets.bibirnate.cache.CacheContainer;
 import com.svydovets.bibirnate.cache.CacheUtils;
 import com.svydovets.bibirnate.exceptions.JdbcException;
 import com.svydovets.bibirnate.session.Session;
+import com.svydovets.bibirnate.session.transaction.TransactionManager;
+import com.svydovets.bibirnate.session.transaction.TransactionManagerImpl;
 
 public class SessionImpl implements Session {
     private final JdbcEntityDao jdbcEntityDao;
     private final CacheContainer cacheContainer;
     private final Connection connection;
+    private final TransactionManager transactionManager;
     private boolean closed;
 
     public SessionImpl(Connection connection, CacheContainer cacheContainer) {
         this.jdbcEntityDao = createJdbcEntityDao(connection);
         this.cacheContainer = cacheContainer;
         this.connection = connection;
+        this.transactionManager = new TransactionManagerImpl(connection);
     }
 
     @Override
@@ -58,6 +62,11 @@ public class SessionImpl implements Session {
     @Override
     public boolean isClosed() {
         return closed;
+    }
+
+    @Override
+    public TransactionManager getTransactionManager() {
+        return transactionManager;
     }
 
     private void checkIfSessionClosed() {

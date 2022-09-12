@@ -11,7 +11,9 @@ sourceCompatibility = '17'
 targetCompatibility = '17'
 
 jar {
-    archiveBaseName = 'svydovets-bibirnate'
+    manifest {
+        attributes 'Main-Class': 'com.svydovets.bibirnate'
+    }
 }
 
 ext {
