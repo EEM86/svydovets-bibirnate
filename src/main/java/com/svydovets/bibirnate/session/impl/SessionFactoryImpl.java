@@ -10,35 +10,48 @@ import com.svydovets.bibirnate.session.Session;
 import com.svydovets.bibirnate.session.SessionFactory;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 public class SessionFactoryImpl implements SessionFactory {
+
+    private static final int DEFAULT_SECOND_CACHE_SIZE = 200_000;
     private final DataSource dataSource;
-    //todo: need to provide configuration for secondLevelCache and size for it
-    private Cache secondCache;
-    private boolean secondCacheEnabled;
+    private Cache secondLevelCache;
+    private boolean secondLevelCacheEnabled;
+    private boolean secondLevelCacheGenerated;
+    private int secondLevelCacheSize;
     private CacheContainer cacheContainer;
 
     @Override
     public Session openSession() {
+        log.trace("Session opening is started...");
+        if (secondLevelCacheEnabled && !secondLevelCacheGenerated) {
+            generateSecondCache();
+        }
+
         try {
-            cacheContainer = new CacheContainer(new Cache(), secondCacheEnabled);
-            return new SessionImpl(dataSource.getConnection(), cacheContainer);
+            var session = new SessionImpl(dataSource.getConnection(),
+              new CacheContainer(secondLevelCache, secondLevelCacheEnabled));
+            log.trace("Session opening is finished. The Session is opened.");
+            return session;
         } catch (SQLException ex) {
+            log.error("Cannot open Session. Failed with exception [{}]", ex.getMessage());
             throw new JdbcException("Cannot open session. The purpose is " + ex.getMessage(), ex);
         }
     }
 
-    public void setEnabled(boolean enabled) {
-        secondCacheEnabled = enabled;
-    }
+    private void generateSecondCache() {
+        log.trace("Second level cache generation is started...");
 
-    public void initSecondCache(int size) {
-        this.secondCache = new Cache(size);
-    }
+        if (secondLevelCacheSize > 0) {
+            this.secondLevelCache = new Cache(secondLevelCacheSize);
+        } else {
+            this.secondLevelCache = new Cache(DEFAULT_SECOND_CACHE_SIZE);
+        }
 
-    public Cache getSecondCache() {
-        return secondCache;
+        log.trace("Second level cache generation is finished.");
     }
 
 }

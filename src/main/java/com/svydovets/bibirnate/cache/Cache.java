@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,6 +23,8 @@ import com.svydovets.bibirnate.cache.command.invalidation.impl.QueryKeyInvalidat
 import com.svydovets.bibirnate.cache.key.Key;
 import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
 import com.svydovets.bibirnate.exceptions.CacheOverloadException;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class is LRU cache realization.
@@ -38,11 +41,12 @@ import com.svydovets.bibirnate.exceptions.CacheOverloadException;
  * For invalidation the same story as with extraction. It also works via command. But here the logic a bit more
  * complicated because cache is able to invalidate related caches by {@link AbstractKeyParam#getEntityType()}.
  */
+@Slf4j
 public class Cache {
 
     private static final int DEFAULT_CACHE_SIZE = 10_000;
     private static final int MIN_CACHE_SIZE = 20;
-    private static final int DEFAULT_MAX_CACHE_SIZE = 50_000;
+    private static final int DEFAULT_MAX_CACHE_SIZE = 200_000;
     private static final int ZERO_DAYS = 0;
     private static final int ONE_DAY = 1;
     private static final int ONE_HOUR = 1;
@@ -67,7 +71,9 @@ public class Cache {
     }
 
     public Cache(int cacheSize, int maxCacheSize) {
+        log.trace("Creation new Cache with cacheSize [{}]", cacheSize);
         if ((maxCacheSize < MIN_CACHE_SIZE * 2) || cacheSize < MIN_CACHE_SIZE || cacheSize > maxCacheSize) {
+            log.error("Provided cacheSize [{}] has inappropriate state", cacheSize);
             throw new IllegalArgumentException(
               String.format("Inappropriate [cacheSize]. [cacheSize] cannot be less then %s or more than %s",
                 maxCacheSize, maxCacheSize));
@@ -80,6 +86,7 @@ public class Cache {
 
         initializeKeyExtractorCommandMap();
         initializeInvalidationCommandMap();
+        log.trace("Creation new Cache is finished");
     }
 
     /**
@@ -188,6 +195,10 @@ public class Cache {
 
     public Map<Class<? extends InvalidationCommand>, InvalidationCommand> getInvalidationCommandMap() {
         return invalidationCommandMap;
+    }
+
+    public Set<Key<?>> getKeys() {
+        return cacheMap.keySet();
     }
 
     private void initializeKeyExtractorCommandMap() {

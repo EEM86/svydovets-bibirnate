@@ -15,7 +15,10 @@ import com.svydovets.bibirnate.cache.command.extractor.KeyExtractorCommand;
 import com.svydovets.bibirnate.cache.command.extractor.impl.EntityKeyExtractorCommand;
 import com.svydovets.bibirnate.cache.command.extractor.impl.QueryKeyExtractorCommand;
 import com.svydovets.bibirnate.cache.command.invalidation.impl.EntityKeyInvalidationCommand;
+import com.svydovets.bibirnate.cache.command.invalidation.impl.QueryKeyInvalidationCommand;
+import com.svydovets.bibirnate.cache.key.Key;
 import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
+import com.svydovets.bibirnate.cache.key.parameters.QueryKeyParam;
 
 /**
  * Provides utils methods for working with double level caches.
@@ -97,16 +100,49 @@ public final class CacheUtils {
     }
 
     /**
+     * Provides first {@link Key} with the {@link QueryKeyParam} by provided <b>entityType</b>.
+     *
+     * @param cacheContainer {@link CacheContainer} that contains both level caches
+     * @param entityType     class with entity type
+     * @return {@link Optional} of {@link Key}
+     */
+    public static Optional<Key<?>> getSimilarQueryKey(CacheContainer cacheContainer, Class<?> entityType) {
+        var result = cacheContainer.getFirstLevelCache().getKeys().stream()
+          .filter(key -> key.getKeyParam().getEntityType().isAssignableFrom(entityType))
+          .findFirst();
+        if (result.isEmpty() && isSecondCacheEnabledAndUsesForEntity(cacheContainer, entityType)) {
+            result = cacheContainer.getSecondLevelCache().getKeys().stream()
+              .filter(key -> key.getKeyParam().getEntityType().isAssignableFrom(entityType))
+              .findFirst();
+        }
+        return result;
+    }
+
+    /**
      * Invalidates all caches where with the same entity type on both levels.
      *
      * @param cacheContainer {@link CacheContainer} container with caches
-     * @param entity required entity
+     * @param entity         required entity
      */
     public static void invalidate(CacheContainer cacheContainer, Object entity) {
         Cache firstLevelCache = cacheContainer.getFirstLevelCache();
         invalidate(entity, firstLevelCache);
         if (isSecondCacheEnabledAndUsesForEntity(cacheContainer, entity.getClass())) {
             invalidate(entity, cacheContainer.getSecondLevelCache());
+        }
+    }
+
+    /**
+     * Remove all caches with the same entityType.
+     *
+     * @param cacheContainer {@link CacheContainer} container with caches
+     * @param key            {@link Key}
+     */
+    public static void invalidate(CacheContainer cacheContainer, Key<?> key) {
+        Cache firstLevelCache = cacheContainer.getFirstLevelCache();
+        invalidate(firstLevelCache, key);
+        if (isSecondCacheEnabledAndUsesForEntity(cacheContainer, key.getKeyParam().getEntityType())) {
+            invalidate(cacheContainer.getSecondLevelCache(), key);
         }
     }
 
@@ -122,6 +158,10 @@ public final class CacheUtils {
                 cache.invalidateRelated(keyParam, EntityKeyExtractorCommand.class, EntityKeyInvalidationCommand.class);
             }
         }
+    }
+
+    private static <T> void invalidate(Cache cache, Key<?> key) {
+        cache.invalidateRelated(key.getKeyParam(), QueryKeyExtractorCommand.class, QueryKeyInvalidationCommand.class);
     }
 
     private static Function<Field, Object> getFieldValueFunction(Object entity) {
