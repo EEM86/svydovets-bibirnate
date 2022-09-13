@@ -10,7 +10,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.svydovets.bibirnate.annotation.Column;
-import com.svydovets.bibirnate.annotation.Entity;
 import com.svydovets.bibirnate.annotation.Id;
 import com.svydovets.bibirnate.annotation.JoinColumn;
 import com.svydovets.bibirnate.annotation.ManyToOne;
@@ -18,6 +17,7 @@ import com.svydovets.bibirnate.annotation.OneToMany;
 import com.svydovets.bibirnate.annotation.OneToOne;
 import com.svydovets.bibirnate.annotation.Table;
 import com.svydovets.bibirnate.exceptions.AmbiguousIdException;
+import com.svydovets.bibirnate.exceptions.EntityMappingException;
 import com.svydovets.bibirnate.exceptions.NoIdException;
 
 /**
@@ -80,7 +80,7 @@ public final class EntityUtils {
 
     private static boolean isJavaType(Field field) {
         return field.getType().isPrimitive()
-            || field.getType().getName().startsWith("java");
+          || field.getType().getName().startsWith("java");
     }
 
     /**
@@ -101,6 +101,25 @@ public final class EntityUtils {
     public static <T> String getTableName(Class<T> entityType) {
         return Optional.ofNullable(entityType.getAnnotation(Table.class)).map(Table::name)
           .filter(Predicate.not(String::isEmpty)).orElse(entityType.getSimpleName());
+    }
+
+    public static <T> String getParentIdColumnName(Class<T> entityType, String fieldName) {
+        try {
+            var parentFiled = entityType.getDeclaredField(fieldName);
+            return parentFiled.getAnnotation(JoinColumn.class).name();
+        } catch (NoSuchFieldException | NullPointerException ex) {
+            throw new EntityMappingException(
+              String.format("Entity: %s mapping exception. " +
+                  "%s entity should have mapped reference to parent entity field: '%s' including @JoinColumn annotation",
+                entityType.getName(), entityType.getName(), fieldName));
+        }
+    }
+
+    public static <T> T wrapIdValue(T id) {
+        if (id.getClass().equals(String.class)) {
+            return (T) String.format("'%s'", id);
+        }
+        return id;
     }
 
     private static <T> Function<List<Field>, Field> getOneFieldCollector(Class<T> entityType) {

@@ -1,6 +1,7 @@
 package com.svydovets.bibirnate.annotation;
 
 import static com.svydovets.bibirnate.session.query.FetchType.EAGER;
+import static com.svydovets.bibirnate.session.query.FetchType.LAZY;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,9 +16,11 @@ import com.svydovets.bibirnate.session.query.FetchType;
 @Target(ElementType.FIELD)
 public @interface OneToMany {
 
-    FetchType fetch() default EAGER;
+    FetchType fetch() default LAZY;
 
     CascadeType[] cascade() default {};
+
+    String mappedBy();
 
 
 }

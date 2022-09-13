@@ -55,6 +55,7 @@ dependencies {
     implementation "com.zaxxer:HikariCP:${hikariVersion}"
 
     implementation "ch.qos.logback:logback-classic:${logbackClassicVersion}"
+    implementation "commons-collections:commons-collections:3.2.2"
 }
 
 test {

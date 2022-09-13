@@ -8,4 +8,6 @@ public class EntityRelation {
     private FetchType fetch;
 
     private CascadeType[] cascade;
+
+    private String mappedBy;
 }

@@ -7,6 +7,7 @@ import static com.svydovets.bibirnate.utils.EntityUtils.getTableName;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
