@@ -14,11 +14,12 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.SneakyThrows;
 
 public class DemoApp {
+
     @SneakyThrows
     public static void main(String[] args) {
         initDB();
 
-        SessionFactory sessionFactory = new SessionFactoryImpl(initializeDataSource());
+        SessionFactory sessionFactory = new SessionFactoryImpl(initializeDataSource("persistence-example.yaml"));
         try (Session session = sessionFactory.openSession()) {
             Person person = session.findById(22, Person.class);
             Optional.ofNullable(person)
@@ -29,9 +30,9 @@ public class DemoApp {
     }
 
     @SneakyThrows
-    private static DataSource initializeDataSource() {
+    private static DataSource initializeDataSource(String properties) {
         var configurationProperties = new YamlConfigurationPropertiesReaderImpl()
-                .readProperties("persistence-example.yaml");
+                .readProperties(properties);
         var hikariConfig = HikariConfigUtils.createHikariConfig(configurationProperties);
 
         return new HikariDataSource(hikariConfig);
