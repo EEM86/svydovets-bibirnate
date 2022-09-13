@@ -1,4 +1,17 @@
-package com.svydovets.bibirnate.session.impl;
+package com.svydovets.bibirnate.jdbc.impl;
+
+import com.svydovets.bibirnate.entities.EntityPrimitives;
+import com.svydovets.bibirnate.entities.PersonSimpleEntity;
+import com.svydovets.bibirnate.mapper.EntityMapperService;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.Test;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Optional;
+import javax.sql.DataSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -8,22 +21,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.Optional;
-
-import org.junit.jupiter.api.Test;
-
-import com.svydovets.bibirnate.entities.EntityPrimitives;
-import com.svydovets.bibirnate.entities.PersonSimpleEntity;
-import com.svydovets.bibirnate.mapper.EntityMapperService;
-
-import lombok.SneakyThrows;
-
-class JdbcEntityDaoTest {
+class BaseJdbcEntityDaoTest {
 
     private static final long ID = 13L;
 
@@ -31,7 +29,7 @@ class JdbcEntityDaoTest {
     @SneakyThrows
     void findById_shouldCallFindBy() {
         var idField = EntityPrimitives.class.getDeclaredField("id");
-        var mock = mock(JdbcEntityDao.class);
+        var mock = mock(BaseJdbcEntityDao.class);
 
         var foundEntity = Optional.of(new EntityPrimitives());
         when(mock.findBy(idField, ID, EntityPrimitives.class)).thenReturn(foundEntity);
@@ -53,7 +51,7 @@ class JdbcEntityDaoTest {
         when(dataSource.getConnection()).thenReturn(connection);
         when(resultSet.next()).thenReturn(false);
 
-        var jdbcEntityDao = new JdbcEntityDao(connection);
+        var jdbcEntityDao = new BaseJdbcEntityDao(connection);
         var idField = EntityPrimitives.class.getDeclaredField("id");
 
         assertEquals(Optional.empty(), jdbcEntityDao.findBy(idField, ID, EntityPrimitives.class));
@@ -75,7 +73,7 @@ class JdbcEntityDaoTest {
         when(dataSource.getConnection()).thenReturn(connection);
         when(resultSet.next()).thenReturn(true);
 
-        var jdbcEntityDao = new JdbcEntityDao(connection);
+        var jdbcEntityDao = new BaseJdbcEntityDao(connection);
         var idField = EntityPrimitives.class.getDeclaredField("id");
 
         try (var entityMapperService = mockStatic(EntityMapperService.class)) {
@@ -93,7 +91,7 @@ class JdbcEntityDaoTest {
     void remove() {
         var connectionMock = mock(Connection.class);
         var statement = mock(Statement.class);
-        var dao = new JdbcEntityDao(connectionMock);
+        var dao = new BaseJdbcEntityDao(connectionMock);
         var person = new PersonSimpleEntity(1L, "name", "last_name", "blindValue");
         when(connectionMock.createStatement()).thenReturn(statement);
         dao.remove(person);

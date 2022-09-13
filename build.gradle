@@ -25,6 +25,7 @@ ext {
     snakeyamlVersion = '1.30'
     postgresqlVersion = '42.5.0'
     hikariVersion = '5.0.1'
+    logbackClassicVersion = '1.2.11'
 }
 
 configurations {
@@ -52,7 +53,8 @@ dependencies {
     implementation "org.apache.commons:commons-lang3:${commonsLang3}"
     implementation "org.yaml:snakeyaml:${snakeyamlVersion}"
     implementation "com.zaxxer:HikariCP:${hikariVersion}"
-    implementation "org.apache.logging.log4j:log4j-core:${log4j}"
+
+    implementation "ch.qos.logback:logback-classic:${logbackClassicVersion}"
 }
 
 test {

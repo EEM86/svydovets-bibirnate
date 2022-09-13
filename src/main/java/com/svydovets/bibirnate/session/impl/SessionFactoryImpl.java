@@ -19,6 +19,7 @@ public class SessionFactoryImpl implements SessionFactory {
     @Override
     public Session openSession() {
         try {
+            cacheContainer = new CacheContainer(new Cache(), secondCacheEnabled);
             return new SessionImpl(dataSource.getConnection(), cacheContainer);
         } catch (SQLException ex) {
             throw new JdbcException("Cannot open session. The purpose is " + ex.getMessage(), ex);
