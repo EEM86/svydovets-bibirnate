@@ -9,6 +9,9 @@ import java.sql.SQLException;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * Utility class for mock and other configs for Session in test env.
+ */
 @UtilityClass
 public class SessionTestUtil {
 

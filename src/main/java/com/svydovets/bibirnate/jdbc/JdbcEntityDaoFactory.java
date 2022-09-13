@@ -18,10 +18,19 @@ import com.svydovets.bibirnate.jdbc.impl.PostgresJdbcEntityDao;
 
 import lombok.SneakyThrows;
 
+/**
+ * Factory to produce JdbcEntityDao implementation according to a database driver.
+ */
 public class JdbcEntityDaoFactory {
 
     private static Map<DbDriver, JdbcEntityDao> driverToDao;
 
+    /**
+     * Create JdcEntityDao from the database connection.
+     *
+     * @param connection Connection
+     * @return JdbcEntityDao instance
+     */
     @SneakyThrows
     public static JdbcEntityDao createJdbcEntityDao(Connection connection) {
         initSupportedDriversMap(connection);
