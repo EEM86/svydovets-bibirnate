@@ -4,6 +4,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 
+import com.svydovets.bibirnate.entities.PersonSimpleEntity;
+import com.svydovets.bibirnate.entities.PersonSimpleInvalidEntity;
+import com.svydovets.bibirnate.entities.PersonSimpleInvalidEntityNoId;
+
 public final class CommonConstants {
 
     private CommonConstants() {
@@ -26,4 +30,12 @@ public final class CommonConstants {
     public static String ONE_TO_MANY_FIELD_NAME = "oneToManyEntities";
     public static String BIG_DECIMAL_FIELD_NAME = "bigDecimalField";
     public static String FLOAT_FIELD_NAME = "float_field";
+
+    public static PersonSimpleEntity PERSON = new PersonSimpleEntity(1L, "name", "last_name", "blindValue");
+
+    public static PersonSimpleInvalidEntity INVALID_PERSON =
+      new PersonSimpleInvalidEntity(1L, "name", "last_name", "blindValue");
+
+    public static PersonSimpleInvalidEntityNoId INVALID_ID_PERSON =
+      new PersonSimpleInvalidEntityNoId(1L, "name", "last_name", "blindValue");
 }

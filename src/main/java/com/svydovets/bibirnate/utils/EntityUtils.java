@@ -10,6 +10,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.svydovets.bibirnate.annotation.Column;
+import com.svydovets.bibirnate.annotation.Entity;
 import com.svydovets.bibirnate.annotation.Id;
 import com.svydovets.bibirnate.annotation.JoinColumn;
 import com.svydovets.bibirnate.annotation.ManyToOne;

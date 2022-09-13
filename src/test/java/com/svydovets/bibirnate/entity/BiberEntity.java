@@ -11,12 +11,12 @@ import com.svydovets.bibirnate.annotation.Id;
 public class BiberEntity {
 
     @Id
-    private long id;
+    private int id;
 
     public BiberEntity() {
     }
 
-    public BiberEntity(long id) {
+    public BiberEntity(int id) {
         this.id = id;
     }
 

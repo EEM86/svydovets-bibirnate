@@ -2,13 +2,19 @@ package com.svydovets.bibirnate.cache;
 
 import static com.svydovets.bibirnate.cache.key.factory.KeyParamFactory.generateKeyParam;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Function;
 
 import com.svydovets.bibirnate.annotation.Cacheable;
+import com.svydovets.bibirnate.annotation.Entity;
+import com.svydovets.bibirnate.annotation.Id;
 import com.svydovets.bibirnate.cache.command.extractor.KeyExtractorCommand;
 import com.svydovets.bibirnate.cache.command.extractor.impl.EntityKeyExtractorCommand;
 import com.svydovets.bibirnate.cache.command.extractor.impl.QueryKeyExtractorCommand;
+import com.svydovets.bibirnate.cache.command.invalidation.impl.EntityKeyInvalidationCommand;
 import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
 
 /**
@@ -29,7 +35,7 @@ public final class CacheUtils {
      * @return {@link Optional} of value from cache
      */
     public static <T> Optional<T> extract(CacheContainer cacheContainer, Class<T> entityType, Object id) {
-        AbstractKeyParam<T> keyParam = generateKeyParam(entityType, id);
+        var keyParam = generateKeyParam(entityType, id);
 
         return getCachedObject(cacheContainer, entityType, keyParam, EntityKeyExtractorCommand.class)
           .filter(cached -> entityType.isAssignableFrom(cached.getClass()))
@@ -49,7 +55,7 @@ public final class CacheUtils {
     public static <T> Optional<? extends Collection> extract(CacheContainer cacheContainer, Class<T> entityType,
                                                              String query,
                                                              Class<? extends Collection> collectionType) {
-        AbstractKeyParam<T> keyParam = generateKeyParam(entityType, query, collectionType);
+        var keyParam = generateKeyParam(entityType, query, collectionType);
 
         return getCachedObject(cacheContainer, entityType, keyParam, QueryKeyExtractorCommand.class)
           .filter(cached -> collectionType.isAssignableFrom(cached.getClass()))
@@ -90,12 +96,50 @@ public final class CacheUtils {
         }
     }
 
-    // TODO: provide api for invalidation
+    /**
+     * Invalidates all caches where with the same entity type on both levels.
+     *
+     * @param cacheContainer {@link CacheContainer} container with caches
+     * @param entity required entity
+     */
+    public static void invalidate(CacheContainer cacheContainer, Object entity) {
+        Cache firstLevelCache = cacheContainer.getFirstLevelCache();
+        invalidate(entity, firstLevelCache);
+        if (isSecondCacheEnabledAndUsesForEntity(cacheContainer, entity.getClass())) {
+            invalidate(entity, cacheContainer.getSecondLevelCache());
+        }
+    }
+
+    private static <T> void invalidate(T entity, Cache cache) {
+        var entityType = entity.getClass();
+        if (entityType.isAnnotationPresent(Entity.class)) {
+            var id = Arrays.stream(entityType.getDeclaredFields())
+              .filter(field -> field.isAnnotationPresent(Id.class))
+              .findAny()
+              .map(getFieldValueFunction(entity));
+            if (id.isPresent()) {
+                var keyParam = generateKeyParam(entityType, id.get());
+                cache.invalidateRelated(keyParam, EntityKeyExtractorCommand.class, EntityKeyInvalidationCommand.class);
+            }
+        }
+    }
+
+    private static Function<Field, Object> getFieldValueFunction(Object entity) {
+        return field -> {
+            try {
+                field.setAccessible(true);
+                return field.get(entity);
+            } catch (IllegalAccessException ex) {
+                throw new RuntimeException("Failed on extraction field value for invalidation caches with message ["
+                  + ex.getMessage() + "].");
+            }
+        };
+    }
 
     private static <T> Optional<Object> getCachedObject(CacheContainer cacheContainer, Class<T> entityType,
                                                         AbstractKeyParam<T> keyParam,
                                                         Class<? extends KeyExtractorCommand> extractorType) {
-        Optional<Object> cached = cacheContainer.getFirstLevelCache().get(keyParam, extractorType);
+        var cached = cacheContainer.getFirstLevelCache().get(keyParam, extractorType);
 
         if (cached.isEmpty() && isSecondCacheEnabledAndUsesForEntity(cacheContainer, entityType)) {
             cached = cacheContainer.getSecondLevelCache().get(keyParam, extractorType);
