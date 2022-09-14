@@ -1,16 +1,14 @@
 package com.svydovets.bibirnate.session.transaction;
 
-import com.svydovets.bibirnate.exceptions.TransactionManagerException;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static com.svydovets.bibirnate.session.transaction.TransactionStatus.*;
+import com.svydovets.bibirnate.exceptions.TransactionManagerException;
 
 public class TransactionManagerImpl implements TransactionManager {
 
     private final Connection connection;
-    private TransactionStatus status = TransactionStatus.NONE;
+    private boolean transactionStarted = false;
 
     public TransactionManagerImpl(Connection connection) {
         this.connection = connection;
@@ -18,42 +16,42 @@ public class TransactionManagerImpl implements TransactionManager {
 
     @Override
     public void begin() throws TransactionManagerException {
-        if (status != NONE) {
+        if (transactionStarted) {
             throw new TransactionManagerException("Transaction already started.");
         }
         try {
             connection.setAutoCommit(false);
-            status = BEGIN;
-        } catch (SQLException e) {
-            throw new TransactionManagerException(e);
+            transactionStarted = true;
+        } catch (SQLException exception) {
+            throw new TransactionManagerException(exception);
         }
     }
 
     @Override
     public void commit() throws TransactionManagerException {
-        if (status != BEGIN) {
+        if (!transactionStarted) {
             throw new TransactionManagerException("Transaction not started or already finished.");
         }
         try {
             connection.commit();
             connection.close();
-            status = COMMIT;
-        } catch (SQLException e) {
-            throw new TransactionManagerException(e);
+            transactionStarted = false;
+        } catch (SQLException exception) {
+            throw new TransactionManagerException(exception);
         }
     }
 
     @Override
     public void rollback() throws TransactionManagerException {
-        if (status != BEGIN) {
+        if (!transactionStarted) {
             throw new TransactionManagerException("Transaction not started or already finished.");
         }
         try {
             connection.rollback();
             connection.close();
-            status = ROLLBACK;
-        } catch (SQLException e) {
-            throw new TransactionManagerException(e);
+            transactionStarted = false;
+        } catch (SQLException exception) {
+            throw new TransactionManagerException(exception);
         }
     }
 
