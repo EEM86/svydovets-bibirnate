@@ -1,4 +1,4 @@
-package com.svydovets.bibirnate.configuration;
+package com.svydovets.bibirnate.configuration.properties;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,7 +13,12 @@ import lombok.experimental.FieldDefaults;
 public class CacheProperties {
 
     /**
-     * Enables second level cache.
+     * Enables second level cache. Second level cache provides cashing on SessionFactory level.
      */
-    boolean secondLevelCacheEnabled = Boolean.FALSE;
+    boolean enabled = Boolean.FALSE;
+
+    /**
+     * Size of the second level cache.
+     */
+    int size = 20_000;
 }

@@ -1,9 +1,9 @@
 package com.svydovets.bibirnate.utils;
 
-import com.svydovets.bibirnate.configuration.ConfigurationProperties;
-import com.svydovets.bibirnate.configuration.ConnectionPoolProperties;
-import com.svydovets.bibirnate.configuration.DatabaseProperties;
-import org.junit.jupiter.api.Assertions;
+import com.svydovets.bibirnate.configuration.properties.ConfigurationProperties;
+import com.svydovets.bibirnate.configuration.properties.ConnectionPoolProperties;
+import com.svydovets.bibirnate.configuration.properties.DatabaseProperties;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

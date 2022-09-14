@@ -1,4 +1,4 @@
-package com.svydovets.bibirnate.configuration;
+package com.svydovets.bibirnate.configuration.properties;
 
 import lombok.AccessLevel;
 import lombok.Getter;

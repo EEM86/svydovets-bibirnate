@@ -1,5 +1,6 @@
 package com.svydovets.bibirnate.configuration;
 
+import com.svydovets.bibirnate.configuration.properties.ConfigurationProperties;
 import com.svydovets.bibirnate.exceptions.PropertiesFileInvalidException;
 import com.svydovets.bibirnate.exceptions.PropertiesFileMissingException;
 import com.svydovets.bibirnate.exceptions.PropertiesFileValidationException;

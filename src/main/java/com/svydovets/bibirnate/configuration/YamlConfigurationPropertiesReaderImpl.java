@@ -6,6 +6,8 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.error.YAMLException;
 
+import com.svydovets.bibirnate.configuration.properties.ConfigurationProperties;
+import com.svydovets.bibirnate.configuration.properties.DatabaseProperties;
 import com.svydovets.bibirnate.exceptions.PropertiesFileInvalidException;
 import com.svydovets.bibirnate.exceptions.PropertiesFileMissingException;
 import com.svydovets.bibirnate.exceptions.PropertiesFileValidationException;

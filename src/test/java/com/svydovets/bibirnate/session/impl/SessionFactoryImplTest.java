@@ -23,7 +23,7 @@ class SessionFactoryImplTest {
         var datasource = mock(DataSource.class);
         when(datasource.getConnection()).thenThrow(SQLException.class);
 
-        var sessionFactory = new SessionFactoryImpl(datasource);
+        var sessionFactory = new SessionFactoryImpl(datasource, false, 0, false);
 
         assertThrows(JdbcException.class, sessionFactory::openSession);
     }
@@ -36,7 +36,7 @@ class SessionFactoryImplTest {
         when(datasource.getConnection()).thenReturn(connection);
         mockConnectionMetadata(connection);
 
-        SessionFactory sessionFactory = new SessionFactoryImpl(datasource);
+        SessionFactory sessionFactory = new SessionFactoryImpl(datasource, false, 0, false);
         assertNotNull(sessionFactory.openSession());
     }
 }

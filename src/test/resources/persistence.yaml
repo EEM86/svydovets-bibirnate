@@ -29,5 +29,9 @@ connectionPool:
   initializationFailTimeout: 8
   keepaliveTime: 9
 
-cache:
-  secondLevelCacheEnabled : true
+secondLevelCache:
+  enabled : true
+  size : 42_000
+
+sqlLogging:
+  enabled : true
