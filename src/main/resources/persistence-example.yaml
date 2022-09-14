@@ -9,3 +9,12 @@ connectionPool:
   minIdle: 5
   maxLifetime: 1800000
   connectionTimeout: 30000
+
+secondLevelCache:
+  enabled : true
+  size : 20_000
+
+sqlLogging:
+  enabled : true
+
+
