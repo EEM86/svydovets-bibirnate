@@ -4,6 +4,7 @@ import java.util.Optional;
 import javax.sql.DataSource;
 
 import com.svydovets.bibirnate.configuration.YamlConfigurationPropertiesReaderImpl;
+import com.svydovets.bibirnate.demo.entity.Note;
 import com.svydovets.bibirnate.demo.entity.Person;
 import com.svydovets.bibirnate.session.Session;
 import com.svydovets.bibirnate.session.SessionFactory;
@@ -21,8 +22,8 @@ public class DemoApp {
 
         SessionFactory sessionFactory = new SessionFactoryImpl(initializeDataSource("persistence-example.yaml"));
         try (Session session = sessionFactory.openSession()) {
-            Person person = session.findById(22, Person.class);
-            Optional.ofNullable(person)
+            Note note = session.findById(8, Note.class);
+            Optional.ofNullable(note)
                     .ifPresentOrElse(System.out::println,
                       () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
         }

@@ -24,6 +24,13 @@ public class BaseJdbcEntityDao implements JdbcEntityDao {
     public static final String SELECT_FROM_TABLE_BY_COLUMN = "select * from %s where %s = ?";
     private final Connection connection;
 
+    private final EntityMapperService entityMapperService;
+
+    public BaseJdbcEntityDao(Connection connection) {
+        this.connection = connection;
+        this.entityMapperService = new EntityMapperService(this);
+    }
+
     /**
      * {@inheritDoc}
      **/
@@ -51,7 +58,7 @@ public class BaseJdbcEntityDao implements JdbcEntityDao {
                 return Optional.empty();
             }
 
-            T entity = EntityMapperService.mapToObject(type, resultSet);
+            T entity = entityMapperService.mapToObject(type, resultSet);
             return Optional.of(entity);
         }
     }

@@ -6,6 +6,7 @@ import com.svydovets.bibirnate.annotation.Id;
 import com.svydovets.bibirnate.annotation.JoinColumn;
 import com.svydovets.bibirnate.annotation.ManyToOne;
 import com.svydovets.bibirnate.annotation.Table;
+
 import lombok.Data;
 
 @Entity

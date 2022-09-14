@@ -1,10 +1,12 @@
 package com.svydovets.bibirnate.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import java.lang.reflect.Field;
 import java.util.stream.Stream;
 
+import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -15,10 +17,14 @@ import com.svydovets.bibirnate.entities.EntityWrongType;
 
 class EntityFieldMapperFactoryTest {
 
+    private final JdbcEntityDao jdbcEntityDao = mock(JdbcEntityDao.class);
+    private final EntityFieldMapperFactory entityFieldMapperFactory = new EntityFieldMapperFactory(jdbcEntityDao);
+
     @ParameterizedTest
     @MethodSource("provideEntityClassesWithField")
     void getFieldMapper(Field field, Class<?> resultClass) {
-        var mapper = EntityFieldMapperFactory.getFieldMapper(field);
+
+        var mapper = entityFieldMapperFactory.getFieldMapper(field);
         assertEquals(resultClass, mapper.getClass());
     }
 
