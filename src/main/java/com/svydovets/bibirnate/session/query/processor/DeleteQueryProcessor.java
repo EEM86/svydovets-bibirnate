@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 
 import com.svydovets.bibirnate.exceptions.PersistenceException;
+import com.svydovets.bibirnate.logs.SqlLogger;
 import com.svydovets.bibirnate.session.query.CascadeType;
 import com.svydovets.bibirnate.session.query.EntityRelation;
 
@@ -17,12 +18,12 @@ public class DeleteQueryProcessor extends QueryProcessor {
 
     private static final String DELETE_TEMPLATE = "DELETE FROM %s WHERE %s = %s";
 
-    public DeleteQueryProcessor(Object entity, Connection connection) {
-        super(entity, connection);
+    public DeleteQueryProcessor(Object entity, Connection connection, SqlLogger sqlLogger) {
+        super(entity, connection, sqlLogger);
     }
 
-    public DeleteQueryProcessor(Object entity, Connection connection, Field parentId) {
-        super(entity, connection, parentId);
+    public DeleteQueryProcessor(Object entity, Connection connection, Field parentId, SqlLogger sqlLogger) {
+        super(entity, connection, parentId, sqlLogger);
     }
 
     @SneakyThrows
@@ -53,6 +54,7 @@ public class DeleteQueryProcessor extends QueryProcessor {
                 //          ManyToOne biDir + uniDir
             }
             String sql = generateQuery();
+            sqlLogger.log(sql);
             statement.execute(sql);
         } catch (SQLException ex) {
             log.trace("Could not delete entity with id = {}", this.getId());
@@ -67,7 +69,7 @@ public class DeleteQueryProcessor extends QueryProcessor {
               if (hasCascadeRelation(toManyRelation)) {
                   //todo: will be done in RELATIONS ticket
                   DeleteQueryProcessor innerProcessor = new DeleteQueryProcessor(
-                    toManyRelation.getRelatedEntities().get(0).getClass(), getConnection(), getId());
+                    toManyRelation.getRelatedEntities().get(0).getClass(), getConnection(), getId(), sqlLogger);
                   innerProcessor.execute();
               } else {
                   //todo: only set parent id to null

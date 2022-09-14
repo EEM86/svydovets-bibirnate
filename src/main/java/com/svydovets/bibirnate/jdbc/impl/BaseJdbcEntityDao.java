@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.util.Optional;
 
 import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
+import com.svydovets.bibirnate.logs.SqlLogger;
 import com.svydovets.bibirnate.mapper.EntityMapperService;
 import com.svydovets.bibirnate.session.query.processor.QueryProcessorFactory;
 
@@ -23,6 +24,8 @@ import lombok.SneakyThrows;
 public class BaseJdbcEntityDao implements JdbcEntityDao {
     public static final String SELECT_FROM_TABLE_BY_COLUMN = "select * from %s where %s = ?";
     private final Connection connection;
+
+    protected final SqlLogger sqlLogger;
 
     /**
      * {@inheritDoc}
@@ -46,6 +49,7 @@ public class BaseJdbcEntityDao implements JdbcEntityDao {
         try (var statement = connection.prepareStatement(selectSql)) {
             statement.setObject(1, value);
             var resultSet = statement.executeQuery();
+            sqlLogger.log(statement.unwrap(java.sql.PreparedStatement.class).toString());
 
             if (!resultSet.next()) {
                 return Optional.empty();
@@ -62,7 +66,8 @@ public class BaseJdbcEntityDao implements JdbcEntityDao {
     @SneakyThrows
     @Override
     public void remove(Object entity) {
-        var queryProcessor = QueryProcessorFactory.defineQueryProcessor(DELETE, entity, connection);
+        var queryProcessor = QueryProcessorFactory.defineQueryProcessor(DELETE, entity, connection,
+          sqlLogger);
         queryProcessor.execute();
     }
 }

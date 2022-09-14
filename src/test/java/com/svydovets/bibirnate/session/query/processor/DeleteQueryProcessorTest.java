@@ -22,6 +22,7 @@ import org.mockito.Mockito;
 
 import com.svydovets.bibirnate.exceptions.EntityValidationException;
 import com.svydovets.bibirnate.exceptions.PersistenceException;
+import com.svydovets.bibirnate.logs.SqlLogger;
 
 import lombok.SneakyThrows;
 
@@ -38,7 +39,7 @@ class DeleteQueryProcessorTest {
     @BeforeAll
     static void init() {
         CONNECTION = Mockito.mock(Connection.class);
-        PROCESSOR = new DeleteQueryProcessor(PERSON, CONNECTION);
+        PROCESSOR = new DeleteQueryProcessor(PERSON, CONNECTION, new SqlLogger(false));
     }
 
     @SneakyThrows
@@ -48,7 +49,7 @@ class DeleteQueryProcessorTest {
         var expected_sql_query = "DELETE FROM persons WHERE id = 1";
         var persistent_fields_count = 3;
         var table_name = "persons";
-        var processor = new DeleteQueryProcessor(PERSON, connection);
+        var processor = new DeleteQueryProcessor(PERSON, connection, new SqlLogger(false));
         var deleteQuery = processor.generateQuery();
         assertEquals(processor.getPersistentObject(), PERSON);
         assertEquals(table_name, processor.getTableName());
@@ -65,15 +66,15 @@ class DeleteQueryProcessorTest {
     @Test
     void generateQueryValidationNoEntityAnnotationException() {
         Exception exception = assertThrows(EntityValidationException.class,
-          () -> new DeleteQueryProcessor(INVALID_PERSON, CONNECTION));
+          () -> new DeleteQueryProcessor(INVALID_PERSON, CONNECTION, new SqlLogger(false)));
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(INVALID_ENTITY_MSG));
     }
 
     @Test
-    void generateQueryValidatioNoIdField() {
+    void generateQueryValidationNoIdField() {
         Exception exception = assertThrows(EntityValidationException.class,
-          () -> new DeleteQueryProcessor(INVALID_ID_PERSON, CONNECTION));
+          () -> new DeleteQueryProcessor(INVALID_ID_PERSON, CONNECTION, new SqlLogger(false)));
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(INVALID_ENTITY_ID_MSG));
     }
@@ -81,7 +82,7 @@ class DeleteQueryProcessorTest {
     @SneakyThrows
     @Test
     void execute() {
-        var processor = new DeleteQueryProcessor(PERSON, CONNECTION);
+        var processor = new DeleteQueryProcessor(PERSON, CONNECTION, new SqlLogger(false));
         var stmt = Mockito.mock(Statement.class);
         when(CONNECTION.createStatement()).thenReturn(stmt);
         processor.execute();

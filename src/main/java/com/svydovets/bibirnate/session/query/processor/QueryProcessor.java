@@ -10,7 +10,7 @@ import com.svydovets.bibirnate.annotation.ManyToOne;
 import com.svydovets.bibirnate.annotation.OneToMany;
 import com.svydovets.bibirnate.annotation.OneToOne;
 import com.svydovets.bibirnate.annotation.Transient;
-import com.svydovets.bibirnate.session.Session;
+import com.svydovets.bibirnate.logs.SqlLogger;
 import com.svydovets.bibirnate.session.query.CascadeType;
 import com.svydovets.bibirnate.session.query.FetchType;
 import com.svydovets.bibirnate.session.query.ToManyRelation;
@@ -41,13 +41,16 @@ public abstract class QueryProcessor {
     private Object parentId;
 
     private ValidationService validationService = new ValidationService();
+    protected final SqlLogger sqlLogger;
 
-    protected QueryProcessor(Object entity, Connection connection) {
+    protected QueryProcessor(Object entity, Connection connection, SqlLogger sqlLogger) {
         initialize(entity, connection, null);
+        this.sqlLogger = sqlLogger;
     }
 
-    protected QueryProcessor(Object entity, Connection connection, Field parentId) {
+    protected QueryProcessor(Object entity, Connection connection, Field parentId, SqlLogger sqlLogger) {
         initialize(entity, connection, parentId);
+        this.sqlLogger = sqlLogger;
     }
 
     private void initialize(Object entity, Connection connection, Field parentId) {

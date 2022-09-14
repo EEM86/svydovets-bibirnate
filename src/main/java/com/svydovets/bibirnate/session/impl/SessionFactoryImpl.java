@@ -6,6 +6,7 @@ import javax.sql.DataSource;
 import com.svydovets.bibirnate.cache.Cache;
 import com.svydovets.bibirnate.cache.CacheContainer;
 import com.svydovets.bibirnate.exceptions.JdbcException;
+import com.svydovets.bibirnate.logs.SqlLogger;
 import com.svydovets.bibirnate.session.Session;
 import com.svydovets.bibirnate.session.SessionFactory;
 
@@ -36,8 +37,12 @@ public class SessionFactoryImpl implements SessionFactory {
         }
 
         try {
-            var session = new SessionImpl(dataSource.getConnection(),
-              new CacheContainer(secondLevelCache, secondLevelCacheEnabled));
+            var session = new SessionImpl(
+              dataSource.getConnection(),
+              new CacheContainer(secondLevelCache, secondLevelCacheEnabled),
+              new SqlLogger(sqlLoggingEnabled)
+            );
+
             log.trace("Session opening is finished. The Session is opened.");
             return session;
         } catch (SQLException ex) {
