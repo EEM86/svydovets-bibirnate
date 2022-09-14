@@ -1,5 +1,6 @@
 package com.svydovets.bibirnate.configuration;
 
+import com.svydovets.bibirnate.configuration.properties.ConfigurationProperties;
 import com.svydovets.bibirnate.exceptions.PropertiesFileInvalidException;
 import com.svydovets.bibirnate.exceptions.PropertiesFileMissingException;
 import com.svydovets.bibirnate.exceptions.PropertiesFileValidationException;
@@ -51,6 +52,12 @@ class YamlConfigurationPropertiesReaderImplTest {
         assertEquals(7, connectionPoolProperties.getMaxLifetime());
         assertEquals(8, connectionPoolProperties.getInitializationFailTimeout());
         assertEquals(9, connectionPoolProperties.getKeepaliveTime());
+    }
+
+    @Test
+    void testReadYamlCachePropertiesSuccess() {
+        configurationProperties = reader.readProperties("persistence.yaml");
+        assertTrue(configurationProperties.getSecondLevelCache().isEnabled());
     }
 
     @Test

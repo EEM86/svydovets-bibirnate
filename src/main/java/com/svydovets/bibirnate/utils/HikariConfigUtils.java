@@ -1,6 +1,6 @@
 package com.svydovets.bibirnate.utils;
 
-import com.svydovets.bibirnate.configuration.ConfigurationProperties;
+import com.svydovets.bibirnate.configuration.properties.ConfigurationProperties;
 import com.zaxxer.hikari.HikariConfig;
 
 /**

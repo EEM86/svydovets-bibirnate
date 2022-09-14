@@ -1,4 +1,4 @@
-package com.svydovets.bibirnate.configuration;
+package com.svydovets.bibirnate.configuration.properties;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,4 +20,14 @@ public class ConfigurationProperties {
      * Specifies the configuration parameters for connection pool.
      */
     ConnectionPoolProperties connectionPool;
+
+    /**
+     * Specifies the configuration parameters for second level cache.
+     */
+    CacheProperties secondLevelCache;
+
+    /**
+     * Specifies the configuration parameter for SQL logging configuration.
+     */
+    LoggingProperties sqlLogging;
 }
