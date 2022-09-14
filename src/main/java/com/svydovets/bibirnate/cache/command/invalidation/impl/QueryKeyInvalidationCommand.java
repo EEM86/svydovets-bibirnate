@@ -13,11 +13,14 @@ import com.svydovets.bibirnate.cache.key.Key;
 import com.svydovets.bibirnate.cache.key.parameters.EntityKeyParam;
 import com.svydovets.bibirnate.cache.key.parameters.QueryKeyParam;
 
+import lombok.extern.slf4j.Slf4j;
+
 
 /**
  * This is the realization of the {@link InvalidationCommand} that makes invalidation for caches related to passed
  * {@link Key}.
  */
+@Slf4j
 public class QueryKeyInvalidationCommand implements InvalidationCommand {
 
     /**
@@ -25,7 +28,7 @@ public class QueryKeyInvalidationCommand implements InvalidationCommand {
      */
     @Override
     public void executeInvalidate(Map<Key<?>, Object> cacheMap, Key<?> key) {
-        // todo: add logger with info that invalidation caches process is started
+        log.trace("Cache invalidation started for QueryCache");
         checkPassedParametersOnNull(cacheMap, key);
 
         QueryKeyParam<?> queryKeyParam =

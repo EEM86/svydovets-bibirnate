@@ -3,6 +3,8 @@ package com.svydovets.bibirnate.session;
 import java.io.Closeable;
 
 import com.svydovets.bibirnate.annotation.Entity;
+import com.svydovets.bibirnate.session.query.Query;
+import com.svydovets.bibirnate.session.query.TypedQuery;
 import com.svydovets.bibirnate.session.transaction.TransactionManager;
 
 /**
@@ -29,4 +31,15 @@ public interface Session extends Closeable {
     boolean isClosed();
 
     TransactionManager getTransactionManager();
+
+    /**
+     * Creates instance {@link TypedQuery}.
+     *
+     * @param sql query
+     * @param entityType class of entity
+     * @return instance of {@link Query}
+     * @param <T> entityType
+     */
+    <T> Query createTypedQuery(String sql, Class<T> entityType);
+
 }

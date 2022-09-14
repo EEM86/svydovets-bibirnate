@@ -1,8 +1,10 @@
 package com.svydovets.bibirnate.session.query;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class ToOneRelation extends EntityRelation {
 
     private Object relatedEntity;

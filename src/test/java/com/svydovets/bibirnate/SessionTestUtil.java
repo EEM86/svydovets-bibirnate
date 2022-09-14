@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 @UtilityClass
 public class SessionTestUtil {
 
-  private static final String DEFAULT_URL = "jdbc:postgresql://localhost:9993/postgres";
+  private static final String DEFAULT_URL = "jdbc:postgresql://localhost:5432/postgres";
 
   public static void mockConnectionMetadata(Connection connection) throws SQLException {
     mockConnectionMetadata(connection, DEFAULT_URL);
