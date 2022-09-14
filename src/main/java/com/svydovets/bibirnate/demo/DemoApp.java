@@ -31,10 +31,10 @@ public class DemoApp {
     private static SessionFactory getSessionFactory() {
         return PersistenceContextProvider.createSessionFactory(new DefaultSessionFactoryBuilderImpl()
           .withDatabaseConnection(DatabaseProperties.builder()
-            .url("url")
-            .user("user")
-            .password("pass")
-            .driverName("org.h2.Driver")
+            .url("jdbc:postgresql://localhost:5432/bibernate")
+            .user("maingroon")
+            .password("password")
+            .driverName("org.postgresql.Driver")
             .build()));
     }
 
