@@ -1,11 +1,11 @@
 package com.svydovets.bibirnate.session;
 
 import java.io.Closeable;
-import java.util.Collection;
 
 import com.svydovets.bibirnate.annotation.Entity;
 import com.svydovets.bibirnate.session.query.Query;
 import com.svydovets.bibirnate.session.query.TypedQuery;
+import com.svydovets.bibirnate.session.transaction.TransactionManager;
 
 /**
  * This is main interface to work with Bibirnate. It allows to read operations for mapped classes.
@@ -29,6 +29,8 @@ public interface Session extends Closeable {
      * @return is the session closed
      */
     boolean isClosed();
+
+    TransactionManager getTransactionManager();
 
     /**
      * Creates instance {@link TypedQuery}.

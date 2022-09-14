@@ -1,4 +1,4 @@
-package com.svydovets.bibirnate.configuration;
+package com.svydovets.bibirnate.configuration.properties;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,8 +21,8 @@ public class ConnectionPoolProperties {
     static final boolean DEFAULT_IS_AUTO_COMMIT = true;
     static final boolean DEFAULT_IS_READ_ONLY = false;
     static final boolean DEFAULT_ISOLATE_INTERNAL_QUERIES = false;
-    static final int DEFAULT_MIN_IDLE = -1;
-    static final int DEFAULT_MAX_POOL_SIZE = -1;
+    static final int DEFAULT_MIN_IDLE = 5;
+    static final int DEFAULT_MAX_POOL_SIZE = 10;
     static final long DEFAULT_MAX_LIFETIME = 1800000;
     static final long DEFAULT_CONNECTION_TIMEOUT = 30000;
     static final long DEFAULT_VALIDATION_TIMEOUT = 5000;

@@ -1,6 +1,7 @@
 package com.svydovets.bibirnate.session.impl;
 
 import static com.svydovets.bibirnate.SessionTestUtil.mockConnectionMetadata;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,6 +32,7 @@ import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
 import com.svydovets.bibirnate.jdbc.JdbcEntityDaoFactory;
 import com.svydovets.bibirnate.jdbc.impl.BaseJdbcEntityDao;
 import com.svydovets.bibirnate.session.Session;
+import com.svydovets.bibirnate.session.transaction.TransactionManagerImpl;
 
 import lombok.SneakyThrows;
 
@@ -118,4 +120,16 @@ class SessionImplTest {
         );
     }
 
+    @Test
+    void getTransaction_shouldGetTransactionManagerImpl() {
+        try (var factory = mockStatic(JdbcEntityDaoFactory.class)) {
+            var jdbcEntityDao = mock(JdbcEntityDao.class);
+            factory.when(() -> JdbcEntityDaoFactory.createJdbcEntityDao(any())).thenReturn(jdbcEntityDao);
+            var session = new SessionImpl(any(), new CacheContainer(new Cache(40_000), false));
+            var transactionManager = session.getTransactionManager();
+
+            assertNotNull(transactionManager);
+            assertEquals(TransactionManagerImpl.class, transactionManager.getClass());
+        }
+    }
 }

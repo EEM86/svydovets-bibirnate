@@ -17,6 +17,8 @@ import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
 import com.svydovets.bibirnate.session.Session;
 import com.svydovets.bibirnate.session.query.Query;
 import com.svydovets.bibirnate.session.query.TypedQuery;
+import com.svydovets.bibirnate.session.transaction.TransactionManager;
+import com.svydovets.bibirnate.session.transaction.TransactionManagerImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,12 +27,14 @@ public class SessionImpl implements Session {
     private final JdbcEntityDao jdbcEntityDao;
     private final CacheContainer cacheContainer;
     private final Connection connection;
+    private final TransactionManager transactionManager;
     private boolean closed;
 
     public SessionImpl(Connection connection, CacheContainer cacheContainer) {
         this.jdbcEntityDao = createJdbcEntityDao(connection);
         this.cacheContainer = cacheContainer;
         this.connection = connection;
+        this.transactionManager = new TransactionManagerImpl(connection);
     }
 
     @Override
@@ -77,6 +81,11 @@ public class SessionImpl implements Session {
     @Override
     public boolean isClosed() {
         return closed;
+    }
+
+    @Override
+    public TransactionManager getTransactionManager() {
+        return transactionManager;
     }
 
     @Override

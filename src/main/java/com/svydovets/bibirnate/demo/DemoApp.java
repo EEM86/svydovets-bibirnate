@@ -1,16 +1,14 @@
 package com.svydovets.bibirnate.demo;
 
 import java.util.Optional;
-import javax.sql.DataSource;
 
-import com.svydovets.bibirnate.configuration.YamlConfigurationPropertiesReaderImpl;
+import com.svydovets.bibirnate.configuration.context.PersistenceContextProvider;
+import com.svydovets.bibirnate.configuration.properties.DatabaseProperties;
 import com.svydovets.bibirnate.demo.entity.Person;
 import com.svydovets.bibirnate.session.Session;
 import com.svydovets.bibirnate.session.SessionFactory;
-import com.svydovets.bibirnate.session.impl.SessionFactoryImpl;
+import com.svydovets.bibirnate.session.impl.builder.DefaultSessionFactoryBuilderImpl;
 import com.svydovets.bibirnate.session.query.Query;
-import com.svydovets.bibirnate.utils.HikariConfigUtils;
-import com.zaxxer.hikari.HikariDataSource;
 
 import lombok.SneakyThrows;
 
@@ -20,7 +18,8 @@ public class DemoApp {
     public static void main(String[] args) {
         initDB();
 
-        SessionFactory sessionFactory = new SessionFactoryImpl(initializeDataSource("persistence-example.yaml"));
+        SessionFactory sessionFactory = getSessionFactory();
+
         try (Session session = sessionFactory.openSession()) {
             Query typedQuery = session.createTypedQuery("select * from persons where first_name like ?", Person.class);
             typedQuery.addParameter("V%");
@@ -49,13 +48,14 @@ public class DemoApp {
         }
     }
 
-    @SneakyThrows
-    private static DataSource initializeDataSource(String properties) {
-        var configurationProperties = new YamlConfigurationPropertiesReaderImpl()
-          .readProperties(properties);
-        var hikariConfig = HikariConfigUtils.createHikariConfig(configurationProperties);
-
-        return new HikariDataSource(hikariConfig);
+    private static SessionFactory getSessionFactory() {
+        return PersistenceContextProvider.createSessionFactory(new DefaultSessionFactoryBuilderImpl()
+          .withDatabaseConnection(DatabaseProperties.builder()
+            .url("jdbc:postgresql://localhost:5432/bibernate")
+            .user("maingroon")
+            .password("password")
+            .driverName("org.postgresql.Driver")
+            .build()));
     }
 
     private static void initDB() {

@@ -19,10 +19,14 @@ public class SessionFactoryImpl implements SessionFactory {
     private static final int DEFAULT_SECOND_CACHE_SIZE = 200_000;
     private final DataSource dataSource;
     private Cache secondLevelCache;
-    private boolean secondLevelCacheEnabled;
+    private final boolean secondLevelCacheEnabled;
+
+    private final int secondLevelCacheSize;
+    private final boolean sqlLoggingEnabled;
     private boolean secondLevelCacheGenerated;
-    private int secondLevelCacheSize;
     private CacheContainer cacheContainer;
+
+
 
     @Override
     public Session openSession() {
