@@ -17,9 +17,9 @@ public class PersistenceContextProvider {
     /**
      * This method creates SessionFactory from provided SessionFactoryBuilder.
      * {@param  SessionFactoryBuilder}   - builder interface for building SessionFactory. Has two implementations:
-     * DefaultSessionFactoryBuilderImpl {@link new DefaultSessionFactoryBuilderImpl}- configuration provided through Java
-     * classes; YamlConfigurationSessionFactoryBuilderImpl {@link new YamlConfigurationSessionFactoryBuilderImpl} -
-     * configuration provided through YAML properties file
+     * DefaultSessionFactoryBuilderImpl {@link new DefaultSessionFactoryBuilderImpl}- configuration provided
+     * through Java; YamlConfigurationSessionFactoryBuilderImpl {@link new YamlConfigurationSessionFactoryBuilderImpl}
+     * - configuration provided through YAML properties file
      *
      * @return SessionFactory - create and return an implementation of SessionFactory
      */
