@@ -1,6 +1,6 @@
 package com.svydovets.bibirnate.session.impl;
 
-import static com.svydovets.bibirnate.session.impl.JdbcEntityDaoFactory.createJdbcEntityDao;
+import static com.svydovets.bibirnate.jdbc.JdbcEntityDaoFactory.createJdbcEntityDao;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -9,10 +9,14 @@ import java.util.Optional;
 import com.svydovets.bibirnate.cache.CacheContainer;
 import com.svydovets.bibirnate.cache.CacheUtils;
 import com.svydovets.bibirnate.exceptions.JdbcException;
+import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
 import com.svydovets.bibirnate.session.Session;
 import com.svydovets.bibirnate.session.transaction.TransactionManager;
 import com.svydovets.bibirnate.session.transaction.TransactionManagerImpl;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class SessionImpl implements Session {
     private final JdbcEntityDao jdbcEntityDao;
     private final CacheContainer cacheContainer;
@@ -29,12 +33,17 @@ public class SessionImpl implements Session {
 
     @Override
     public <T> T findById(Object id, Class<T> type) {
+        log.trace("Finding {} by id {}", type.getSimpleName(), id);
+
         checkIfSessionClosed();
         Optional<T> result = CacheUtils.extract(cacheContainer, type, id);
 
         if (result.isEmpty()) {
+            log.trace("Entity was not found in cache, making request to DB");
             result = jdbcEntityDao.findById(id, type);
             CacheUtils.put(cacheContainer, type, id, result);
+        } else {
+            log.trace("Entity was found in cache");
         }
 
         return result.orElse(null);
@@ -42,6 +51,7 @@ public class SessionImpl implements Session {
 
     @Override
     public void remove(Object entity) {
+        log.trace("Removing {} by id", entity.getClass().getSimpleName());
         checkIfSessionClosed();
         jdbcEntityDao.remove(entity);
         CacheUtils.invalidate(cacheContainer, entity);
@@ -49,14 +59,17 @@ public class SessionImpl implements Session {
 
     @Override
     public void close() {
+        log.trace("Closing session");
         if (!closed) {
             try {
                 connection.close();
                 closed = true;
             } catch (SQLException ex) {
+                log.trace("Cannot close session.");
                 throw new JdbcException("Cannot close session. The purpose is " + ex.getMessage(), ex);
             }
         }
+        log.trace("Session closed successfully");
     }
 
     @Override
