@@ -30,7 +30,7 @@ public class TypedQueryTest {
     @BeforeAll
     static void beforeAll() throws SQLException {
         connection = mock(Connection.class);
-        jdbcEntityDao = new BaseJdbcEntityDao(connection);
+        jdbcEntityDao = mock(JdbcEntityDao.class);
         cacheContainer = mock(CacheContainer.class);
         mockConnectionMetadata(connection);
         queryString = "select * from table";

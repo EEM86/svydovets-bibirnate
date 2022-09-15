@@ -1,19 +1,5 @@
 package com.svydovets.bibirnate.jdbc.impl;
 
-import com.svydovets.bibirnate.entities.EntityPrimitives;
-import com.svydovets.bibirnate.entities.PersonSimpleEntity;
-import com.svydovets.bibirnate.logs.SqlLogger;
-import com.svydovets.bibirnate.mapper.EntityMapperService;
-import lombok.SneakyThrows;
-import org.junit.jupiter.api.Test;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.Optional;
-import javax.sql.DataSource;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
@@ -33,6 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import com.svydovets.bibirnate.entities.EntityPrimitives;
 import com.svydovets.bibirnate.entities.PersonSimpleEntity;
+import com.svydovets.bibirnate.logs.SqlLogger;
 import com.svydovets.bibirnate.mapper.EntityMapperService;
 
 import lombok.SneakyThrows;
