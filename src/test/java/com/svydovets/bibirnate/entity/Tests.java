@@ -1,4 +1,4 @@
-package com.svydovets.bibirnate.demo.entity;
+package com.svydovets.bibirnate.entity;
 
 import java.time.LocalDateTime;
 
@@ -9,23 +9,16 @@ import com.svydovets.bibirnate.annotation.Id;
 import com.svydovets.bibirnate.annotation.Table;
 
 import lombok.Data;
-import lombok.ToString;
 
-@Data
 @Entity
-@ToString
-@Table(name = "persons")
+@Table(name = "tests")
+@Data
 @Cacheable
-public class Person {
-    @Id
-    private Long id;
+public class Tests {
 
-    @Column(name = "first_name")
-    private String firstName;
-    @Column(name = "last_name")
-    private String lastName;
-    private String email;
-    private int age;
+    @Id
+    private Integer id;
+    private String description;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 }

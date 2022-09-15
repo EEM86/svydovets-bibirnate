@@ -13,13 +13,13 @@ public class SqlGenerator {
         return firstNames.get(rand.nextInt(firstNames.size()));
     }
 
-    public static String getRandomLastName() {
+    public static String getRandomEmailEnd() {
         var endsEmail = getEndsOfEmail();
         var rand = new Random();
         return endsEmail.get(rand.nextInt(endsEmail.size()));
     }
 
-    public static String getRandomEmailEnd() {
+    public static String getRandomLastName() {
         var lastNames = getLastNames();
         var rand = new Random();
         return lastNames.get(rand.nextInt(lastNames.size()));
@@ -59,7 +59,7 @@ public class SqlGenerator {
         List<String> result = new ArrayList<>();
 
         for (int i = 0; i < amount; i++) {
-            var randomInt = getRandomNumberUsingInts(2, 9000);
+            var randomInt = getRandomNumberUsingInts(1, 5000);
             result.add(
               String.format("insert into notes (body, person_id) values ('%s', %s);", "note " + randomInt , randomInt));
         }

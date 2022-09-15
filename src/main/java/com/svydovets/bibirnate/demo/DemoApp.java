@@ -30,20 +30,24 @@ public class DemoApp {
             }
 
             TransactionManager transactionManager = session.getTransactionManager();
-            transactionManager.begin();
+            try {
+                transactionManager.begin();
 
-            SqlGenerator.generateInsertQueriesToNotes(100).forEach(noteQuery -> {
-                Query typedQuery = session.createTypedQuery(noteQuery, Note.class);
-                typedQuery.execute();
-            });
+                SqlGenerator.generateInsertQueriesToNotes(1).forEach(noteQuery -> {
+                    Query typedQuery = session.createTypedQuery(noteQuery, Note.class);
+                    typedQuery.execute();
+                });
 
-            transactionManager.rollback();
+                transactionManager.commit();
+            } catch (Exception ex) {
+                transactionManager.rollback();
+            }
 
             Query typedQuery = session.createTypedQuery("select * from persons where first_name like ?", Person.class);
             typedQuery.addParameter("P%");
             Person firstResult = (Person) typedQuery.getFirstResult();
             System.out.println(firstResult.toString());
-            //cached
+            //will be extracted from cache
             firstResult = (Person) typedQuery.getFirstResult();
             System.out.println(firstResult.toString());
 
@@ -52,27 +56,22 @@ public class DemoApp {
             //will be extracted from cache
             System.out.println(typedQuery.getResultList().size());
 
-            Person person = session.findById(10, Person.class);
+            Person person = session.findById(2, Person.class);
             Optional.ofNullable(person)
               .ifPresentOrElse(System.out::println,
                 () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
-            //will be extracted from cache
-            person = session.findById(2, Person.class);
+            //session.remove(person);
+
             Optional.ofNullable(person)
               .ifPresentOrElse(System.out::println,
                 () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
 
-            Note note = session.findById(7, Note.class);
+            Note note = session.findById(2, Note.class);
 
             Optional.ofNullable(note)
               .ifPresentOrElse(System.out::println,
                 () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
 
-            session.remove(person);
-
-            Optional.ofNullable(person)
-              .ifPresentOrElse(System.out::println,
-                () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
         }
     }
 
