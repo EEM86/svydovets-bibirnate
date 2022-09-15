@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import com.svydovets.bibirnate.logs.SqlLogger;
+
 class QueryProcessorTest {
 
     static QueryProcessor processor;
@@ -16,7 +18,7 @@ class QueryProcessorTest {
     @BeforeAll
     static void init() {
         var connection = mock(Connection.class);
-        processor = new DeleteQueryProcessor(PERSON, connection);
+        processor = new DeleteQueryProcessor(PERSON, connection, new SqlLogger(false));
     }
 
     @Test

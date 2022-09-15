@@ -27,8 +27,8 @@ public class DefaultSessionFactoryBuilderImpl extends AbstractSessionFactoryBuil
         return this;
     }
 
-    public DefaultSessionFactoryBuilderImpl withSecondLevelCache(CacheProperties cacheProperties1) {
-        this.cacheProperties = cacheProperties1;
+    public DefaultSessionFactoryBuilderImpl withSecondLevelCache(CacheProperties cacheProperties) {
+        this.cacheProperties = cacheProperties;
         return this;
     }
 

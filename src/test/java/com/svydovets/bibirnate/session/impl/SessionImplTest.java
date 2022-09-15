@@ -31,6 +31,7 @@ import com.svydovets.bibirnate.exceptions.JdbcException;
 import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
 import com.svydovets.bibirnate.jdbc.JdbcEntityDaoFactory;
 import com.svydovets.bibirnate.jdbc.impl.BaseJdbcEntityDao;
+import com.svydovets.bibirnate.logs.SqlLogger;
 import com.svydovets.bibirnate.session.Session;
 import com.svydovets.bibirnate.session.transaction.TransactionManagerImpl;
 
@@ -45,7 +46,7 @@ class SessionImplTest {
         Connection connection = mock(Connection.class);
         CacheContainer cacheContainer = mock(CacheContainer.class);
         mockConnectionMetadata(connection);
-        session = new SessionImpl(connection, cacheContainer);
+        session = new SessionImpl(connection, cacheContainer, new SqlLogger(false));
     }
 
     @Test
@@ -53,8 +54,8 @@ class SessionImplTest {
     void session_shouldCallJdbcEntryDaoFind() {
         try (var factory = mockStatic(JdbcEntityDaoFactory.class)) {
             var jdbcEntityDao = mock(BaseJdbcEntityDao.class);
-            factory.when(() -> JdbcEntityDaoFactory.createJdbcEntityDao(any())).thenReturn(jdbcEntityDao);
-            var session = new SessionImpl(any(), new CacheContainer(new Cache(40_000), false));
+            factory.when(() -> JdbcEntityDaoFactory.createJdbcEntityDao(any(), any())).thenReturn(jdbcEntityDao);
+            var session = new SessionImpl(any(), new CacheContainer(new Cache(40_000), false), any());
             session.findById(12L, EntityPrimitives.class);
             verify(jdbcEntityDao).findById(12L, EntityPrimitives.class);
         }
@@ -66,7 +67,7 @@ class SessionImplTest {
         Connection connection = mock(Connection.class);
         CacheContainer cacheContainer = mock(CacheContainer.class);
         mockConnectionMetadata(connection);
-        Session session = new SessionImpl(connection, cacheContainer);
+        Session session = new SessionImpl(connection, cacheContainer, new SqlLogger(false));
         session.close();
         Assertions.assertThrows(JdbcException.class, () -> session.findById(12L, EntityPrimitives.class));
     }
@@ -79,7 +80,7 @@ class SessionImplTest {
 
         mockConnectionMetadata(connection);
 
-        var session = new SessionImpl(connection, cacheContainer);
+        var session = new SessionImpl(connection, cacheContainer, new SqlLogger(false));
         session.close();
 
         assertTrue(session.isClosed());
@@ -89,8 +90,9 @@ class SessionImplTest {
     void remove() {
         try (var factory = mockStatic(JdbcEntityDaoFactory.class)) {
             var jdbcEntityDao = mock(JdbcEntityDao.class);
-            factory.when(() -> JdbcEntityDaoFactory.createJdbcEntityDao(any())).thenReturn(jdbcEntityDao);
-            var session = new SessionImpl(any(), new CacheContainer(new Cache(40_000), false));
+            factory.when(() -> JdbcEntityDaoFactory.createJdbcEntityDao(any(), any())).thenReturn(jdbcEntityDao);
+            var session = new SessionImpl(any(), new CacheContainer(new Cache(40_000), false),
+              any());
             session.remove(new PersonSimpleEntity());
             verify(jdbcEntityDao).remove(any(PersonSimpleEntity.class));
         }
@@ -124,8 +126,9 @@ class SessionImplTest {
     void getTransaction_shouldGetTransactionManagerImpl() {
         try (var factory = mockStatic(JdbcEntityDaoFactory.class)) {
             var jdbcEntityDao = mock(JdbcEntityDao.class);
-            factory.when(() -> JdbcEntityDaoFactory.createJdbcEntityDao(any())).thenReturn(jdbcEntityDao);
-            var session = new SessionImpl(any(), new CacheContainer(new Cache(40_000), false));
+            factory.when(() -> JdbcEntityDaoFactory.createJdbcEntityDao(any(), any())).thenReturn(jdbcEntityDao);
+            var session = new SessionImpl(any(), new CacheContainer(new Cache(40_000), false),
+              any());
             var transactionManager = session.getTransactionManager();
 
             assertNotNull(transactionManager);

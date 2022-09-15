@@ -14,6 +14,7 @@ import com.svydovets.bibirnate.cache.CacheUtils;
 import com.svydovets.bibirnate.exceptions.BibernateException;
 import com.svydovets.bibirnate.exceptions.JdbcException;
 import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
+import com.svydovets.bibirnate.logs.SqlLogger;
 import com.svydovets.bibirnate.session.Session;
 import com.svydovets.bibirnate.session.query.Query;
 import com.svydovets.bibirnate.session.query.TypedQuery;
@@ -28,13 +29,15 @@ public class SessionImpl implements Session {
     private final CacheContainer cacheContainer;
     private final Connection connection;
     private final TransactionManager transactionManager;
+    private final SqlLogger sqlLogger;
     private boolean closed;
 
-    public SessionImpl(Connection connection, CacheContainer cacheContainer) {
-        this.jdbcEntityDao = createJdbcEntityDao(connection);
+    public SessionImpl(Connection connection, CacheContainer cacheContainer, SqlLogger sqlLogger) {
+        this.jdbcEntityDao = createJdbcEntityDao(connection, sqlLogger);
         this.cacheContainer = cacheContainer;
         this.connection = connection;
         this.transactionManager = new TransactionManagerImpl(connection);
+        this.sqlLogger = sqlLogger;
     }
 
     @Override

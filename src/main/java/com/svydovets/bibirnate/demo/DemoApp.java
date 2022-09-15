@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.svydovets.bibirnate.configuration.context.PersistenceContextProvider;
 import com.svydovets.bibirnate.configuration.properties.DatabaseProperties;
+import com.svydovets.bibirnate.configuration.properties.LoggingProperties;
 import com.svydovets.bibirnate.demo.entity.Note;
 import com.svydovets.bibirnate.demo.entity.Person;
 import com.svydovets.bibirnate.session.Session;
@@ -17,8 +18,6 @@ public class DemoApp {
 
     @SneakyThrows
     public static void main(String[] args) {
-        initDB();
-
         SessionFactory sessionFactory = getSessionFactory();
 
         try (Session session = sessionFactory.openSession()) {
@@ -41,7 +40,8 @@ public class DemoApp {
             System.out.println(typedQuery.getResultList());
             System.out.println(typedQuery.getResultSet());
 
-            Person person = session.findById(2, Person.class);
+            Person person = session.findById(4, Person.class);
+            session.remove(person);
 
             Optional.ofNullable(person)
               .ifPresentOrElse(System.out::println,
@@ -56,16 +56,20 @@ public class DemoApp {
     }
 
     private static SessionFactory getSessionFactory() {
-        return PersistenceContextProvider.createSessionFactory(new DefaultSessionFactoryBuilderImpl()
-          .withDatabaseConnection(DatabaseProperties.builder()
-            .url("jdbc:postgresql://localhost:5432/bibernate")
-            .user("maingroon")
-            .password("password")
-            .driverName("org.postgresql.Driver")
-            .build()));
-    }
+        var sqlLoggingProperties = new LoggingProperties();
+        sqlLoggingProperties.setEnabled(true);
 
-    private static void initDB() {
-        //todo: init db
+        var dbProperties = DatabaseProperties.builder()
+          .url("jdbc:postgresql://localhost:5432/postgres")
+          .user("postgres")
+          .password("")
+          .driverName("org.postgresql.Driver")
+          .build();
+
+        var sessionFactoryBuilder = new DefaultSessionFactoryBuilderImpl()
+          .withSqlQueriesLoggingEnabled(sqlLoggingProperties)
+          .withDatabaseConnection(dbProperties);
+
+        return PersistenceContextProvider.createSessionFactory(sessionFactoryBuilder);
     }
 }
