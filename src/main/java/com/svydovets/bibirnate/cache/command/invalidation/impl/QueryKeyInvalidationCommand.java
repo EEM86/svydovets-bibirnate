@@ -23,6 +23,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class QueryKeyInvalidationCommand implements InvalidationCommand {
 
+    public QueryKeyInvalidationCommand() {
+        log.trace("New QueryKeyInvalidationCommand object is created.");
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -31,23 +35,23 @@ public class QueryKeyInvalidationCommand implements InvalidationCommand {
         log.trace("Cache invalidation started for QueryCache");
         checkPassedParametersOnNull(cacheMap, key);
 
-        QueryKeyParam<?> queryKeyParam =
-          (QueryKeyParam<?>) checkOnIsAssignableTo(key.getKeyParam(), QueryKeyParam.class);
-
-        Class<?> entityType = queryKeyParam.getEntityType();
+        var queryKeyParam = (QueryKeyParam<?>) checkOnIsAssignableTo(key.getKeyParam(), QueryKeyParam.class);
+        var entityType = queryKeyParam.getEntityType();
 
         removeAllCacheWithQueryKeyRelated(cacheMap, entityType);
         removeAllCacheWithEntityKeyRelatedToEntityType(cacheMap, entityType);
     }
 
     private void removeAllCacheWithEntityKeyRelatedToEntityType(Map<Key<?>, Object> cacheMap, Class<?> entityType) {
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        log.trace("Starting invalidation for QueryCache in new thread...");
+        var executorService = Executors.newSingleThreadExecutor();
         cacheMap.keySet().stream()
           .filter(k -> k.getKeyParam().getClass().isAssignableFrom(EntityKeyParam.class))
           .filter(k -> k.getKeyParam().getEntityType().isAssignableFrom(entityType))
           .forEach(cacheMap::remove);
 
         executorService.shutdown();
+        log.trace("Invalidation for QueryCache in new thread is started");
     }
 
 }

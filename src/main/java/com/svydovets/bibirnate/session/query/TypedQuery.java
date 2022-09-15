@@ -19,12 +19,15 @@ import com.svydovets.bibirnate.exceptions.NoResultException;
 import com.svydovets.bibirnate.exceptions.NoUniqueResultException;
 import com.svydovets.bibirnate.mapper.EntityMapperService;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * This class is the service that provides an opportunity to work with native SQL queries for specified entity type.
  * Pay attention that syntax for queries the same as for JDBC {@link PreparedStatement}, like:
  * "SELECT * FROM TABLE_NAME WHERE TABLE_COlUMN_1 = ?" or
  * "SELECT * FROM TABLE_NAME WHERE TABLE_COlUMN_1 LIKE ?"
  */
+@Slf4j
 public class TypedQuery implements Query {
 
     private final Connection connection;
@@ -39,42 +42,70 @@ public class TypedQuery implements Query {
         this.entityType = entityType;
         this.cacheContainer = cacheContainer;
         this.parameters = new ArrayList<>();
+        log.trace("New TypedQuery fro SQL [{}] is created", query);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getSingleResult() {
+        log.trace("getSingleResult, start extraction single result by query [{}]", query);
         List<Object> queryResult = getQueryResult();
 
         if (queryResult.isEmpty()) {
+            log.error("getSingleResult, no result found by the query [{}]", query);
             throw new NoResultException(String.format("No result found by the query [%s].", this.query));
         } else if (queryResult.size() > 1) {
+            log.error("getSingleResult, no unique result found by the query [{}]", query);
             throw new NoUniqueResultException(String.format("Not unique result by the query [%s].", this.query));
         }
 
+        log.trace("getSingleResult, extraction single result by query [{}] is finished with state [{}]", query,
+          queryResult.get(0));
         return queryResult.get(0);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getFirstResult() {
+        log.trace("getFirstResult, start extraction first result by query [{}]", query);
         List<Object> queryResult = getQueryResult();
         if (queryResult.isEmpty()) {
             throw new NoResultException(String.format("No result found by the query [%s].", this.query));
         }
+
+        log.trace("getFirstResult, extraction first result by query [{}] is finished with state [{}]", query,
+          queryResult.get(0));
         return queryResult.get(0);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T> List<T> getResultList() {
+        log.trace("getResultList, extraction result list by query [{}]", query);
         return getQueryResult();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T> Set<T> getResultSet() {
+        log.trace("getResultSet, extraction result set by query [{}]", query);
         return new HashSet<>(getResultList());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void execute() {
+        log.trace("execute, start execution query [{}]", query);
         try (var statement = connection.prepareStatement(query)) {
             initializePreparedStatement(statement);
             String extractedQuery = extractQuery(statement);
@@ -86,16 +117,22 @@ public class TypedQuery implements Query {
                   .ifPresent(key -> CacheUtils.invalidate(cacheContainer, key));
             }
         } catch (SQLException ex) {
+            log.trace("execute, cannot execute query [{}]. Failed with message [{}]", query, ex.getMessage());
             throw generateBibernateException(ex);
         }
+        log.trace("execute, execution query [{}] is finished successfully", query);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addParameter(Object parameter) {
         parameters.add(parameter);
     }
 
     private <T> List<T> getQueryResult() {
+        log.trace("getQueryResult, start extraction by the query [{}]", query);
         List<T> result = new ArrayList<>();
         try (var statement = connection.prepareStatement(query)) {
             initializePreparedStatement(statement);
@@ -113,8 +150,11 @@ public class TypedQuery implements Query {
                 result = (List<T>) fromCache.get();
             }
 
+            log.trace("getQueryResult, extraction by the query [{}] is finished successfully.", query);
             return result;
         } catch (SQLException ex) {
+            log.error("getQueryResult, cannot extract values by the query [{}]. Failed with message [{}]", query,
+              ex.getMessage());
             throw generateBibernateException(ex);
         }
     }

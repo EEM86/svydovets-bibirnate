@@ -3,10 +3,13 @@ package com.svydovets.bibirnate.cache.key.parameters;
 import java.util.Collection;
 import java.util.Objects;
 
+import lombok.ToString;
+
 /**
  * This class is extension for the {@link AbstractKeyParam} that builds on the entity class type, query (original query
  * to the DB), and collection class type of result.
  */
+@ToString
 public class QueryKeyParam<T> extends AbstractKeyParam<T> {
 
     private final String query;

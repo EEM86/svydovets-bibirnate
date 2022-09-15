@@ -9,4 +9,9 @@
     <root level="TRACE">
         <appender-ref ref="STDOUT" />
     </root>
+
+<!--    DISABLED INTENTIONALLY FOR TESTS-->
+    <logger name="com.svydovets.bibirnate.cache.key.factory.KeyParamFactory" level="OFF"/>
+    <logger name="com.svydovets.bibirnate.cache.Cache" level="OFF"/>
+    <logger name="com.svydovets.bibirnate.cache.CacheUtils" level="OFF"/>
 </configuration>

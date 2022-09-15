@@ -11,12 +11,16 @@ import com.svydovets.bibirnate.cache.key.Key;
 import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
 import com.svydovets.bibirnate.cache.key.parameters.EntityKeyParam;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * This is the realization of the {@link KeyExtractorCommand} that extracts {@link Key} by {@link EntityKeyParam}.
  */
+@Slf4j
 public class EntityKeyExtractorCommand implements KeyExtractorCommand {
 
     public EntityKeyExtractorCommand() {
+        log.trace("New EntityKeyExtractorCommand object is created.");
     }
 
     /**
@@ -24,16 +28,20 @@ public class EntityKeyExtractorCommand implements KeyExtractorCommand {
      */
     @Override
     public Optional<Key<?>> executeExtract(Map<Key<?>, Object> cacheMap, AbstractKeyParam<?> keyParam) {
+        log.trace("Start searching EntityKey in cacheMap...");
         checkPassedParametersOnNull(cacheMap, keyParam);
 
-        EntityKeyParam<?> entityKeyParam = (EntityKeyParam<?>) checkOnIsAssignableTo(keyParam, EntityKeyParam.class);
+        var entityKeyParam = (EntityKeyParam<?>) checkOnIsAssignableTo(keyParam, EntityKeyParam.class);
 
-        return cacheMap.keySet().stream()
+        var resultKey = cacheMap.keySet().stream()
           .filter(key -> key.getKeyParam().getClass().isAssignableFrom(EntityKeyParam.class))
           .filter(key -> ((EntityKeyParam<?>) key.getKeyParam()).getEntityType().equals(entityKeyParam.getEntityType()))
           .filter(key -> ((EntityKeyParam<?>) key.getKeyParam()).getId().equals(entityKeyParam.getId()))
           .peek(Key::update)
           .findAny();
+
+        log.trace("Searching EntityKey in cacheMap is finished.");
+        return resultKey;
     }
 
 }

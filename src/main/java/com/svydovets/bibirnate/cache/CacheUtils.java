@@ -1,5 +1,9 @@
 package com.svydovets.bibirnate.cache;
 
+import static com.svydovets.bibirnate.cache.constant.CacheConstant.INVALIDATE_FIRST_CACHE_FINISH_MESSAGE;
+import static com.svydovets.bibirnate.cache.constant.CacheConstant.INVALIDATE_FIRST_CACHE_START_MESSAGE;
+import static com.svydovets.bibirnate.cache.constant.CacheConstant.INVALIDATE_SECOND_CACHE_FINISH_MESSAGE;
+import static com.svydovets.bibirnate.cache.constant.CacheConstant.INVALIDATE_SECOND_CACHE_START_MESSAGE;
 import static com.svydovets.bibirnate.cache.key.factory.KeyParamFactory.generateKeyParam;
 
 import java.lang.reflect.Field;
@@ -20,9 +24,12 @@ import com.svydovets.bibirnate.cache.key.Key;
 import com.svydovets.bibirnate.cache.key.parameters.AbstractKeyParam;
 import com.svydovets.bibirnate.cache.key.parameters.QueryKeyParam;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Provides utils methods for working with double level caches.
  */
+@Slf4j
 public final class CacheUtils {
 
     private CacheUtils() {
@@ -126,9 +133,13 @@ public final class CacheUtils {
      */
     public static void invalidate(CacheContainer cacheContainer, Object entity) {
         Cache firstLevelCache = cacheContainer.getFirstLevelCache();
+        log.trace(INVALIDATE_FIRST_CACHE_START_MESSAGE);
         invalidate(entity, firstLevelCache);
+        log.trace(INVALIDATE_FIRST_CACHE_FINISH_MESSAGE);
         if (isSecondCacheEnabledAndUsesForEntity(cacheContainer, entity.getClass())) {
+            log.trace(INVALIDATE_SECOND_CACHE_START_MESSAGE);
             invalidate(entity, cacheContainer.getSecondLevelCache());
+            log.trace(INVALIDATE_SECOND_CACHE_FINISH_MESSAGE);
         }
     }
 
@@ -140,9 +151,13 @@ public final class CacheUtils {
      */
     public static void invalidate(CacheContainer cacheContainer, Key<?> key) {
         Cache firstLevelCache = cacheContainer.getFirstLevelCache();
+        log.trace(INVALIDATE_FIRST_CACHE_START_MESSAGE);
         invalidate(firstLevelCache, key);
+        log.trace(INVALIDATE_FIRST_CACHE_FINISH_MESSAGE);
         if (isSecondCacheEnabledAndUsesForEntity(cacheContainer, key.getKeyParam().getEntityType())) {
+            log.trace(INVALIDATE_SECOND_CACHE_START_MESSAGE);
             invalidate(cacheContainer.getSecondLevelCache(), key);
+            log.trace(INVALIDATE_SECOND_CACHE_FINISH_MESSAGE);
         }
     }
 

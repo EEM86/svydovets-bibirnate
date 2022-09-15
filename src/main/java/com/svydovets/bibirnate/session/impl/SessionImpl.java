@@ -50,7 +50,7 @@ public class SessionImpl implements Session {
         if (result.isEmpty()) {
             log.trace("Entity was not found in cache, making request to DB");
             result = jdbcEntityDao.findById(id, type);
-            CacheUtils.put(cacheContainer, type, id, result);
+            result.ifPresent(entity -> CacheUtils.put(cacheContainer, type, id, entity));
         } else {
             log.trace("Entity was found in cache");
         }

@@ -21,6 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EntityKeyInvalidationCommand implements InvalidationCommand {
 
+    public EntityKeyInvalidationCommand() {
+        log.trace("New EntityKeyInvalidationCommand object is created.");
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -29,9 +33,8 @@ public class EntityKeyInvalidationCommand implements InvalidationCommand {
         log.trace("Cache invalidation started for EntityCache");
         checkPassedParametersOnNull(cacheMap, key);
 
-        EntityKeyParam<?> entityKeyParam = (EntityKeyParam<?>) checkOnIsAssignableTo(key.getKeyParam(),
-          EntityKeyParam.class);
-        Class<?> entityType = entityKeyParam.getEntityType();
+        var entityKeyParam = (EntityKeyParam<?>) checkOnIsAssignableTo(key.getKeyParam(), EntityKeyParam.class);
+        var entityType = entityKeyParam.getEntityType();
 
         removeCacheByEntityKeyWithSameId(cacheMap, entityKeyParam, entityType);
         removeAllCacheWithQueryKeyRelated(cacheMap, entityType);
@@ -39,7 +42,8 @@ public class EntityKeyInvalidationCommand implements InvalidationCommand {
 
     private void removeCacheByEntityKeyWithSameId(Map<Key<?>, Object> cacheMap, EntityKeyParam<?> entityKeyParam,
                                                   Class<?> entityType) {
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        log.trace("Starting invalidation for EntityCache in new thread...");
+        var executorService = Executors.newSingleThreadExecutor();
         cacheMap.keySet().stream()
           .filter(k -> k.getKeyParam().getClass().isAssignableFrom(EntityKeyParam.class))
           .filter(k -> k.getKeyParam().getEntityType().isAssignableFrom(entityType))
@@ -47,6 +51,7 @@ public class EntityKeyInvalidationCommand implements InvalidationCommand {
           .forEach(cacheMap::remove);
 
         executorService.shutdown();
+        log.trace("Invalidation for EntityCache in new thread is started");
     }
 
 }

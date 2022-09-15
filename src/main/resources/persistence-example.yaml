@@ -1,7 +1,7 @@
 database:
-  url: jdbc:postgresql://localhost:5432/bibernate
-  user: maingroon
-  password: password
+  url: jdbc:postgresql://rds-postgres-svydovets.c3bxmbbb5a4p.eu-central-1.rds.amazonaws.com:5432/svydovetsDB
+  user: masterSvydovets
+  password: demo4bibernate
   driverName: org.postgresql.Driver
 
 connectionPool:
