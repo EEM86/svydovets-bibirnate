@@ -86,12 +86,12 @@ public class DeleteQueryProcessor extends QueryProcessor {
             try (var statement = getConnection().createStatement()) {
                 getDepthQueryQueue()
                   .forEach((key, value) -> value.forEach(query -> {
-                      try {
-//                          System.out.println(query);
-                          statement.execute(query);
-                      } catch (SQLException ex) {
-                          throw new PersistenceException("Could not Execute DELETE statement: " + query, ex);
-                      }
+//                      try {
+                          System.out.println(query);
+//                          statement.execute(query);
+//                      } catch (SQLException ex) {
+//                          throw new PersistenceException("Could not Execute DELETE statement: " + query, ex);
+//                      }
                   }));
             } catch (SQLException ex) {
                 log.trace("Could not delete entity with id = {}", this.getId());
