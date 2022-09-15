@@ -71,7 +71,6 @@ public class BaseJdbcEntityDao implements JdbcEntityDao {
     /**
      * {@inheritDoc}
      **/
-    @SneakyThrows
     @Override
     public void remove(Object entity) {
         var queryProcessor = QueryProcessorFactory.defineQueryProcessor(DELETE, entity, connection,

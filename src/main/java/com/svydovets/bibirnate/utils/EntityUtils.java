@@ -18,7 +18,9 @@ import com.svydovets.bibirnate.annotation.OneToOne;
 import com.svydovets.bibirnate.annotation.Table;
 import com.svydovets.bibirnate.exceptions.AmbiguousIdException;
 import com.svydovets.bibirnate.exceptions.EntityMappingException;
+import com.svydovets.bibirnate.exceptions.EntityValidationException;
 import com.svydovets.bibirnate.exceptions.NoIdException;
+import com.svydovets.bibirnate.exceptions.PersistenceException;
 
 /**
  * Utility class with different entity-related helper methods.
@@ -122,9 +124,24 @@ public final class EntityUtils {
         return id;
     }
 
+    public static Object getEntityIdValue(Object entity) {
+        var idField = Arrays.stream(entity.getClass().getDeclaredFields())
+          .filter(field -> field.isAnnotationPresent(Id.class))
+          .findFirst()
+          .orElseThrow(() -> new EntityValidationException(String.format("Entity %s does not contain id field",
+            entity.getClass().getSimpleName())));
+        Object id = null;
+        try {
+            idField.setAccessible(true);
+            return idField.get(entity);
+        } catch (IllegalAccessException ex) {
+            throw new PersistenceException(String.format("Could not take a value of field: %s", idField.getName()), ex);
+        }
+    }
+
     private static <T> Function<List<Field>, Field> getOneFieldCollector(Class<T> entityType) {
         return list -> {
-            if (list.size() == 0) {
+            if (list.isEmpty()) {
                 throw new NoIdException(entityType);
             }
             if (list.size() > 1) {

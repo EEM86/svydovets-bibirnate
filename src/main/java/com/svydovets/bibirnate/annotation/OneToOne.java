@@ -23,4 +23,6 @@ public @interface OneToOne {
     FetchType fetch() default EAGER;
 
     CascadeType[] cascade() default {};
+
+    String mappedBy() default "";
 }

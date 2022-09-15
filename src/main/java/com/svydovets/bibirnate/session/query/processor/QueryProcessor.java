@@ -3,14 +3,12 @@ package com.svydovets.bibirnate.session.query.processor;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import com.svydovets.bibirnate.annotation.ManyToOne;
 import com.svydovets.bibirnate.annotation.OneToMany;
 import com.svydovets.bibirnate.annotation.OneToOne;
 import com.svydovets.bibirnate.annotation.Transient;
@@ -44,27 +42,20 @@ public abstract class QueryProcessor {
 
     private Parent parent;
 
-//    private Map<Integer, Set<String>> depthQueryQueue;
-//
-//    private Integer queryDepth;
-
     private ValidationService validationService = new ValidationService();
     protected final SqlLogger sqlLogger;
 
     protected QueryProcessor(Object entity, Connection connection, SqlLogger sqlLogger) {
-//        initialize(entity, connection, null, null);
         initialize(entity, connection, null);
+
         this.sqlLogger = sqlLogger;
     }
 
-    protected QueryProcessor(Object entity, Connection connection, Parent parent, SqlLogger sqlLogger){
-//                             Map<Integer, Set<String>> queryQueue) {
-//        initialize(entity, connection, parent, queryQueue);
+    protected QueryProcessor(Object entity, Connection connection, Parent parent, SqlLogger sqlLogger) {
         initialize(entity, connection, parent);
         this.sqlLogger = sqlLogger;
     }
 
-//    private void initialize(Object entity, Connection connection, Parent parent, Map<Integer, Set<String>> queryQueue) {
     private void initialize(Object entity, Connection connection, Parent parent) {
         validationService.validateEntity(entity);
         persistentObject = entity;
@@ -75,27 +66,16 @@ public abstract class QueryProcessor {
         this.entityFields = Arrays.stream(entityClass.getDeclaredFields())
           .filter(field -> !field.isAnnotationPresent(Transient.class))
           .toList();
-
-        //todo: handle uniDirectional
         this.toManyRelations = entityFields.stream()
           .filter(field -> field.isAnnotationPresent(OneToMany.class))
           .map(field -> wrapToToManyRelationObject(entity, field))
           .filter(relation -> !CollectionUtils.isEmpty(relation.getRelatedEntities()))
           .toList();
-        //todo: handle uniDirectional
-//        this.toOneRelations = entityFields.stream()
-//          .filter(field -> field.isAnnotationPresent(OneToOne.class) || field.isAnnotationPresent(ManyToOne.class))
-//          .map(field -> wrapToToOneRelationObject(entity, field))
-//          .toList();
+        this.toOneRelations = entityFields.stream()
+          .filter(field -> field.isAnnotationPresent(OneToOne.class) || field.isAnnotationPresent(ManyToOne.class))
+          .map(field -> wrapToToOneRelationObject(entity, field))
+          .toList();
         this.parent = parent;
-//        if (Objects.isNull(queryQueue)) {
-//            this.depthQueryQueue = new HashMap<>();
-//            queryDepth = 0;
-//        } else {
-//            this.depthQueryQueue = queryQueue;
-//            this.queryDepth = this.depthQueryQueue.keySet().stream()
-//              .max(Integer::compare).orElse(0);
-//        }
     }
 
     @SneakyThrows
@@ -104,31 +84,34 @@ public abstract class QueryProcessor {
         var fieldValue = toManyField.get(entity);
         var annotation = toManyField.getAnnotation(OneToMany.class);
         return new ToManyRelation(annotation.fetch(), annotation.cascade(), annotation.mappedBy(),
-          (List<Object>) fieldValue);
+          (List<Object>) fieldValue, toManyField);
     }
 
     @SneakyThrows
-    private ToOneRelation wrapToToOneRelationObject(Object entity, Field toManyField) {
-        toManyField.setAccessible(true);
-        var fieldValue = toManyField.get(entity);
+    private ToOneRelation wrapToToOneRelationObject(Object entity, Field toOneField) {
+        toOneField.setAccessible(true);
+        var fieldValue = toOneField.get(entity);
         FetchType fetch;
         CascadeType[] cascadeType;
-        try {
-            fetch = toManyField.getAnnotation(OneToMany.class).fetch();
-            cascadeType = toManyField.getAnnotation(OneToMany.class).cascade();
-        } catch (NullPointerException ex) {
-            fetch = toManyField.getAnnotation(OneToOne.class).fetch();
-            cascadeType = toManyField.getAnnotation(OneToOne.class).cascade();
+        String mappedBy;
+        if (toOneField.getAnnotation(OneToOne.class) != null) {
+            fetch = toOneField.getAnnotation(OneToOne.class).fetch();
+            cascadeType = toOneField.getAnnotation(OneToOne.class).cascade();
+            mappedBy = toOneField.getAnnotation(OneToOne.class).mappedBy();
+        } else {
+            fetch = toOneField.getAnnotation(ManyToOne.class).fetch();
+            cascadeType = toOneField.getAnnotation(ManyToOne.class).cascade();
+            mappedBy = null;
         }
-        return new ToOneRelation(fetch, cascadeType, fieldValue);
+        return new ToOneRelation(fetch, cascadeType, fieldValue, toOneField, mappedBy);
     }
 
     public boolean hasToManyRelations() {
-        return !toManyRelations.isEmpty();
+        return CollectionUtils.isNotEmpty(toManyRelations);
     }
 
     public boolean hasToOneRelations() {
-        return !toOneRelations.isEmpty();
+        return CollectionUtils.isNotEmpty(toOneRelations);
     }
 
     public boolean hasParent() {
