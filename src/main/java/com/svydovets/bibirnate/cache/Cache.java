@@ -105,8 +105,7 @@ public class Cache {
     public void put(AbstractKeyParam<?> keyParam, Object value) {
         log.trace("put, start validation for parameters...");
         Objects.requireNonNull(keyParam, String.format(PARAMETER_CANNOT_BE_NULL, keyParam));
-        log.trace("put, validation is passed. Start to generation new Key from passed [{}] and put to cacheMap",
-          keyParam);
+        log.trace("put, validation is passed. Start generation new Key from passed [{}] and put to cacheMap", keyParam);
 
         cacheMap.put(new Key<>(keyParam), value);
         log.trace("put, Key [{}] and value was successfully put to the cacheMap", keyParam);

@@ -6,9 +6,11 @@ import com.svydovets.bibirnate.annotation.Id;
 import com.svydovets.bibirnate.annotation.Table;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
+@ToString
 @Table(name = "persons")
 public class Person {
     @Id

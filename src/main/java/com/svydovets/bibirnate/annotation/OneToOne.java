@@ -10,7 +10,12 @@ import java.lang.annotation.Target;
 import com.svydovets.bibirnate.session.query.CascadeType;
 import com.svydovets.bibirnate.session.query.FetchType;
 
-//todo: add javadoc in scope of BIB-15
+/**
+ * Defines single value association to another entity that has one-to-one multiplicity
+ * for now works for selection only with eager fetch type
+ * (related entity will be loaded at the same time when entity that owns this relation is loaded)
+ * and on the side that owns foreign key (must be specified in JoinColumn annotation).
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface OneToOne {

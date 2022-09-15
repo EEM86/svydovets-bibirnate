@@ -5,6 +5,7 @@ import java.util.Optional;
 import com.svydovets.bibirnate.configuration.context.PersistenceContextProvider;
 import com.svydovets.bibirnate.configuration.properties.DatabaseProperties;
 import com.svydovets.bibirnate.configuration.properties.LoggingProperties;
+import com.svydovets.bibirnate.demo.entity.Note;
 import com.svydovets.bibirnate.demo.entity.Person;
 import com.svydovets.bibirnate.session.Session;
 import com.svydovets.bibirnate.session.SessionFactory;
@@ -43,6 +44,12 @@ public class DemoApp {
             session.remove(person);
 
             Optional.ofNullable(person)
+              .ifPresentOrElse(System.out::println,
+                () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
+
+            Note note = session.findById(7, Note.class);
+
+            Optional.ofNullable(note)
               .ifPresentOrElse(System.out::println,
                 () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
         }

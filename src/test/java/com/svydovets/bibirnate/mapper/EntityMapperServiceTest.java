@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
@@ -43,6 +44,7 @@ import com.svydovets.bibirnate.entities.EntityNoDefaultConstructor;
 import com.svydovets.bibirnate.entities.EntityPrimitives;
 import com.svydovets.bibirnate.entities.EntityWrongType;
 import com.svydovets.bibirnate.exceptions.EntityMappingException;
+import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
 
 class EntityMapperServiceTest {
 
@@ -52,7 +54,8 @@ class EntityMapperServiceTest {
     @BeforeEach
     void beforeEach() {
         rs = Mockito.mock(ResultSet.class);
-        entityMapperService = new EntityMapperService();
+        JdbcEntityDao jdbcEntityDao = mock(JdbcEntityDao.class);
+        entityMapperService = new EntityMapperService(jdbcEntityDao);
     }
 
     @Test
@@ -126,7 +129,8 @@ class EntityMapperServiceTest {
             entityMapperService.mapToObject(EntityWrongType.class, rs);
         });
         String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(String.format("Field type: %s is not supported", AllTypesEntity.class.getName())));
+        assertTrue(
+          actualMessage.contains(String.format("Field type: %s is not supported", AllTypesEntity.class.getName())));
     }
 
     private static Stream<Arguments> provideEntityClassesWithExceptionMessages() {

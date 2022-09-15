@@ -3,14 +3,23 @@ package com.svydovets.bibirnate.mapper;
 import java.lang.reflect.Field;
 
 import com.svydovets.bibirnate.exceptions.EntityMappingException;
+import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
 import com.svydovets.bibirnate.utils.EntityUtils;
 
 /**
  * Factory class to define {@link EntityFieldMapper} implementation.
  */
 public class EntityFieldMapperFactory {
+    private final EntityFieldMapper regularFieldMapper;
 
-    private EntityFieldMapperFactory() {
+    private final EntityFieldMapper toOneFieldMapper;
+
+    private final EntityFieldMapper toManyFieldMapper;
+
+    public EntityFieldMapperFactory(JdbcEntityDao jdbcEntityDao) {
+        this.regularFieldMapper = new RegularFieldMapper();
+        this.toOneFieldMapper = new ToOneFieldMapper(jdbcEntityDao);
+        this.toManyFieldMapper = new ToManyFieldMapper();
     }
 
     /**
@@ -25,13 +34,13 @@ public class EntityFieldMapperFactory {
      * @throws EntityMappingException in case the field does not belong to any existing mappers
      *                                or is not properly mapped.
      */
-    public static EntityFieldMapper getFieldMapper(Field field) {
+    public EntityFieldMapper getFieldMapper(Field field) {
         if (EntityUtils.isRegularField(field)) {
-            return new RegularFieldMapper();
+            return regularFieldMapper;
         } else if (EntityUtils.isEntityField(field)) {
-            return new ToOneFieldMapper();
+            return toOneFieldMapper;
         } else if (EntityUtils.isEntityCollectionField(field)) {
-            return new ToManyFieldMapper();
+            return toManyFieldMapper;
         } else {
             throw new EntityMappingException(
               String.format("Field type: %s is not supported", field.getType().getName()));

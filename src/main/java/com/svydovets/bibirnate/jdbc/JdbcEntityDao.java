@@ -1,7 +1,10 @@
 package com.svydovets.bibirnate.jdbc;
 
 import java.lang.reflect.Field;
+import java.sql.Connection;
 import java.util.Optional;
+
+import com.svydovets.bibirnate.mapper.EntityMapperService;
 
 /**
  * Interface to work with database.
@@ -35,5 +38,9 @@ public interface JdbcEntityDao {
      * @param entity to remove
      */
     void remove(Object entity);
+
+    Connection getConnection();
+
+    EntityMapperService getEntityMapperService();
 
 }

@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import com.svydovets.bibirnate.annotation.Column;
 import com.svydovets.bibirnate.annotation.Entity;
 import com.svydovets.bibirnate.annotation.Id;
+import com.svydovets.bibirnate.annotation.JoinColumn;
 import com.svydovets.bibirnate.annotation.ManyToOne;
 import com.svydovets.bibirnate.annotation.OneToMany;
 import com.svydovets.bibirnate.annotation.OneToOne;
@@ -67,7 +68,10 @@ public final class EntityUtils {
      *
      * @param field - mapped entity's field
      */
-    public static String getFieldName(Field field) {
+    public static String getColumnName(Field field) {
+        if (field.isAnnotationPresent(JoinColumn.class)) {
+            return field.getAnnotation(JoinColumn.class).name();
+        }
         return Optional.ofNullable(field.getAnnotation(Column.class))
           .map(Column::name)
           .filter(Predicate.not(String::isEmpty))
