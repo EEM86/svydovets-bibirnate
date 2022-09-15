@@ -1,16 +1,17 @@
 package com.svydovets.bibirnate.jdbc;
 
-import com.svydovets.bibirnate.SessionTestUtil;
-import com.svydovets.bibirnate.jdbc.impl.PostgresJdbcEntityDao;
-import org.junit.jupiter.api.Test;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import org.junit.jupiter.api.Test;
+
+import com.svydovets.bibirnate.SessionTestUtil;
+import com.svydovets.bibirnate.jdbc.impl.PostgresJdbcEntityDao;
 
 class JdbcEntityDaoFactoryTest {
 

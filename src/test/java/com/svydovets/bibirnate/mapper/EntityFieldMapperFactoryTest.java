@@ -6,7 +6,6 @@ import static org.mockito.Mockito.mock;
 import java.lang.reflect.Field;
 import java.util.stream.Stream;
 
-import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -14,6 +13,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import com.svydovets.bibirnate.entities.AllTypesEntity;
 import com.svydovets.bibirnate.entities.EntityPrimitives;
 import com.svydovets.bibirnate.entities.EntityWrongType;
+import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
 
 class EntityFieldMapperFactoryTest {
 

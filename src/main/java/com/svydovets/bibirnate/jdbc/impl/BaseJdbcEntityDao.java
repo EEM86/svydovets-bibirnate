@@ -72,4 +72,14 @@ public class BaseJdbcEntityDao implements JdbcEntityDao {
         var queryProcessor = QueryProcessorFactory.defineQueryProcessor(DELETE, entity, connection);
         queryProcessor.execute();
     }
+
+    @Override
+    public Connection getConnection() {
+        return connection;
+    }
+
+    @Override
+    public EntityMapperService getEntityMapperService() {
+        return entityMapperService;
+    }
 }

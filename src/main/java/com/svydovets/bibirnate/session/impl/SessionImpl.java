@@ -98,7 +98,7 @@ public class SessionImpl implements Session {
         var msg = "[entityType] cannot be null. Please provide a class of the entity for what you create a query.";
         Objects.requireNonNull(entityType, msg);
 
-        return new TypedQuery(connection, sql, entityType, cacheContainer);
+        return new TypedQuery(jdbcEntityDao, sql, entityType, cacheContainer);
     }
 
     private void checkIfSessionClosed() {

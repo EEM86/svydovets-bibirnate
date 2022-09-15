@@ -46,6 +46,12 @@ public class DemoApp {
             Optional.ofNullable(person)
               .ifPresentOrElse(System.out::println,
                 () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
+
+            Note note = session.findById(7, Note.class);
+
+            Optional.ofNullable(note)
+              .ifPresentOrElse(System.out::println,
+                () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
         }
     }
 
