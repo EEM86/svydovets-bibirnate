@@ -13,7 +13,7 @@ import com.svydovets.bibirnate.cache.Cache;
 import com.svydovets.bibirnate.cache.CacheContainer;
 import com.svydovets.bibirnate.entity.BiberEntity;
 import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
-import com.svydovets.bibirnate.jdbc.impl.BaseJdbcEntityDao;
+import com.svydovets.bibirnate.logs.SqlLogger;
 
 public class TypedQueryTest {
 
@@ -36,7 +36,7 @@ public class TypedQueryTest {
         queryString = "select * from table";
         entityType = BiberEntity.class;
         secondLevelCache = new Cache(200_000);
-        query = new TypedQuery(jdbcEntityDao, queryString, entityType, cacheContainer);
+        query = new TypedQuery(jdbcEntityDao, queryString, entityType, cacheContainer, new SqlLogger(true));
     }
 
 //    @Test

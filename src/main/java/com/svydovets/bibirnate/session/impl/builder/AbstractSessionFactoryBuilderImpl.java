@@ -6,6 +6,9 @@ import com.svydovets.bibirnate.session.impl.SessionFactoryImpl;
 import com.svydovets.bibirnate.utils.HikariConfigUtils;
 import com.zaxxer.hikari.HikariDataSource;
 
+/**
+ * Basic abstraction for the {@link SessionFactory} configuration.
+ */
 public abstract class AbstractSessionFactoryBuilderImpl implements SessionFactoryBuilder {
 
     protected SessionFactory buildSessionFactory(ConfigurationProperties configurationProperties) {

@@ -30,6 +30,12 @@ public interface Session extends Closeable {
      */
     boolean isClosed();
 
+    /**
+     * Provides {@link TransactionManager} for control over transaction (transaction.begin() || transaction.commit() ||
+     * transaction.rollback()).
+     *
+     * @return instance of the {@link TransactionManager}
+     */
     TransactionManager getTransactionManager();
 
     /**
