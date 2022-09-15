@@ -31,4 +31,7 @@ public enum DbDriver {
         return null;
     }
 
+    public String getName() {
+        return name;
+    }
 }

@@ -2,6 +2,8 @@ package com.svydovets.bibirnate.jdbc;
 
 import com.svydovets.bibirnate.SessionTestUtil;
 import com.svydovets.bibirnate.jdbc.impl.PostgresJdbcEntityDao;
+import com.svydovets.bibirnate.logs.SqlLogger;
+
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
@@ -20,7 +22,7 @@ class JdbcEntityDaoFactoryTest {
     void testCreateJdbcEntityDao_shouldReturnPostgresJdbcEntityDao_whenPostgresConfigured() throws SQLException {
         var connection = mock(Connection.class);
         SessionTestUtil.mockConnectionMetadata(connection);
-        final JdbcEntityDao jdbcEntityDao = factory.createJdbcEntityDao(connection);
+        final JdbcEntityDao jdbcEntityDao = factory.createJdbcEntityDao(connection, new SqlLogger(false));
 
         assertTrue(jdbcEntityDao instanceof PostgresJdbcEntityDao);
     }
@@ -30,7 +32,7 @@ class JdbcEntityDaoFactoryTest {
         var connection = mock(Connection.class);
         SessionTestUtil.mockConnectionMetadata(connection, "jdbc:mock://localhost:29211");
         var exception = assertThrows(SQLException.class,
-            () -> factory.createJdbcEntityDao(connection));
+            () -> factory.createJdbcEntityDao(connection, new SqlLogger(false)));
 
         assertEquals("No suitable driver", exception.getMessage());
     }

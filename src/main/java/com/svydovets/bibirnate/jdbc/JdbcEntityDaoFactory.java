@@ -1,20 +1,15 @@
 package com.svydovets.bibirnate.jdbc;
 
-import static com.svydovets.bibirnate.jdbc.DbDriver.H2;
-import static com.svydovets.bibirnate.jdbc.DbDriver.MYSQL;
-import static com.svydovets.bibirnate.jdbc.DbDriver.ORACLE;
-import static com.svydovets.bibirnate.jdbc.DbDriver.POSTGRES;
 import static java.sql.DriverManager.getDriver;
 
 import java.sql.Connection;
-import java.util.EnumMap;
-import java.util.Map;
 
 import com.svydovets.bibirnate.jdbc.impl.BaseJdbcEntityDao;
 import com.svydovets.bibirnate.jdbc.impl.H2JdbcEntityDao;
 import com.svydovets.bibirnate.jdbc.impl.MysqlJdbcEntityDao;
 import com.svydovets.bibirnate.jdbc.impl.OracleJdbcEntityDao;
 import com.svydovets.bibirnate.jdbc.impl.PostgresJdbcEntityDao;
+import com.svydovets.bibirnate.logs.SqlLogger;
 
 import lombok.SneakyThrows;
 
@@ -23,7 +18,6 @@ import lombok.SneakyThrows;
  */
 public class JdbcEntityDaoFactory {
 
-    private static Map<DbDriver, JdbcEntityDao> driverToDao;
 
     /**
      * Create JdcEntityDao from the database connection.
@@ -32,21 +26,18 @@ public class JdbcEntityDaoFactory {
      * @return JdbcEntityDao instance
      */
     @SneakyThrows
-    public static JdbcEntityDao createJdbcEntityDao(Connection connection) {
-        initSupportedDriversMap(connection);
+    public static JdbcEntityDao createJdbcEntityDao(Connection connection, SqlLogger sqlLogger) {
         final String url = connection.getMetaData().getURL();
         var driver = getDriver(url);
         var driverName = driver.getClass().getName();
 
-        return driverToDao.getOrDefault(DbDriver.fromName(driverName), new BaseJdbcEntityDao(connection));
-    }
-
-    private static void initSupportedDriversMap(Connection connection) {
-        driverToDao = new EnumMap<>(DbDriver.class);
-        driverToDao.put(H2, new H2JdbcEntityDao(connection));
-        driverToDao.put(MYSQL, new MysqlJdbcEntityDao(connection));
-        driverToDao.put(POSTGRES, new PostgresJdbcEntityDao(connection));
-        driverToDao.put(ORACLE, new OracleJdbcEntityDao(connection));
+        return switch (driverName) {
+            case "org.h2.Driver" -> new H2JdbcEntityDao(connection, sqlLogger);
+            case "com.mysql.cj.jdbc.Driver" -> new MysqlJdbcEntityDao(connection, sqlLogger);
+            case "org.postgresql.Driver" -> new PostgresJdbcEntityDao(connection, sqlLogger);
+            case "oracle.jdbc.driver.OracleDriver" -> new OracleJdbcEntityDao(connection, sqlLogger);
+            default ->  new BaseJdbcEntityDao(connection, sqlLogger);
+        };
     }
 
 }
