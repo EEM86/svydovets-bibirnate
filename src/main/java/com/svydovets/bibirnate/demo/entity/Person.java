@@ -1,5 +1,7 @@
 package com.svydovets.bibirnate.demo.entity;
 
+import java.time.LocalDateTime;
+
 import com.svydovets.bibirnate.annotation.Column;
 import com.svydovets.bibirnate.annotation.Entity;
 import com.svydovets.bibirnate.annotation.Id;
@@ -20,4 +22,8 @@ public class Person {
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
+    private String email;
+    private int age;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 }

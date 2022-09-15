@@ -23,6 +23,9 @@ import com.svydovets.bibirnate.session.transaction.TransactionManagerImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Basic implementation of the {@link Session}.
+ */
 @Slf4j
 public class SessionImpl implements Session {
     private final JdbcEntityDao jdbcEntityDao;
@@ -40,6 +43,9 @@ public class SessionImpl implements Session {
         this.sqlLogger = sqlLogger;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T> T findById(Object id, Class<T> type) {
         log.trace("Finding {} by id {}", type.getSimpleName(), id);
@@ -58,6 +64,9 @@ public class SessionImpl implements Session {
         return result.orElse(null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void remove(Object entity) {
         log.trace("Removing {} by id", entity.getClass().getSimpleName());
@@ -66,6 +75,9 @@ public class SessionImpl implements Session {
         CacheUtils.invalidate(cacheContainer, entity);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() {
         log.trace("Closing session");
@@ -81,16 +93,25 @@ public class SessionImpl implements Session {
         log.trace("Session closed successfully");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isClosed() {
         return closed;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TransactionManager getTransactionManager() {
         return transactionManager;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T> Query createTypedQuery(String sql, Class<T> entityType) {
         log.trace("Creation TypedQuery with SQL [{}] and for the entity type [{}].", sql, entityType);
@@ -101,7 +122,7 @@ public class SessionImpl implements Session {
         var msg = "[entityType] cannot be null. Please provide a class of the entity for what you create a query.";
         Objects.requireNonNull(entityType, msg);
 
-        return new TypedQuery(jdbcEntityDao, sql, entityType, cacheContainer);
+        return new TypedQuery(jdbcEntityDao, sql, entityType, cacheContainer, sqlLogger);
     }
 
     private void checkIfSessionClosed() {

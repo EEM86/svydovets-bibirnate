@@ -17,6 +17,7 @@ import com.svydovets.bibirnate.exceptions.BibernateException;
 import com.svydovets.bibirnate.exceptions.NoResultException;
 import com.svydovets.bibirnate.exceptions.NoUniqueResultException;
 import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
+import com.svydovets.bibirnate.logs.SqlLogger;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,7 +25,10 @@ import lombok.extern.slf4j.Slf4j;
  * This class is the service that provides an opportunity to work with native SQL queries for specified entity type.
  * Pay attention that syntax for queries the same as for JDBC {@link PreparedStatement}, like:
  * "SELECT * FROM TABLE_NAME WHERE TABLE_COlUMN_1 = ?" or
- * "SELECT * FROM TABLE_NAME WHERE TABLE_COlUMN_1 LIKE ?"
+ * "SELECT * FROM TABLE_NAME WHERE TABLE_COlUMN_1 LIKE ?" or
+ * "INSERT INTO TABLE_NAME (FIELD_ONE_NAME, FIELD_TWO_NAME) VALUES (?, ?)" or
+ * "UPDATE TABLE_NAME SET FIELD_ONE_NAME = ? WHERE ID = ?" or
+ * "DELETE FROM TABLE WHERE ID = ?";
  */
 @Slf4j
 public class TypedQuery implements Query {
@@ -34,12 +38,15 @@ public class TypedQuery implements Query {
     private final List<Object> parameters;
     private final Class<?> entityType;
     private final CacheContainer cacheContainer;
+    private final SqlLogger sqlLogger;
 
-    public TypedQuery(JdbcEntityDao jdbcEntityDao, String query, Class<?> entityType, CacheContainer cacheContainer) {
+    public TypedQuery(JdbcEntityDao jdbcEntityDao, String query, Class<?> entityType, CacheContainer cacheContainer,
+                      SqlLogger sqlLogger) {
         this.jdbcEntityDao = jdbcEntityDao;
         this.query = query;
         this.entityType = entityType;
         this.cacheContainer = cacheContainer;
+        this.sqlLogger = sqlLogger;
         this.parameters = new ArrayList<>();
         log.trace("New TypedQuery fro SQL [{}] is created", query);
     }
@@ -106,6 +113,7 @@ public class TypedQuery implements Query {
     public void execute() {
         log.trace("execute, start execution query [{}]", query);
         try (var statement = jdbcEntityDao.getConnection().prepareStatement(query)) {
+            sqlLogger.log(query);
             initializePreparedStatement(statement);
             String extractedQuery = extractQuery(statement);
 
@@ -140,6 +148,7 @@ public class TypedQuery implements Query {
             Optional<? extends Collection> fromCache = CacheUtils.extract(cacheContainer, entityType, extractedQuery,
               result.getClass());
             if (fromCache.isEmpty()) {
+                sqlLogger.log(query);
                 var resultSet = statement.executeQuery();
                 while (resultSet.next()) {
                     result.add(jdbcEntityDao.getEntityMapperService().mapToObject((Class<T>) entityType, resultSet));

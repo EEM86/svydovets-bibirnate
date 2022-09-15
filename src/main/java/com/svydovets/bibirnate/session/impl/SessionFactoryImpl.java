@@ -14,21 +14,28 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RequiredArgsConstructor
 public class SessionFactoryImpl implements SessionFactory {
 
     private static final int DEFAULT_SECOND_CACHE_SIZE = 200_000;
     private final DataSource dataSource;
     private Cache secondLevelCache;
     private final boolean secondLevelCacheEnabled;
-
     private final int secondLevelCacheSize;
     private final boolean sqlLoggingEnabled;
     private boolean secondLevelCacheGenerated;
-    private CacheContainer cacheContainer;
 
+    public SessionFactoryImpl(DataSource dataSource, boolean secondLevelCacheEnabled, int secondLevelCacheSize,
+                              boolean sqlLoggingEnabled) {
+        this.dataSource = dataSource;
+        this.secondLevelCacheEnabled = secondLevelCacheEnabled;
+        this.secondLevelCacheSize = secondLevelCacheSize;
+        this.sqlLoggingEnabled = sqlLoggingEnabled;
+        log.info("SessionFactory is successfully configured");
+    }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Session openSession() {
         log.trace("Session opening is started...");
@@ -51,6 +58,7 @@ public class SessionFactoryImpl implements SessionFactory {
         }
     }
 
+
     private void generateSecondCache() {
         log.trace("Second level cache generation is started...");
 
@@ -59,6 +67,7 @@ public class SessionFactoryImpl implements SessionFactory {
         } else {
             this.secondLevelCache = new Cache(DEFAULT_SECOND_CACHE_SIZE);
         }
+        secondLevelCacheGenerated = true;
 
         log.trace("Second level cache generation is finished.");
     }

@@ -13,6 +13,9 @@ import com.svydovets.bibirnate.utils.ValidationUtils;
 
 import lombok.NoArgsConstructor;
 
+/**
+ * Provides default {@link SessionFactory} configuration.
+ */
 @NoArgsConstructor
 public class DefaultSessionFactoryBuilderImpl extends AbstractSessionFactoryBuilderImpl
   implements SessionFactoryBuilder {
@@ -42,6 +45,9 @@ public class DefaultSessionFactoryBuilderImpl extends AbstractSessionFactoryBuil
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SessionFactory build() {
         ValidationUtils.validateNotNullDatabaseFields(DatabaseProperties.class, databaseProperties);
