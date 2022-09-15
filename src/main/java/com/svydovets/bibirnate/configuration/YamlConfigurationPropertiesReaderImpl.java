@@ -29,7 +29,6 @@ public class YamlConfigurationPropertiesReaderImpl implements ConfigurationPrope
             if (properties == null || properties.getDatabase() == null) {
                 throw new PropertiesFileValidationException("Database");
             }
-            ValidationUtils.validateNotNullDatabaseFields(DatabaseProperties.class, properties.getDatabase());
             return properties;
         } catch (YAMLException ex) {
             throw new PropertiesFileInvalidException(filename);

@@ -41,6 +41,7 @@ public abstract class QueryProcessor {
     private Object parentId;
 
     private ValidationService validationService = new ValidationService();
+    private Object entity;
 
     protected QueryProcessor(Object entity, Connection connection) {
         initialize(entity, connection, null);
@@ -54,6 +55,7 @@ public abstract class QueryProcessor {
         validationService.validateEntity(entity);
         persistentObject = entity;
         var entityClass = entity.getClass();
+        this.entity = entity;
         this.connection = connection;
         this.tableName = EntityUtils.getTableName(entityClass);
         this.id = EntityUtils.getIdField(entityClass);

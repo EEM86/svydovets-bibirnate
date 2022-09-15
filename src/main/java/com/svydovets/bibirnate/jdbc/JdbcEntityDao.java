@@ -36,4 +36,10 @@ public interface JdbcEntityDao {
      */
     void remove(Object entity);
 
+
+    /**
+     * Update entity in database.
+     *
+     * @param entity to be updated
+     */void update(Object entity);
 }

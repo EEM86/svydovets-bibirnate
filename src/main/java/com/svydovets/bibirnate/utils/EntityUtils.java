@@ -1,8 +1,10 @@
 package com.svydovets.bibirnate.utils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -10,7 +12,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.svydovets.bibirnate.annotation.Column;
-import com.svydovets.bibirnate.annotation.Entity;
 import com.svydovets.bibirnate.annotation.Id;
 import com.svydovets.bibirnate.annotation.ManyToOne;
 import com.svydovets.bibirnate.annotation.OneToMany;
@@ -18,6 +19,7 @@ import com.svydovets.bibirnate.annotation.OneToOne;
 import com.svydovets.bibirnate.annotation.Table;
 import com.svydovets.bibirnate.exceptions.AmbiguousIdException;
 import com.svydovets.bibirnate.exceptions.NoIdException;
+import lombok.SneakyThrows;
 
 /**
  * Utility class with different entity-related helper methods.
@@ -74,6 +76,21 @@ public final class EntityUtils {
           .orElse(field.getName());
     }
 
+    /**
+     * Returns the field value handling errors. Used in streams.
+     *
+     * @param field - mapped entity's field
+     * @param object - object entity's values
+     */
+    public static Object getFieldValue(Field field, Object object) {
+        try {
+            field.setAccessible(Boolean.TRUE);
+            return field.get(object);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static boolean isJavaType(Field field) {
         return field.getType().isPrimitive()
             || field.getType().getName().startsWith("java");
@@ -109,5 +126,40 @@ public final class EntityUtils {
             }
             return list.get(0);
         };
+    }
+
+    /**
+     * Returns the fields from the class, which types are regular.
+     */
+    public static Field[] getRegularFields(Class<?> entity) {
+        return Arrays.stream(entity.getDeclaredFields())
+                .filter(EntityUtils::isRegularField)
+                .toArray(Field[]::new);
+    }
+
+
+    public static <T> String resolveTableName(Class<T> entityType) {
+        return Optional.of(entityType.getDeclaredAnnotation(Table.class))
+                .map(Table::name)
+                .orElseThrow(() -> new RuntimeException("Can not find marker @Table for " + entityType));
+    }
+
+    public static <T> String resolveColumnName(Field field) {
+        return Optional.ofNullable(field.getAnnotation(Column.class))
+                .map(Column::name)
+                .orElseGet(field::getName);
+    }
+
+    public static <T> Object getId(T entity) {
+        var type = entity.getClass();
+        var idField = getIdField(type);
+        idField.setAccessible(Boolean.TRUE);
+        return getFieldValue(idField, entity);
+    }
+
+    public static <T> Field[] getSortedFields(Class<T> entity) {
+        return Arrays.stream(entity.getDeclaredFields())
+                .sorted(Comparator.comparing(Field::getName))
+                .toArray(Field[]::new);
     }
 }

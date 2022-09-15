@@ -44,7 +44,6 @@ public class DefaultSessionFactoryBuilderImpl extends AbstractSessionFactoryBuil
 
     @Override
     public SessionFactory build() {
-        ValidationUtils.validateNotNullDatabaseFields(DatabaseProperties.class, databaseProperties);
         var configurationProperties = populateConfigurationPropertiesOrGetDefault();
         return buildSessionFactory(configurationProperties);
     }
