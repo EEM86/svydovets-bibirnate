@@ -12,7 +12,8 @@ public class ToManyRelation extends EntityRelation {
 
     List<Object> relatedEntities;
 
-    public ToManyRelation(FetchType fetch, CascadeType[] cascade, String mappedBy, List<Object> relatedEntities, Field field) {
+    public ToManyRelation(FetchType fetch, CascadeType[] cascade, String mappedBy,
+                          List<Object> relatedEntities, Field field) {
         setFetch(fetch);
         setCascade(cascade);
         setMappedBy(mappedBy);

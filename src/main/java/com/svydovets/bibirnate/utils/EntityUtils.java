@@ -82,7 +82,7 @@ public final class EntityUtils {
 
     private static boolean isJavaType(Field field) {
         return field.getType().isPrimitive()
-          || field.getType().getName().startsWith("java");
+                || field.getType().getName().startsWith("java");
     }
 
     /**
@@ -111,8 +111,9 @@ public final class EntityUtils {
             return parentFiled.getAnnotation(JoinColumn.class).name();
         } catch (NoSuchFieldException | NullPointerException ex) {
             throw new EntityMappingException(
-              String.format("Entity: %s mapping exception. " +
-                  "%s entity should have mapped reference to parent entity field: '%s' including @JoinColumn annotation",
+              String.format("Entity: %s mapping exception. "
+                  + "%s entity should have mapped reference to parent entity field: '%s' "
+                  + "including @JoinColumn annotation",
                 entityType.getName(), entityType.getName(), fieldName));
         }
     }

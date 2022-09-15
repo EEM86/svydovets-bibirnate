@@ -80,18 +80,17 @@ public class DeleteQueryProcessor extends QueryProcessor {
             getToOneRelations().forEach(this::handleToOneEntityRelation);
         }
         String sql = generateQuery();
-        sqlLogger.log(sql);
         getDepthQueryQueue().computeIfAbsent(getQueryDepth(), k -> new HashSet<>()).add(sql);
         if (getQueryDepth() == 0) {
             try (var statement = getConnection().createStatement()) {
                 getDepthQueryQueue()
                   .forEach((key, value) -> value.forEach(query -> {
-//                      try {
-                          System.out.println(query);
-//                          statement.execute(query);
-//                      } catch (SQLException ex) {
-//                          throw new PersistenceException("Could not Execute DELETE statement: " + query, ex);
-//                      }
+                      try {
+                          sqlLogger.log(query);
+                          statement.execute(query);
+                      } catch (SQLException ex) {
+                          throw new PersistenceException("Could not Execute DELETE statement: " + query, ex);
+                      }
                   }));
             } catch (SQLException ex) {
                 log.trace("Could not delete entity with id = {}", this.getId());
@@ -110,8 +109,9 @@ public class DeleteQueryProcessor extends QueryProcessor {
         Object parentId = null;
         try {
             parentId = EntityUtils.wrapIdValue(parentIdField.get(this.getPersistentObject()));
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+        } catch (IllegalAccessException ex) {
+            throw new PersistenceException(
+              String.format("Could not get value from field: %s", parentIdField.getName()));
         }
         return new Parent(parentIdColumnName, parentId, parentIdField);
     }
@@ -124,7 +124,8 @@ public class DeleteQueryProcessor extends QueryProcessor {
                     relation.getRelatedEntities().forEach(rel -> {
                         Parent parent = generateParent(rel, relation.getMappedBy());
                         DeleteQueryProcessor innerProcessor =
-                          new DeleteQueryProcessor(rel, getConnection(), parent, getDepthQueryQueue(), newDepth, sqlLogger);
+                          new DeleteQueryProcessor(rel, getConnection(), parent, getDepthQueryQueue(), newDepth,
+                            sqlLogger);
                         innerProcessor.execute();
                     });
                 }
@@ -141,8 +142,8 @@ public class DeleteQueryProcessor extends QueryProcessor {
         if (Objects.nonNull(relation.getRelatedEntity()) && getQueryDepth() == -1) {
             var mappedBy = relation.getField().getAnnotation(OneToOne.class).mappedBy();
             return Arrays.stream(relation.getRelatedEntity().getClass().getDeclaredFields())
-              .anyMatch(field -> field.isAnnotationPresent(OneToOne.class) &&
-                mappedBy.equals(field.getName()));
+              .anyMatch(field -> field.isAnnotationPresent(OneToOne.class)
+                && mappedBy.equals(field.getName()));
         }
         return false;
     }
@@ -151,8 +152,8 @@ public class DeleteQueryProcessor extends QueryProcessor {
         if (Objects.nonNull(getParent()) && Objects.nonNull(relation.getRelatedEntity())) {
             var fieldName = relation.getField().getName();
             return Arrays.stream(getParent().getClass().getDeclaredFields())
-              .anyMatch(field -> field.isAnnotationPresent(OneToOne.class) &&
-                fieldName.equals(field.getAnnotation(OneToOne.class).mappedBy()));
+              .anyMatch(field -> field.isAnnotationPresent(OneToOne.class)
+                && fieldName.equals(field.getAnnotation(OneToOne.class).mappedBy()));
         }
         return false;
     }
@@ -161,8 +162,8 @@ public class DeleteQueryProcessor extends QueryProcessor {
         if (Objects.nonNull(getParent()) && Objects.nonNull(relation.getRelatedEntity())) {
             var fieldName = relation.getField().getName();
             return Arrays.stream(getParent().getClass().getDeclaredFields())
-              .anyMatch(field -> field.isAnnotationPresent(OneToMany.class) &&
-                fieldName.equals(field.getAnnotation(OneToMany.class).mappedBy()));
+              .anyMatch(field -> field.isAnnotationPresent(OneToMany.class)
+                && fieldName.equals(field.getAnnotation(OneToMany.class).mappedBy()));
         }
         return false;
     }
@@ -171,15 +172,15 @@ public class DeleteQueryProcessor extends QueryProcessor {
         if (CollectionUtils.isNotEmpty(relation.getRelatedEntities()) && getQueryDepth() == -1) {
             var mappedBy = relation.getField().getAnnotation(OneToMany.class).mappedBy();
             return Arrays.stream(relation.getRelatedEntities().get(0).getClass().getDeclaredFields())
-              .anyMatch(field -> field.isAnnotationPresent(ManyToOne.class) &&
-                mappedBy.equals(field.getName()));
+              .anyMatch(field -> field.isAnnotationPresent(ManyToOne.class)
+                && mappedBy.equals(field.getName()));
         }
         return false;
     }
 
 
     private void handleToOneEntityRelation(ToOneRelation relation) {
-//        todo: validate
+        //      todo: validate
         if (Objects.nonNull(relation.getRelatedEntity())) {
             if (relation.getFetch() == FetchType.EAGER) {
                 if (relation.getField().isAnnotationPresent(OneToOne.class)) {
@@ -199,7 +200,7 @@ public class DeleteQueryProcessor extends QueryProcessor {
                 if (!isOneToOneBackwardChildMapping(relation)) {
                     DeleteQueryProcessor innerProcessor =
                       new DeleteQueryProcessor(relation.getRelatedEntity(),
-                        getConnection(), null, getDepthQueryQueue(), -1,sqlLogger);
+                        getConnection(), null, getDepthQueryQueue(), -1, sqlLogger);
                     innerProcessor.execute();
                 }
             } else {
