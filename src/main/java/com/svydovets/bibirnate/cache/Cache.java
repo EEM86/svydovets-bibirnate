@@ -103,9 +103,12 @@ public class Cache {
      * @param value    value that should be cached
      */
     public void put(AbstractKeyParam<?> keyParam, Object value) {
+        log.trace("put, start validation for parameters...");
         Objects.requireNonNull(keyParam, String.format(PARAMETER_CANNOT_BE_NULL, keyParam));
+        log.trace("put, validation is passed. Start generation new Key from passed [{}] and put to cacheMap", keyParam);
 
         cacheMap.put(new Key<>(keyParam), value);
+        log.trace("put, Key [{}] and value was successfully put to the cacheMap", keyParam);
 
         autoClean();
     }
@@ -121,12 +124,19 @@ public class Cache {
      * @return {@link Optional#of(Object)} cached value or {@link Optional#empty()}
      */
     public Optional<Object> get(AbstractKeyParam<?> keyParam, Class<? extends KeyExtractorCommand> extractCommandType) {
+        log.trace("get, start validation for passed parameters...");
         Objects.requireNonNull(keyParam, String.format(PARAMETER_CANNOT_BE_NULL, keyParam));
         Objects.requireNonNull(extractCommandType, String.format(PARAMETER_CANNOT_BE_NULL, extractCommandType));
 
-        Optional<Key<?>> key = getKey(keyParam, extractCommandType);
+        var result = getKey(keyParam, extractCommandType).map(cacheMap::get);
 
-        return key.map(cacheMap::get);
+        if (result.isEmpty()) {
+            log.trace("get, value is not presented in cache by Key [{}]", keyParam);
+        } else {
+            log.trace("get, value is successfully extracted from cache by Key [{}]", keyParam);
+        }
+
+        return result;
     }
 
     /**
@@ -141,21 +151,25 @@ public class Cache {
      */
     public void invalidateRelated(AbstractKeyParam<?> keyParam, Class<? extends KeyExtractorCommand> extractCommandType,
                                   Class<? extends InvalidationCommand> invalidationCommandType) {
+        log.trace("invalidateRelated, start validation for passed parameters...");
         Objects.requireNonNull(keyParam, String.format(PARAMETER_CANNOT_BE_NULL, keyParam));
         Objects.requireNonNull(extractCommandType, String.format(PARAMETER_CANNOT_BE_NULL, extractCommandType));
         Objects.requireNonNull(invalidationCommandType,
           String.format(PARAMETER_CANNOT_BE_NULL, invalidationCommandType));
-
+        log.trace("invalidateRelated, passed parameters are valid. Start invalidation from cache...");
 
         getKey(keyParam, extractCommandType).ifPresent(
           value -> invalidationCommandMap.get(invalidationCommandType).executeInvalidate(cacheMap, value));
+        log.trace("invalidateRelated, invalidation from cache is successfully finished.");
     }
 
     /**
      * Makes clear for {@link Cache#cacheMap}.
      */
     public void clear() {
+        log.info("clear, start to clear all cache...");
         cacheMap.clear();
+        log.info("clear, finished.");
     }
 
     /**
@@ -173,9 +187,11 @@ public class Cache {
      * @param keyExtractorCommand instance of the {@link KeyExtractorCommand}
      */
     public void addKeyExtractorCommand(KeyExtractorCommand keyExtractorCommand) {
+        log.info("addKeyExtractorCommand, start validation for passed parameter...");
         Objects.requireNonNull(keyExtractorCommand, String.format(PARAMETER_CANNOT_BE_NULL, keyExtractorCommand));
 
         keyExtractorCommandMap.put(keyExtractorCommand.getClass(), keyExtractorCommand);
+        log.info("addKeyExtractorCommand, passed parameter is valid and successfully added to configuration.");
     }
 
     /**
@@ -184,9 +200,11 @@ public class Cache {
      * @param invalidationCommand instance of the {@link InvalidationCommand}
      */
     public void addCacheInvalidationCommand(InvalidationCommand invalidationCommand) {
+        log.info("addCacheInvalidationCommand, start validation for passed parameter...");
         Objects.requireNonNull(invalidationCommand, String.format(PARAMETER_CANNOT_BE_NULL, invalidationCommand));
 
         invalidationCommandMap.put(invalidationCommand.getClass(), invalidationCommand);
+        log.info("addCacheInvalidationCommand, passed parameter is valid and successfully added to configuration.");
     }
 
     public Map<Class<? extends KeyExtractorCommand>, KeyExtractorCommand> getKeyExtractorCommandMap() {
@@ -215,18 +233,22 @@ public class Cache {
 
     private void autoClean() {
         if ((Float.valueOf(cacheMap.size()) / Float.valueOf(cacheSize)) * ONE_HUNDRED > MAX_CACHE_SIZE_PERCENTAGE) {
-            if (Duration.between(lastClean, LocalDateTime.now()).toSeconds() <= SIXTY_SECONDS) {
+            log.info("autoClean, start cleaning from cache...");
+            if (Duration.between(lastClean, LocalDateTime.now()).toSeconds() >= SIXTY_SECONDS) {
                 if (Duration.between(lastClean, LocalDateTime.now()).toHours() <= TWO_HOURS) {
                     var sb = new StringBuilder();
                     sb.append("Biberante Cache is overloaded! ")
                       .append("Please check your settings and review if second level cache is enabled or what kind of ")
                       .append("requests can overload it. Also, check the cacheSize, you can extend this amount up to ")
                       .append(maxCacheSize);
+                    log.error("autoClean, FAILED because last clean was less then 2 hours ago!");
                     throw new CacheOverloadException(sb.toString());
                 } else if (Duration.between(lastClean, LocalDateTime.now()).toDays() >= ONE_DAY) {
                     clean(key -> Duration.between(key.getUpdated(), LocalDateTime.now()).toDays() > ONE_DAY);
+                    log.info("autoClean, cleaning from cache objects that were LRU more than one day ago");
                 } else if (Duration.between(lastClean, LocalDateTime.now()).toDays() == ZERO_DAYS) {
                     clean(key -> Duration.between(key.getUpdated(), LocalDateTime.now()).toHours() > ONE_HOUR);
+                    log.info("autoClean, cleaning from cache objects that were LRU today");
                 }
             }
         }

@@ -2,9 +2,12 @@ package com.svydovets.bibirnate.cache.key.parameters;
 
 import java.util.Objects;
 
+import lombok.ToString;
+
 /**
  * This is an abstraction for key parameter instances.
  */
+@ToString
 public abstract class AbstractKeyParam<T> {
 
     private final Class<T> entityType;
