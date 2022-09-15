@@ -54,7 +54,7 @@ class EntityUtilsTest {
     @MethodSource("provideEntityClassesWithFieldNames")
     void getFieldNameWithColumnAnnotation(Class<?> entityClass, String fieldName, String result)
       throws NoSuchFieldException {
-        var name = EntityUtils.getFieldName(entityClass.getDeclaredField(fieldName));
+        var name = EntityUtils.getColumnName(entityClass.getDeclaredField(fieldName));
         assertEquals(result, name);
     }
 

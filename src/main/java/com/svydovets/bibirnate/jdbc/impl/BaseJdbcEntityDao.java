@@ -1,7 +1,7 @@
 package com.svydovets.bibirnate.jdbc.impl;
 
 import static com.svydovets.bibirnate.session.query.CrudOperation.DELETE;
-import static com.svydovets.bibirnate.utils.EntityUtils.getFieldName;
+import static com.svydovets.bibirnate.utils.EntityUtils.getColumnName;
 import static com.svydovets.bibirnate.utils.EntityUtils.getIdField;
 import static com.svydovets.bibirnate.utils.EntityUtils.getTableName;
 
@@ -20,12 +20,19 @@ import lombok.SneakyThrows;
 /**
  * Standard JdbcEntityDao implementation.
  */
-@RequiredArgsConstructor
 public class BaseJdbcEntityDao implements JdbcEntityDao {
     public static final String SELECT_FROM_TABLE_BY_COLUMN = "select * from %s where %s = ?";
     private final Connection connection;
 
     protected final SqlLogger sqlLogger;
+
+    private final EntityMapperService entityMapperService;
+
+    public BaseJdbcEntityDao(Connection connection, SqlLogger sqlLogger) {
+        this.connection = connection;
+        this.entityMapperService = new EntityMapperService(this);
+        this.sqlLogger = sqlLogger;
+    }
 
     /**
      * {@inheritDoc}
@@ -43,7 +50,7 @@ public class BaseJdbcEntityDao implements JdbcEntityDao {
     @Override
     public <T> Optional<T> findBy(Field field, Object value, Class<T> type) {
         var tableName = getTableName(type);
-        var columnName = getFieldName(field);
+        var columnName = getColumnName(field);
         var selectSql = String.format(SELECT_FROM_TABLE_BY_COLUMN, tableName, columnName);
 
         try (var statement = connection.prepareStatement(selectSql)) {
@@ -55,7 +62,7 @@ public class BaseJdbcEntityDao implements JdbcEntityDao {
                 return Optional.empty();
             }
 
-            T entity = EntityMapperService.mapToObject(type, resultSet);
+            T entity = entityMapperService.mapToObject(type, resultSet);
             return Optional.of(entity);
         }
     }
@@ -69,5 +76,15 @@ public class BaseJdbcEntityDao implements JdbcEntityDao {
         var queryProcessor = QueryProcessorFactory.defineQueryProcessor(DELETE, entity, connection,
           sqlLogger);
         queryProcessor.execute();
+    }
+
+    @Override
+    public Connection getConnection() {
+        return connection;
+    }
+
+    @Override
+    public EntityMapperService getEntityMapperService() {
+        return entityMapperService;
     }
 }

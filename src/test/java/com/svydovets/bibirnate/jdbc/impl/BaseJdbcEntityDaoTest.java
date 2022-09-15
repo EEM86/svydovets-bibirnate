@@ -1,11 +1,12 @@
 package com.svydovets.bibirnate.jdbc.impl;
 
-import com.svydovets.bibirnate.entities.EntityPrimitives;
-import com.svydovets.bibirnate.entities.PersonSimpleEntity;
-import com.svydovets.bibirnate.logs.SqlLogger;
-import com.svydovets.bibirnate.mapper.EntityMapperService;
-import lombok.SneakyThrows;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,14 +15,14 @@ import java.sql.Statement;
 import java.util.Optional;
 import javax.sql.DataSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Test;
+
+import com.svydovets.bibirnate.entities.EntityPrimitives;
+import com.svydovets.bibirnate.entities.PersonSimpleEntity;
+import com.svydovets.bibirnate.logs.SqlLogger;
+import com.svydovets.bibirnate.mapper.EntityMapperService;
+
+import lombok.SneakyThrows;
 
 class BaseJdbcEntityDaoTest {
 
@@ -78,14 +79,14 @@ class BaseJdbcEntityDaoTest {
         when(statement.unwrap(any())).thenReturn(mock(PreparedStatement.class));
 
         var jdbcEntityDao = new BaseJdbcEntityDao(connection, new SqlLogger(false));
+        var entityMapperService = mock(EntityMapperService.class);
+        when(entityMapperService.mapToObject(EntityPrimitives.class, resultSet)).thenReturn(entity);
+        var entityMapperServiceField = jdbcEntityDao.getClass().getDeclaredField("entityMapperService");
+        entityMapperServiceField.setAccessible(true);
+        entityMapperServiceField.set(jdbcEntityDao, entityMapperService);
         var idField = EntityPrimitives.class.getDeclaredField("id");
 
-        try (var entityMapperService = mockStatic(EntityMapperService.class)) {
-            entityMapperService.when(() -> EntityMapperService.mapToObject(EntityPrimitives.class, resultSet))
-              .thenReturn(entity);
-
-            assertEquals(Optional.of(entity), jdbcEntityDao.findBy(idField, ID, EntityPrimitives.class));
-        }
+        assertEquals(Optional.of(entity), jdbcEntityDao.findBy(idField, ID, EntityPrimitives.class));
 
         verify(statement).setObject(1, ID);
     }

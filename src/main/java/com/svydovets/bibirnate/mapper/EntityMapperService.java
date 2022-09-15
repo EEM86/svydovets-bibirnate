@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import com.svydovets.bibirnate.annotation.Transient;
 import com.svydovets.bibirnate.exceptions.DefaultConstructorNotFoundException;
 import com.svydovets.bibirnate.exceptions.EntityMappingException;
+import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
 import com.svydovets.bibirnate.utils.EntityUtils;
 
 /**
@@ -15,6 +16,12 @@ import com.svydovets.bibirnate.utils.EntityUtils;
  * and converting java Object to appropriate SQL structure.
  */
 public class EntityMapperService {
+
+    private final EntityFieldMapperFactory entityFieldMapperFactory;
+
+    public EntityMapperService(JdbcEntityDao jdbcEntityDao) {
+        this.entityFieldMapperFactory = new EntityFieldMapperFactory(jdbcEntityDao);
+    }
 
     /**
      * Converts SQL result set to java Object.
@@ -25,19 +32,19 @@ public class EntityMapperService {
      * @throws DefaultConstructorNotFoundException in case no default constructor present in the result Entity class
      * @throws EntityMappingException              in case by some reason an instance of the Entity could not be created
      */
-    public static  <T> T mapToObject(Class<T> toClass, ResultSet resultSet) {
+    public  <T> T mapToObject(Class<T> toClass, ResultSet resultSet) {
         try {
             var constructor = toClass.getConstructor();
-            var instance = constructor.newInstance();
+            var entity = constructor.newInstance();
             for (Field field : toClass.getDeclaredFields()) {
                 if (!field.isAnnotationPresent(Transient.class)) {
-                    var fieldName = EntityUtils.getFieldName(field);
+                    var fieldName = EntityUtils.getColumnName(field);
                     var dbValue = resultSet.getObject(fieldName);
-                    var mapper = EntityFieldMapperFactory.getFieldMapper(field);
-                    mapper.mapField(field, instance, dbValue);
+                    var mapper = entityFieldMapperFactory.getFieldMapper(field);
+                    mapper.mapField(field, entity, dbValue);
                 }
             }
-            return instance;
+            return entity;
         } catch (NoSuchMethodException ex) {
             throw new DefaultConstructorNotFoundException(
               String.format("Entity class: %s should contain default empty constructor", toClass.getSimpleName()), ex);

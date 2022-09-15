@@ -5,10 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Defines single value association to another entity that has may-to-one multiplicity.
- */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface ManyToOne {
+public @interface JoinColumn {
+    String name();
 }
