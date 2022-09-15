@@ -2,7 +2,7 @@ database:
   url: url
   user: user
   password: pass
-  driverName: databaseDriver
+  driverName: org.postgresql.Driver
 
 connectionPool:
   catalog: catalog

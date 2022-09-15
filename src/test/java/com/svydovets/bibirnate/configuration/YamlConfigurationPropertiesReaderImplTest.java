@@ -22,7 +22,7 @@ class YamlConfigurationPropertiesReaderImplTest {
         assertEquals("url", databaseProperties.getUrl());
         assertEquals("user", databaseProperties.getUser());
         assertEquals("pass", databaseProperties.getPassword());
-        assertEquals("databaseDriver", databaseProperties.getDriverName());
+        assertEquals("org.postgresql.Driver", databaseProperties.getDriverName());
     }
 
     @Test
