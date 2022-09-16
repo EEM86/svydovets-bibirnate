@@ -4,6 +4,9 @@ import java.lang.reflect.Field;
 
 import lombok.Data;
 
+/**
+ * Basic POJO class that contains all the params child entity is mapped with.
+ */
 @Data
 public class EntityRelation {
 

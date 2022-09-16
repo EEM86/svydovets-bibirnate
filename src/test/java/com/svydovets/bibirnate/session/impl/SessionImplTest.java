@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
@@ -16,7 +17,6 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -24,6 +24,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import com.svydovets.bibirnate.cache.Cache;
 import com.svydovets.bibirnate.cache.CacheContainer;
+import com.svydovets.bibirnate.cache.CacheUtils;
 import com.svydovets.bibirnate.entities.EntityPrimitives;
 import com.svydovets.bibirnate.entities.PersonSimpleEntity;
 import com.svydovets.bibirnate.entity.BiberEntity;
@@ -88,14 +89,22 @@ class SessionImplTest {
     }
 
     @Test
-    @Disabled
     void remove() {
         try (var factory = mockStatic(JdbcEntityDaoFactory.class)) {
             var jdbcEntityDao = mock(JdbcEntityDao.class);
             factory.when(() -> JdbcEntityDaoFactory.createJdbcEntityDao(any(), any())).thenReturn(jdbcEntityDao);
-            var session = new SessionImpl(any(), new CacheContainer(new Cache(40_000), false),
-              any());
-            session.remove(new PersonSimpleEntity());
+
+            var person = new PersonSimpleEntity();
+            person.setId(11L);
+
+            var cacheContainer = new CacheContainer(new Cache(40_000), false);
+            CacheUtils.put(cacheContainer, person.getClass(), person.getId(), person);
+            var conn = mock(Connection.class);
+
+            var log = mock(SqlLogger.class);
+            var session = new SessionImpl(conn, cacheContainer, log);
+
+            session.remove(person);
             verify(jdbcEntityDao).remove(any(PersonSimpleEntity.class));
         }
     }
