@@ -149,6 +149,127 @@ sqlLogging:
 </details>
 </details>
 
+## TransactionManager
+<details>
+<summary>Description</summary>
+
+Provides control over execution of transaction.  
+If you need a transaction you can extract it from Session#getTransactionManager. Then, for starting transaction you 
+need to <b>transactionManager.begin()</b>. Then can make some operations with DB and then commit or rollback changes.
+
+<details>
+<summary>Look at code snippet</summary>
+
+```java
+ TransactionManager transactionManager = session.getTransactionManager();
+  try {
+      transactionManager.begin();
+      var person = session.findById(2, Person.class);
+
+      person.setFirstName("new name");
+    
+      session.flush();
+      
+      transactionManager.commit();
+  } catch (Exception ex) {
+      transactionManager.rollback();
+  }
+```
+</details>
+</details>
+
+## Session
+<details>
+<summary>Description</summary>
+
+### Session is the main interface for working with ORM. 
+The session is encapsulating connection to DB, and gives opportunities to perform CRUD operations.
+
+<details>
+<summary>How to open and close session:</summary>
+
+```java
+  SessionFactory sessionFactory = getSessionFactory();
+  try (Session session = sessionFactory.openSession()) { //will be automatically closed
+      //do smth
+  } catch(Exception ex){
+      // do smth
+  }
+```
+```java
+  SessionFactory sessionFactory = getSessionFactory();
+  Session session;
+  try {
+      session = sessionFactory.openSession()
+      //do smth
+  } catch(Exception ex){
+      // do smth
+  } finally {
+      if (!session.isClosed()) {
+          sessiom.close();
+        } 
+  }
+```
+</details>
+
+<details>
+<summary>CRUD</summary>
+Session provides methods for the CRUD operations:
+
+<details>
+<summary>findById</summary>
+Searching in DB entity by its id.
+
+```java
+  SessionFactory sessionFactory = getSessionFactory();
+  try (Session session = sessionFactory.openSession()) {
+      var person = session.findById(2, Person.class);
+      //do smth
+  } catch(Exception ex){
+      // do smth
+  }
+```
+</details>
+<details>
+<summary>createTypedQuery</summary>
+
+See more in the <a name="query">Query</a> block
+</details>
+<details>
+<summary>persist</summary>
+Insert entity into DB to proper table.
+
+```java
+  SessionFactory sessionFactory = getSessionFactory();
+  try (Session session = sessionFactory.openSession()) {
+      TransactionManager transactionManager = session.getTransactionManager();
+      try {
+      transactionManager.begin();
+         
+          session.persist(entity);
+        
+          transactionManager.commit();
+      } catch (Exception ex) {
+        transactionManager.rollback();
+      }
+  } catch(Exception ex){
+      // do smth
+  }
+```
+</details>
+<details>
+<summary>update</summary>
+
+#TODO
+</details>
+<details>
+<summary>remove</summary>
+
+#TODO
+</details>
+</details>
+</details>
+
 ## Cache
 <details>
 <summary>Description</summary>
