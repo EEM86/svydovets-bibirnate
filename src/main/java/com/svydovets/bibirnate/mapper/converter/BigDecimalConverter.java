@@ -15,6 +15,12 @@ public class BigDecimalConverter implements SqlDataTypeConverter {
         if (field.getType().equals(BigInteger.class)) {
             return val.toBigInteger();
         }
+        if (field.getType().equals(Long.class)) {
+            return val.longValue();
+        }
+        if (field.getType().equals(Integer.class)) {
+            return val.intValue();
+        }
         return val;
     }
 }
