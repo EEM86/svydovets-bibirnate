@@ -406,4 +406,30 @@ Query  query = session.createTypedQuery("delete from persons where id = ?;", Per
 </details>
 </details>
 
+## Mapping
+<details>
+<summary>Description</summary>
+At this moment for selection bibernate supports only to-one associations (one-to-one and many-to-one)
+this association must be specified only on the child entity side (entity with foreign key column)
+and also must be marked with @JoinColumn annotation where specified foreign key column name.
+
+```java
+@Entity
+@Table(name = "notes")
+@Data
+public class Note {
+
+    @Id
+    private Long id;
+
+    @Column(name = "body")
+    private String body;
+
+    @ManyToOne
+    @JoinColumn(name = "person_id")
+    private Person person;
+}
+```
+</details>
+
 ### Thanks for reading! Have fun!
