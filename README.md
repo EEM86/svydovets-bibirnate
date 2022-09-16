@@ -4,6 +4,9 @@
 
 ## Configuration
 
+<details>
+<summary>Description</summary>
+
 To start using Bibernate ORM client is needed to obtain SessionFactory instance using PersistenceContextProvider
 with SessionFactoryBuilder. The configuration can be passed to ORM by YAML-file configuration or using Java-class objects.
 Configuration includes database connection properties, connection pool properties, second level cache configuration and 
@@ -144,6 +147,142 @@ sqlLogging:
   enabled : true
 ```
 </details>
+</details>
 
+## Cache
+<details>
+<summary>Description</summary>
+
+Bibernate supports two levels of cache:
+>1. Session cache. Is enabled by default and cannot be disabled. This cache is shared only within one session where its
+> created.
+
+>2. SessionFactory cache. Is disabled by default. Can be enabled via configuration (look at description above for 
+>configuration). 
+>Second level cache is working for entities that is marked as <b>@Cacheable</b>
+>
+><details>
+><summary>Code snippet</summary>
+>
+>```java
+>@Data
+>@Entity
+>@ToString
+>@Table(name = "persons")
+>@Cacheable
+>public class Person {
+>    @Id
+>    private Long id;
+>
+>    @Column(name = "first_name")
+>    private String firstName;
+>    @Column(name = "last_name")
+>    private String lastName;
+>    private String email;
+>    private int age;
+>    @Column(name = "created_at")
+>    private LocalDateTime createdAt;
+>}
+>```
+></details>
+><b>Also, pay attention that second level cache is custom realisation of Svydovets team, we don't use any external 
+>tools for it.</b>
+
+</details>
+
+## Query
+<details>
+<summary>Description</summary>
+
+Biberenate supports TypedQuery (and we are planing to provide NativeQuery in the future).
+<b>TypedQuery</b> applies String SQL query and Class of entity and able to map result from DB but currently is unable
+to map fields from entity to SQL query. For working with TypedQuery you need to provide SQL query in the same way as
+for JDBC PreparedStatement.
+Please take a look at code snippets bellow:
+<details>
+<summary>Snippets</summary>
+
+<details>
+<summary>SELECT without parameters:</summary>
+
+```java
+Query typedQuery = session.createTypedQuery("select * from persons", Person.class);
+  var resultList = typedQuery.getResultList();
+```
+</details>
+<details>
+<summary>SELECT with parameter:</summary>
+
+```java
+Query typedQuery = session.createTypedQuery("select * from persons where first_name like ?", Person.class);
+  typedQuery.addParameter("P%");
+  Person firstResult = (Person) typedQuery.getFirstResult();
+```
+</details>
+<details>
+<summary>SELECT with parameters:</summary>
+
+```java
+Query typedQuery = session.createTypedQuery("select * from persons where first_name = ? and last_name = ?", Person.class);
+  typedQuery.addParameter("P%");
+  typedQuery.addParameter("P%");
+  Person firstResult = (Person) typedQuery.getFirstResult();
+```
+</details>
+<details>
+<summary>INSERT:</summary>
+
+```java
+Query  query = session.createTypedQuery("insert into persons (first_name, last_name, email, age) values (?, ?, ?, ?);", Person.class);
+  typedQuery.addParameter("FirstName");
+  typedQuery.addParameter("LastName");
+  typedQuery.addParameter("email");
+  typedQuery.addParameter(1);
+  query.execute();
+```
+</details>
+<details>
+<summary>UPDATE:</summary>
+
+```java
+Query  query = session.createTypedQuery("update persons set last_name = ? where id = ?;", Person.class);
+  typedQuery.addParameter("LastName");
+  typedQuery.addParameter(1);
+  query.execute();
+```
+</details>
+<details>
+<summary>DELETE:</summary>
+
+```java
+Query  query = session.createTypedQuery("delete from persons where id = ?;", Person.class);
+  typedQuery.addParameter(1);
+  query.execute();
+```
+</details>
+<details>
+<summary>INSERT with TransactionalManager commit and rollback:</summary>
+
+```java
+ TransactionManager transactionManager = session.getTransactionManager();
+  try {
+      transactionManager.begin();
+    
+      Query  query = session.createTypedQuery("insert into persons (first_name, last_name, email, age) values (?, ?, ?, ?);", Person.class);
+      typedQuery.addParameter("FirstName");
+      typedQuery.addParameter("LastName");
+      typedQuery.addParameter("email");
+      typedQuery.addParameter(1);
+      query.execute();
+    
+      transactionManager.commit();
+  } catch (Exception ex) {
+      transactionManager.rollback();
+  }
+```
+</details>
+
+</details>
+</details>
 
 ### Thanks for reading! Have fun!

@@ -1,5 +1,6 @@
 package com.svydovets.bibirnate.demo.entity;
 
+import com.svydovets.bibirnate.annotation.Cacheable;
 import com.svydovets.bibirnate.annotation.Column;
 import com.svydovets.bibirnate.annotation.Entity;
 import com.svydovets.bibirnate.annotation.Id;
@@ -12,6 +13,7 @@ import lombok.Data;
 @Entity
 @Table(name = "notes")
 @Data
+@Cacheable
 public class Note {
 
     @Id
