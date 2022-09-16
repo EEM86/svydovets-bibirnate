@@ -21,7 +21,7 @@ public class EntityWrongType {
     @OneToOne
     private AllTypesEntity oneToOneEntity;
 
-    @OneToMany
+    @OneToMany(mappedBy = "")
     private List<AllTypesEntity> oneToManyEntities;
 
 }

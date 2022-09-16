@@ -17,6 +17,15 @@ public class ValidationService {
         }
     }
 
+    public <T> void validateChildEntity(T entity, String mappedBy) {
+        validateEntity(entity);
+        var hasChildMapping = Arrays.stream(entity.getClass().getDeclaredFields())
+          .anyMatch(field -> field.getName().equals(mappedBy));
+        if (!hasChildMapping) {
+            throw new EntityValidationException("Child entity : %s doesn't have mapping to parent entity");
+        }
+    }
+
     public <T> boolean entityHasId(T entity) {
         return Arrays.stream(entity.getClass().getDeclaredFields())
           .anyMatch(field -> field.isAnnotationPresent(Id.class));

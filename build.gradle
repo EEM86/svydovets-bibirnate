@@ -26,6 +26,7 @@ ext {
     postgresqlVersion = '42.5.0'
     hikariVersion = '5.0.1'
     logbackClassicVersion = '1.2.11'
+    commonscollectionsVersion = '3.2.2'
 }
 
 configurations {
@@ -55,6 +56,7 @@ dependencies {
     implementation "com.zaxxer:HikariCP:${hikariVersion}"
 
     implementation "ch.qos.logback:logback-classic:${logbackClassicVersion}"
+    implementation "commons-collections:commons-collections:${commonscollectionsVersion}"
 }
 
 test {

@@ -13,6 +13,7 @@ import com.svydovets.bibirnate.cache.CacheContainer;
 import com.svydovets.bibirnate.cache.CacheUtils;
 import com.svydovets.bibirnate.exceptions.BibernateException;
 import com.svydovets.bibirnate.exceptions.JdbcException;
+import com.svydovets.bibirnate.exceptions.PersistenceException;
 import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
 import com.svydovets.bibirnate.logs.SqlLogger;
 import com.svydovets.bibirnate.session.Session;
@@ -20,6 +21,7 @@ import com.svydovets.bibirnate.session.query.Query;
 import com.svydovets.bibirnate.session.query.TypedQuery;
 import com.svydovets.bibirnate.session.transaction.TransactionManager;
 import com.svydovets.bibirnate.session.transaction.TransactionManagerImpl;
+import com.svydovets.bibirnate.utils.EntityUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -69,10 +71,23 @@ public class SessionImpl implements Session {
      */
     @Override
     public void remove(Object entity) {
+        Objects.requireNonNull(entity);
         log.trace("Removing {} by id", entity.getClass().getSimpleName());
         checkIfSessionClosed();
-        jdbcEntityDao.remove(entity);
-        CacheUtils.invalidate(cacheContainer, entity);
+        var id = EntityUtils.getEntityIdValue(entity);
+        var result = CacheUtils.extract(cacheContainer, entity.getClass(), id);
+        if (result.isPresent()) {
+            try {
+                connection.setAutoCommit(false);
+                jdbcEntityDao.remove(entity);
+                CacheUtils.invalidate(cacheContainer, entity);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        } else {
+            throw new PersistenceException(
+              String.format("Object %s can not be deleted as it is not present in Session", entity));
+        }
     }
 
     /**
