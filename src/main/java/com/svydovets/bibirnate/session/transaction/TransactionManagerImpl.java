@@ -34,7 +34,6 @@ public class TransactionManagerImpl implements TransactionManager {
         }
         try {
             connection.commit();
-            connection.close();
             transactionStarted = false;
         } catch (SQLException exception) {
             throw new TransactionManagerException(exception);
@@ -48,7 +47,6 @@ public class TransactionManagerImpl implements TransactionManager {
         }
         try {
             connection.rollback();
-            connection.close();
             transactionStarted = false;
         } catch (SQLException exception) {
             throw new TransactionManagerException(exception);

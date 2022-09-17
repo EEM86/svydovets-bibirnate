@@ -3,6 +3,7 @@ package com.svydovets.bibirnate.utils;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -38,7 +39,7 @@ public final class EntityUtils {
      */
     public static boolean isRegularField(Field field) {
         boolean simpleField = !isEntityCollectionField(field) && !isEntityField(field)
-          && !Collection.class.isAssignableFrom(field.getType()) && isJavaType(field);
+                && !Collection.class.isAssignableFrom(field.getType()) && isJavaType(field);
         if (!simpleField && field.getType().isArray()) {
             simpleField = field.getType().componentType().equals(byte.class);
         }
@@ -75,9 +76,24 @@ public final class EntityUtils {
             return field.getAnnotation(JoinColumn.class).name();
         }
         return Optional.ofNullable(field.getAnnotation(Column.class))
-          .map(Column::name)
-          .filter(Predicate.not(String::isEmpty))
-          .orElse(field.getName());
+                .map(Column::name)
+                .filter(Predicate.not(String::isEmpty))
+                .orElse(field.getName());
+    }
+
+    /**
+     * Returns the field value handling errors. Used in streams.
+     *
+     * @param field  - mapped entity's field
+     * @param object - object entity's values
+     */
+    public static Object getFieldValue(Field field, Object object) {
+        try {
+            field.setAccessible(Boolean.TRUE);
+            return field.get(object);
+        } catch (IllegalAccessException ex) {
+            throw new PersistenceException(String.format("Could not take a value of field: %s", field.getName()), ex);
+        }
     }
 
     private static boolean isJavaType(Field field) {
@@ -94,7 +110,7 @@ public final class EntityUtils {
      */
     public static <T> Field getIdField(Class<T> entityType) {
         return Arrays.stream(entityType.getDeclaredFields()).filter(f -> f.isAnnotationPresent(Id.class))
-          .collect(Collectors.collectingAndThen(Collectors.toList(), getOneFieldCollector(entityType)));
+                .collect(Collectors.collectingAndThen(Collectors.toList(), getOneFieldCollector(entityType)));
     }
 
     /**
@@ -102,7 +118,7 @@ public final class EntityUtils {
      */
     public static <T> String getTableName(Class<T> entityType) {
         return Optional.ofNullable(entityType.getAnnotation(Table.class)).map(Table::name)
-          .filter(Predicate.not(String::isEmpty)).orElse(entityType.getSimpleName());
+                .filter(Predicate.not(String::isEmpty)).orElse(entityType.getSimpleName());
     }
 
     public static <T> String getParentIdColumnName(Class<T> entityType, String fieldName) {
@@ -111,10 +127,10 @@ public final class EntityUtils {
             return parentFiled.getAnnotation(JoinColumn.class).name();
         } catch (NoSuchFieldException | NullPointerException ex) {
             throw new EntityMappingException(
-              String.format("Entity: %s mapping exception. "
-                  + "%s entity should have mapped reference to parent entity field: '%s' "
-                  + "including @JoinColumn annotation",
-                entityType.getName(), entityType.getName(), fieldName));
+                    String.format("Entity: %s mapping exception. "
+                                    + "%s entity should have mapped reference to parent entity field: '%s' "
+                                    + "including @JoinColumn annotation",
+                            entityType.getName(), entityType.getName(), fieldName));
         }
     }
 
@@ -127,10 +143,10 @@ public final class EntityUtils {
 
     public static Object getEntityIdValue(Object entity) {
         var idField = Arrays.stream(entity.getClass().getDeclaredFields())
-          .filter(field -> field.isAnnotationPresent(Id.class))
-          .findFirst()
-          .orElseThrow(() -> new EntityValidationException(String.format("Entity %s does not contain id field",
-            entity.getClass().getSimpleName())));
+                .filter(field -> field.isAnnotationPresent(Id.class))
+                .findFirst()
+                .orElseThrow(() -> new EntityValidationException(String.format("Entity %s does not contain id field",
+                        entity.getClass().getSimpleName())));
         Object id = null;
         try {
             idField.setAccessible(true);
@@ -150,5 +166,17 @@ public final class EntityUtils {
             }
             return list.get(0);
         };
+    }
+
+    public static <T> String resolveColumnName(Field field) {
+        return Optional.ofNullable(field.getAnnotation(Column.class))
+                .map(Column::name)
+                .orElseGet(field::getName);
+    }
+
+    public static <T> Field[] getSortedFields(Class<T> entity) {
+        return Arrays.stream(entity.getDeclaredFields())
+                .sorted(Comparator.comparing(Field::getName))
+                .toArray(Field[]::new);
     }
 }

@@ -239,14 +239,20 @@ See more in the <a name="query">Query</a> block
 <summary>persist</summary>
 Insert entity into DB to proper table.
 
+IN PROGRESS
+</details>
+<details>
+<summary>update</summary>
+
 ```java
   SessionFactory sessionFactory = getSessionFactory();
   try (Session session = sessionFactory.openSession()) {
       TransactionManager transactionManager = session.getTransactionManager();
       try {
       transactionManager.begin();
+          var entity = session.findById(3, Person.class);  
          
-          session.persist(entity);
+          session.update(entity);
         
           transactionManager.commit();
       } catch (Exception ex) {
@@ -256,11 +262,26 @@ Insert entity into DB to proper table.
       // do smth
   }
 ```
-</details>
-<details>
-<summary>update</summary>
-
-#TODO
+```java
+  SessionFactory sessionFactory = getSessionFactory();
+  try (Session session = sessionFactory.openSession()) {
+      TransactionManager transactionManager = session.getTransactionManager();
+      try {
+      transactionManager.begin();
+          var entity = session.findById(3, Person.class);  
+         
+          entity.setFirstName("Test name");
+          
+          sessiom.flush();
+        
+          transactionManager.commit();
+      } catch (Exception ex) {
+        transactionManager.rollback();
+      }
+  } catch(Exception ex){
+      // do smth
+  }
+```
 </details>
 <details>
 <summary>remove</summary>
@@ -437,6 +458,33 @@ Query  query = session.createTypedQuery("delete from persons where id = ?;", Per
 </details>
 
 </details>
+</details>
+
+## Mapping
+<details>
+<summary>Description</summary>
+At this moment for selection, bibernate supports only to-one associations (one-to-one and many-to-one)
+with eager fetch type (associated entity will be loaded at the same time with entity that owns this relation)
+this association must be specified only on the child entity side (entity with foreign key column)
+and also must be marked with @JoinColumn annotation where specified foreign key column name.
+
+```java
+@Entity
+@Table(name = "notes")
+@Data
+public class Note {
+
+    @Id
+    private Long id;
+
+    @Column(name = "body")
+    private String body;
+
+    @ManyToOne
+    @JoinColumn(name = "person_id")
+    private Person person;
+}
+```
 </details>
 
 ### Thanks for reading! Have fun!

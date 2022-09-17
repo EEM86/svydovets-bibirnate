@@ -49,6 +49,7 @@ public abstract class QueryProcessor {
 
     private EntityValidationService validationService = new EntityValidationService();
     protected final SqlLogger sqlLogger;
+    private Object entity;
 
     protected QueryProcessor(Object entity, Connection connection, SqlLogger sqlLogger) {
         initialize(entity, connection, null);
@@ -65,6 +66,7 @@ public abstract class QueryProcessor {
         validationService.validateEntity(entity);
         persistentObject = entity;
         var entityClass = entity.getClass();
+        this.entity = entity;
         this.connection = connection;
         this.tableName = EntityUtils.getTableName(entityClass);
         this.id = EntityUtils.getIdField(entityClass);
@@ -79,6 +81,7 @@ public abstract class QueryProcessor {
         this.toOneRelations = entityFields.stream()
           .filter(field -> field.isAnnotationPresent(OneToOne.class) || field.isAnnotationPresent(ManyToOne.class))
           .map(field -> wrapToToOneRelationObject(entity, field))
+          .filter(relation -> Objects.nonNull(relation.getRelatedEntity()))
           .toList();
         this.parent = parent;
     }

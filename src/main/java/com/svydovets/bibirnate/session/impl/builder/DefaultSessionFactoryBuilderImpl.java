@@ -9,7 +9,6 @@ import com.svydovets.bibirnate.configuration.properties.ConnectionPoolProperties
 import com.svydovets.bibirnate.configuration.properties.DatabaseProperties;
 import com.svydovets.bibirnate.configuration.properties.LoggingProperties;
 import com.svydovets.bibirnate.session.SessionFactory;
-import com.svydovets.bibirnate.utils.ValidationUtils;
 
 import lombok.NoArgsConstructor;
 
@@ -50,7 +49,6 @@ public class DefaultSessionFactoryBuilderImpl extends AbstractSessionFactoryBuil
      */
     @Override
     public SessionFactory build() {
-        ValidationUtils.validateNotNullDatabaseFields(DatabaseProperties.class, databaseProperties);
         var configurationProperties = populateConfigurationPropertiesOrGetDefault();
         return buildSessionFactory(configurationProperties);
     }
