@@ -4,6 +4,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 import com.svydovets.bibirnate.configuration.context.PersistenceContextProvider;
+import com.svydovets.bibirnate.configuration.properties.ConnectionPoolProperties;
 import com.svydovets.bibirnate.configuration.properties.DatabaseProperties;
 import com.svydovets.bibirnate.configuration.properties.LoggingProperties;
 import com.svydovets.bibirnate.demo.entity.Note;
@@ -18,63 +19,6 @@ import lombok.SneakyThrows;
 
 public class DemoApp {
 
-    @SneakyThrows
-    public static void main(String[] args) {
-        SessionFactory sessionFactory = getSessionFactory();
-        try (Session session = sessionFactory.openSession()) {
-            var query  = "insert into persons (first_name, last_name, email, age) values (?, ?, ?, ?);";
-            for (int i = 0; i < 1; i++) {
-                Query typedQuery = session.createTypedQuery(query, Person.class);
-                insertIntoPersons(typedQuery);
-                //typedQuery.execute();
-            }
-
-            TransactionManager transactionManager = session.getTransactionManager();
-            try {
-                transactionManager.begin();
-
-                SqlGenerator.generateInsertQueriesToNotes(1).forEach(noteQuery -> {
-                    Query typedQuery = session.createTypedQuery(noteQuery, Note.class);
-                    typedQuery.execute();
-                });
-
-                transactionManager.commit();
-            } catch (Exception ex) {
-                transactionManager.rollback();
-            }
-
-            Query typedQuery = session.createTypedQuery("select * from persons where first_name like ?", Person.class);
-            typedQuery.addParameter("P%");
-            Person firstResult = (Person) typedQuery.getFirstResult();
-            System.out.println(firstResult.toString());
-            //will be extracted from cache
-            firstResult = (Person) typedQuery.getFirstResult();
-            System.out.println(firstResult.toString());
-
-            typedQuery = session.createTypedQuery("select * from persons", Person.class);
-            System.out.println(typedQuery.getResultList().size());
-            //will be extracted from cache
-            System.out.println(typedQuery.getResultList().size());
-
-            Person person = session.findById(2, Person.class);
-            Optional.ofNullable(person)
-              .ifPresentOrElse(System.out::println,
-                () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
-            //session.remove(person);
-
-            Optional.ofNullable(person)
-              .ifPresentOrElse(System.out::println,
-                () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
-
-            Note note = session.findById(2, Note.class);
-
-            Optional.ofNullable(note)
-              .ifPresentOrElse(System.out::println,
-                () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
-
-        }
-    }
-
     private static SessionFactory getSessionFactory() {
         var sqlLoggingProperties = new LoggingProperties();
         sqlLoggingProperties.setEnabled(true);
@@ -86,11 +30,77 @@ public class DemoApp {
           .driverName("org.postgresql.Driver")
           .build();
 
+        //TODO: provide actual DB schema:
+        // for goverla team -> goverla
+        // for petros team -> petros
+        // for breskul team -> breskul
+        // for blyznytsia team -> blyznytsia
+        var connectionPoolProperties = new ConnectionPoolProperties();
+        connectionPoolProperties.setSchema("public");
+
         var sessionFactoryBuilder = new DefaultSessionFactoryBuilderImpl()
           .withSqlQueriesLoggingEnabled(sqlLoggingProperties)
-          .withDatabaseConnection(dbProperties);
+          .withDatabaseConnection(dbProperties)
+          .withConnectionPool(connectionPoolProperties);
 
         return PersistenceContextProvider.createSessionFactory(sessionFactoryBuilder);
+    }
+
+    @SneakyThrows
+    public static void main(String[] args) {
+        SessionFactory sessionFactory = getSessionFactory();
+        try (Session session = sessionFactory.openSession()) {
+            var query = "insert into persons (first_name, last_name, email, age) values (?, ?, ?, ?);";
+            for (int i = 0; i < 1; i++) {
+                Query typedQuery = session.createTypedQuery(query, Person.class);
+                insertIntoPersons(typedQuery);
+                typedQuery.execute();
+            }
+
+            TransactionManager transactionManager = session.getTransactionManager();
+            try {
+                transactionManager.begin();
+
+                SqlGenerator.generateInsertQueriesToNotes(1).forEach(noteQuery -> {
+                    Query typedQuery = session.createTypedQuery(noteQuery, Note.class);
+                    typedQuery.execute();
+                });
+
+                Query typedQuery =
+                  session.createTypedQuery("select * from persons where first_name like ?", Person.class);
+                typedQuery.addParameter("P%");
+                Person firstResult = (Person) typedQuery.getFirstResult();
+                System.out.println(firstResult.toString());
+                //will be extracted from cache
+                firstResult = (Person) typedQuery.getFirstResult();
+                System.out.println(firstResult.toString());
+
+                typedQuery = session.createTypedQuery("select * from persons", Person.class);
+                System.out.println(typedQuery.getResultList().size());
+                //will be extracted from cache
+                System.out.println(typedQuery.getResultList().size());
+
+                Person person = session.findById(2, Person.class);
+                Optional.ofNullable(person)
+                  .ifPresentOrElse(System.out::println,
+                    () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
+                session.remove(person);
+
+                Optional.ofNullable(person)
+                  .ifPresentOrElse(System.out::println,
+                    () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
+
+                Note note = session.findById(2, Note.class);
+
+                Optional.ofNullable(note)
+                  .ifPresentOrElse(System.out::println,
+                    () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
+
+                transactionManager.commit();
+            } catch (Exception ex) {
+                transactionManager.rollback();
+            }
+        }
     }
 
     private static void insertIntoPersons(Query typedQuery) {

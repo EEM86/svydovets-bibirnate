@@ -239,14 +239,20 @@ See more in the <a name="query">Query</a> block
 <summary>persist</summary>
 Insert entity into DB to proper table.
 
+IN PROGRESS
+</details>
+<details>
+<summary>update</summary>
+
 ```java
   SessionFactory sessionFactory = getSessionFactory();
   try (Session session = sessionFactory.openSession()) {
       TransactionManager transactionManager = session.getTransactionManager();
       try {
       transactionManager.begin();
+          var entity = session.findById(3, Person.class);  
          
-          session.persist(entity);
+          session.update(entity);
         
           transactionManager.commit();
       } catch (Exception ex) {
@@ -256,11 +262,26 @@ Insert entity into DB to proper table.
       // do smth
   }
 ```
-</details>
-<details>
-<summary>update</summary>
-
-#TODO
+```java
+  SessionFactory sessionFactory = getSessionFactory();
+  try (Session session = sessionFactory.openSession()) {
+      TransactionManager transactionManager = session.getTransactionManager();
+      try {
+      transactionManager.begin();
+          var entity = session.findById(3, Person.class);  
+         
+          entity.setFirstName("Test name");
+          
+          sessiom.flush();
+        
+          transactionManager.commit();
+      } catch (Exception ex) {
+        transactionManager.rollback();
+      }
+  } catch(Exception ex){
+      // do smth
+  }
+```
 </details>
 <details>
 <summary>remove</summary>
