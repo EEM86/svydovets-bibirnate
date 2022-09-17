@@ -1,5 +1,14 @@
 package com.svydovets.bibirnate.session.impl;
 
+import static com.svydovets.bibirnate.jdbc.JdbcEntityDaoFactory.createJdbcEntityDao;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Objects;
+import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.svydovets.bibirnate.cache.CacheContainer;
 import com.svydovets.bibirnate.cache.CacheUtils;
 import com.svydovets.bibirnate.exceptions.BibernateException;
@@ -16,14 +25,6 @@ import com.svydovets.bibirnate.session.transaction.TransactionManagerImpl;
 import com.svydovets.bibirnate.utils.EntityUtils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Objects;
-import java.util.Optional;
-
-import static com.svydovets.bibirnate.jdbc.JdbcEntityDaoFactory.createJdbcEntityDao;
 
 /**
  * Basic implementation of the {@link Session}.

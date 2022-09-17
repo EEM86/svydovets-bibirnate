@@ -1,10 +1,10 @@
 package com.svydovets.bibirnate.session.state.key;
 
-import com.svydovets.bibirnate.exceptions.PersistenceException;
+import static com.svydovets.bibirnate.utils.EntityUtils.getIdField;
 
 import java.util.Objects;
 
-import static com.svydovets.bibirnate.utils.EntityUtils.getIdField;
+import com.svydovets.bibirnate.exceptions.PersistenceException;
 
 
 public record KeyEntity(Class<?> entityType, Object id) {

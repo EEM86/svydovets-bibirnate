@@ -1,15 +1,16 @@
 package com.svydovets.bibirnate.session.impl.builder;
 
+import java.util.Objects;
+import java.util.function.Supplier;
+
 import com.svydovets.bibirnate.configuration.properties.CacheProperties;
 import com.svydovets.bibirnate.configuration.properties.ConfigurationProperties;
 import com.svydovets.bibirnate.configuration.properties.ConnectionPoolProperties;
 import com.svydovets.bibirnate.configuration.properties.DatabaseProperties;
 import com.svydovets.bibirnate.configuration.properties.LoggingProperties;
 import com.svydovets.bibirnate.session.SessionFactory;
-import lombok.NoArgsConstructor;
 
-import java.util.Objects;
-import java.util.function.Supplier;
+import lombok.NoArgsConstructor;
 
 /**
  * Provides default {@link SessionFactory} configuration.

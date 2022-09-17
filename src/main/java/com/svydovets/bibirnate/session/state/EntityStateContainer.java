@@ -1,8 +1,7 @@
 package com.svydovets.bibirnate.session.state;
 
-import com.svydovets.bibirnate.session.state.key.KeyEntity;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import static com.svydovets.bibirnate.utils.EntityUtils.getFieldValue;
+import static com.svydovets.bibirnate.utils.EntityUtils.getSortedFields;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -12,8 +11,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.svydovets.bibirnate.utils.EntityUtils.getFieldValue;
-import static com.svydovets.bibirnate.utils.EntityUtils.getSortedFields;
+import com.svydovets.bibirnate.session.state.key.KeyEntity;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -34,7 +35,7 @@ public class EntityStateContainer {
     }
 
     /**
-     * Returns entity object fulfilled in current state;
+     * Returns entity object fulfilled in current state.
      *
      * @param key which field should be stored.
      */
@@ -54,7 +55,6 @@ public class EntityStateContainer {
     }
 
 
-
     public boolean isEntityStateConsistent(Object entity) {
         var key = KeyEntity.of(entity);
         var snapshotValues = entitiesState.get(key);
@@ -62,7 +62,9 @@ public class EntityStateContainer {
 
         for (int i = 0; i < fields.length; i++) {
             if (getFieldValue(fields[i], entity) != snapshotValues[i]) {
-                log.trace("Entity field value '" + entity + "' has been modified and should be updated on " + snapshotValues[i]);
+                String message = "Entity field value '" + entity + "' has been modified and should be updated on "
+                  + snapshotValues[i];
+                log.trace(message);
                 return false;
             }
         }
@@ -75,15 +77,17 @@ public class EntityStateContainer {
      * @param entity which field should be stored.
      */
     public void put(Object entity) {
-        var key = KeyEntity.of(entity);
-        var fields = Arrays.stream(entity.getClass().getDeclaredFields())
-                .peek(field -> field.setAccessible(Boolean.TRUE))
-                .sorted(Comparator.comparing(Field::getName))
-                .map(field -> getFieldValue(field, entity))
-                .toArray();
+        if (Objects.nonNull(entity)) {
+            var key = KeyEntity.of(entity);
+            var fields = Arrays.stream(entity.getClass().getDeclaredFields())
+              .peek(field -> field.setAccessible(Boolean.TRUE))
+              .sorted(Comparator.comparing(Field::getName))
+              .map(field -> getFieldValue(field, entity))
+              .toArray();
 
-        log.trace("Entity " + entity + " has been loaded with such values " + Arrays.toString(fields));
-        entitiesState.put(key, fields);
+            log.trace("Entity " + entity + " has been loaded with such values " + Arrays.toString(fields));
+            entitiesState.put(key, fields);
+        }
     }
 
 }

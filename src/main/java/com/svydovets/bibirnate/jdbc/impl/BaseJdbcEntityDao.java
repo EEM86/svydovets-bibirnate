@@ -1,20 +1,21 @@
 package com.svydovets.bibirnate.jdbc.impl;
 
-import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
-import com.svydovets.bibirnate.logs.SqlLogger;
-import com.svydovets.bibirnate.mapper.EntityMapperService;
-import com.svydovets.bibirnate.session.query.processor.QueryProcessorFactory;
-import lombok.SneakyThrows;
-
-import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.util.Optional;
-
 import static com.svydovets.bibirnate.session.query.CrudOperation.DELETE;
 import static com.svydovets.bibirnate.session.query.CrudOperation.UPDATE;
 import static com.svydovets.bibirnate.utils.EntityUtils.getColumnName;
 import static com.svydovets.bibirnate.utils.EntityUtils.getIdField;
 import static com.svydovets.bibirnate.utils.EntityUtils.getTableName;
+
+import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.util.Optional;
+
+import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
+import com.svydovets.bibirnate.logs.SqlLogger;
+import com.svydovets.bibirnate.mapper.EntityMapperService;
+import com.svydovets.bibirnate.session.query.processor.QueryProcessorFactory;
+
+import lombok.SneakyThrows;
 
 /**
  * Standard JdbcEntityDao implementation.
@@ -75,7 +76,6 @@ public class BaseJdbcEntityDao implements JdbcEntityDao {
           sqlLogger);
         queryProcessor.execute();
     }
-
 
     /**
      * {@inheritDoc}
