@@ -30,6 +30,11 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Implementation of {@link QueryProcessor} class.
+ * Handles DELETE specific logic including different parent-child relations, cascade/non cascade operations.
+ * As per current implementation supports only EAGER fetch type.
+ */
 @Slf4j
 @Getter
 public class DeleteQueryProcessor extends QueryProcessor {
@@ -57,6 +62,9 @@ public class DeleteQueryProcessor extends QueryProcessor {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @SneakyThrows
     @Override
     public String generateQuery() {
@@ -71,6 +79,9 @@ public class DeleteQueryProcessor extends QueryProcessor {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void execute() {
         if (hasToManyRelations()) {

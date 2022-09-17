@@ -23,6 +23,11 @@ public interface Session extends Closeable {
 
     void update(Object entity);
 
+    /**
+     * Delete existing project from Database.
+     *
+     * @param entity - entity that should be removed
+     */
     void remove(Object entity);
 
     /**
