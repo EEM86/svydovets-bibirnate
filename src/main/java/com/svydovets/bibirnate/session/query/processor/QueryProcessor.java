@@ -81,6 +81,7 @@ public abstract class QueryProcessor {
         this.toOneRelations = entityFields.stream()
           .filter(field -> field.isAnnotationPresent(OneToOne.class) || field.isAnnotationPresent(ManyToOne.class))
           .map(field -> wrapToToOneRelationObject(entity, field))
+          .filter(relation -> Objects.nonNull(relation.getRelatedEntity()))
           .toList();
         this.parent = parent;
     }

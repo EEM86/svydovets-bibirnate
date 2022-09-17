@@ -191,7 +191,7 @@ public class DeleteQueryProcessor extends QueryProcessor {
 
 
     private void handleToOneEntityRelation(ToOneRelation relation) {
-        //      todo: validate
+        getValidationService().validateToOneEntity(relation.getRelatedEntity(), relation);
         if (Objects.nonNull(relation.getRelatedEntity())) {
             if (relation.getFetch() == FetchType.EAGER) {
                 if (relation.getField().isAnnotationPresent(OneToOne.class)) {

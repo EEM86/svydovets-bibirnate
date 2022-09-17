@@ -58,6 +58,60 @@ public class EntityValidationService {
         }
     }
 
+    public <T> void validateToOneEntity(T entity, ToOneRelation relation) {
+        validateEntity(entity);
+        var fieldName = relation.getField().getName();
+        var childClass = relation.getRelatedEntity().getClass();
+        if (relation.getField().isAnnotationPresent(ManyToOne.class)) {
+            var hasParentMapping = Arrays.stream(childClass.getDeclaredFields())
+              .filter(field -> field.isAnnotationPresent(OneToMany.class))
+              .anyMatch(field -> Objects.nonNull(field.getAnnotation(OneToMany.class).mappedBy())
+                && field.getAnnotation(OneToMany.class).mappedBy().equals(fieldName));
+            if (!relation.getField().isAnnotationPresent(JoinColumn.class) || !hasParentMapping) {
+                throw new EntityValidationException(
+                  String.format("Incorrect @ManyToOne mapping for field: %s in class %s. "
+                      + "@ManyToOne field should contain @JoinColumn mapping, "
+                      + "field in related entity should be annotated with "
+                      + "@OneToMany(mappedBy=\"<ManyToOne field name>\")",
+                    relation.getField().getName(),
+                    relation.getField().getDeclaringClass().getName()));
+            }
+        } else {
+            if (relation.getField().isAnnotationPresent(JoinColumn.class)) {
+                var hasParentMapping = Arrays.stream(childClass.getDeclaredFields())
+                  .filter(field -> field.isAnnotationPresent(OneToOne.class))
+                  .anyMatch(field -> Objects.nonNull(field.getAnnotation(OneToOne.class).mappedBy())
+                    && field.getAnnotation(OneToOne.class).mappedBy().equals(fieldName));
+                if (!relation.getField().isAnnotationPresent(JoinColumn.class) || !hasParentMapping) {
+                    throw new EntityValidationException(
+                      String.format("Incorrect @OneToOne mapping for field: %s in class %s. "
+                          + "@OneToOne field should contain @JoinColumn mapping, "
+                          +
+                          "field in related entity should be annotated with "
+                          + "@OneToMany(mappedBy=\"<OneToOne child field name>\")",
+                        relation.getField().getName(),
+                        relation.getField().getDeclaringClass().getName()));
+                }
+            } else {
+                var mappedByVal = relation.getMappedBy();
+                var hasMapping = Arrays.stream(childClass.getDeclaredFields())
+                  .filter(
+                    field -> field.isAnnotationPresent(OneToOne.class) && field.isAnnotationPresent(JoinColumn.class))
+                    .anyMatch(field -> field.getName().equals(mappedByVal));
+                if (!hasMapping) {
+                    throw new EntityValidationException(
+                      String.format("Incorrect @OneToOne mapping for field: %s in class %s. "
+                          + "@OneToOne field should contain mappedBy = \"value\" where value refers to a name "
+                          + "of backward OneToOne mapping"
+                          + "Field in related entity should be annotated with "
+                          + "@OneToMany and @JoinColumn" ,
+                        relation.getField().getName(),
+                        relation.getField().getDeclaringClass().getName()));
+                }
+            }
+        }
+    }
+
     /**
      * Check that provided entity has a field annotated with @Id.
      *
