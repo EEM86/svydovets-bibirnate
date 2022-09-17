@@ -21,6 +21,8 @@ public interface Session extends Closeable {
      */
     <T> T findById(Object id, Class<T> type);
 
+    void update(Object entity);
+
     void remove(Object entity);
 
     /**
@@ -48,4 +50,5 @@ public interface Session extends Closeable {
      */
     <T> Query createTypedQuery(String sql, Class<T> entityType);
 
+    void flush();
 }

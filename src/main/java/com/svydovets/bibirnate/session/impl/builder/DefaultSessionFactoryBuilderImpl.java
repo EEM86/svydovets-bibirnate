@@ -1,17 +1,15 @@
 package com.svydovets.bibirnate.session.impl.builder;
 
-import java.util.Objects;
-import java.util.function.Supplier;
-
 import com.svydovets.bibirnate.configuration.properties.CacheProperties;
 import com.svydovets.bibirnate.configuration.properties.ConfigurationProperties;
 import com.svydovets.bibirnate.configuration.properties.ConnectionPoolProperties;
 import com.svydovets.bibirnate.configuration.properties.DatabaseProperties;
 import com.svydovets.bibirnate.configuration.properties.LoggingProperties;
 import com.svydovets.bibirnate.session.SessionFactory;
-import com.svydovets.bibirnate.utils.ValidationUtils;
-
 import lombok.NoArgsConstructor;
+
+import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * Provides default {@link SessionFactory} configuration.
@@ -50,7 +48,6 @@ public class DefaultSessionFactoryBuilderImpl extends AbstractSessionFactoryBuil
      */
     @Override
     public SessionFactory build() {
-        ValidationUtils.validateNotNullDatabaseFields(DatabaseProperties.class, databaseProperties);
         var configurationProperties = populateConfigurationPropertiesOrGetDefault();
         return buildSessionFactory(configurationProperties);
     }
