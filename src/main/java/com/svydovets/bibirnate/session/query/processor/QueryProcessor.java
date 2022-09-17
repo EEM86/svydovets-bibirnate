@@ -17,12 +17,17 @@ import com.svydovets.bibirnate.session.query.CascadeType;
 import com.svydovets.bibirnate.session.query.FetchType;
 import com.svydovets.bibirnate.session.query.ToManyRelation;
 import com.svydovets.bibirnate.session.query.ToOneRelation;
-import com.svydovets.bibirnate.session.validation.ValidationService;
+import com.svydovets.bibirnate.session.validation.EntityValidationService;
 import com.svydovets.bibirnate.utils.EntityUtils;
 
 import lombok.Data;
 import lombok.SneakyThrows;
 
+
+/**
+ * The {@link QueryProcessor} is a general class for different types CRUD processors responsible
+ * for generating and executing SQL queries.
+ */
 @Data
 public abstract class QueryProcessor {
 
@@ -42,7 +47,7 @@ public abstract class QueryProcessor {
 
     private Parent parent;
 
-    private ValidationService validationService = new ValidationService();
+    private EntityValidationService validationService = new EntityValidationService();
     protected final SqlLogger sqlLogger;
 
     protected QueryProcessor(Object entity, Connection connection, SqlLogger sqlLogger) {
@@ -106,19 +111,42 @@ public abstract class QueryProcessor {
         return new ToOneRelation(fetch, cascadeType, fieldValue, toOneField, mappedBy);
     }
 
+    /**
+     * Defines if the current processor implementation has child {@link OneToMany} relations.
+     *
+     * @return true if child relations exists otherwise - false.
+     */
     public boolean hasToManyRelations() {
         return CollectionUtils.isNotEmpty(toManyRelations);
     }
 
+    /**
+     * Defines if the current processor implementation has child {@link ManyToOne} or {@link OneToOne} relations.
+     *
+     * @return true if child relations exists otherwise - false.
+     */
     public boolean hasToOneRelations() {
         return CollectionUtils.isNotEmpty(toOneRelations);
     }
 
+    /**
+     * Defines if the current processor implementation is a parent or child relation.
+     *
+     * @return true if recent implementation is one of the child relations otherwise - false
+     */
     public boolean hasParent() {
         return !Objects.isNull(this.parent);
     }
 
+    /**
+     * Responsible for generating CRUD processor specific queries.
+     *
+     * @return Sting query being further executed
+     */
     public abstract String generateQuery();
 
+    /**
+     * Main method for executing processor's specific logic.
+     */
     public abstract void execute();
 }

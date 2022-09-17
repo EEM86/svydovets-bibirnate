@@ -21,6 +21,11 @@ public interface Session extends Closeable {
      */
     <T> T findById(Object id, Class<T> type);
 
+    /**
+     * Delete existing project from Database.
+     *
+     * @param entity - entity that should be removed
+     */
     void remove(Object entity);
 
     /**

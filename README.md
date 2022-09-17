@@ -265,7 +265,40 @@ Insert entity into DB to proper table.
 <details>
 <summary>remove</summary>
 
-#TODO
+Delete entity from a DB.
+
+Cascade types supported: DELETE, ALL, no cascade
+
+Fetch types supported: EAGER
+
+In case of Cascade value provided - deletes from the database original 
+object with all relations. If cascade value omitted - deletes an original
+object from the database and in child relations - set "fk_id" column 
+values to null.
+
+> Required steps to execute remove operation:
+> - add object to persistence context 
+> - open transaction
+> - call remove operation
+> - close transaction
+
+```java
+  SessionFactory sessionFactory = getSessionFactory();
+  try (Session session = sessionFactory.openSession()) {
+    TransactionManager transactionManager = session.getTransactionManager();
+    try{
+        transactionManager.begin();
+        var person = session.findById(2, Person.class);
+        session.remove(person);
+        transactionManager.commin();
+    }catch(Exception ex){
+        transactionManager.rollback();        
+    } 
+  } catch(Exception ex){
+      // do smth
+  }
+```
+
 </details>
 </details>
 </details>
