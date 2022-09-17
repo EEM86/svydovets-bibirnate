@@ -22,6 +22,13 @@ public interface Session extends Closeable {
     <T> T findById(Object id, Class<T> type);
 
     /**
+     * Update provided entity in the DB.
+     *
+     * @param entity - entity that should be updated
+     */
+    void update(Object entity);
+
+    /**
      * Delete existing project from Database.
      *
      * @param entity - entity that should be removed
@@ -53,4 +60,8 @@ public interface Session extends Closeable {
      */
     <T> Query createTypedQuery(String sql, Class<T> entityType);
 
+    /**
+     * Do flush all changes to Database.
+     */
+    void flush();
 }

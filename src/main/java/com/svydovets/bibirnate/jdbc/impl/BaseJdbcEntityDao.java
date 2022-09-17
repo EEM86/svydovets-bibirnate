@@ -1,13 +1,13 @@
 package com.svydovets.bibirnate.jdbc.impl;
 
 import static com.svydovets.bibirnate.session.query.CrudOperation.DELETE;
+import static com.svydovets.bibirnate.session.query.CrudOperation.UPDATE;
 import static com.svydovets.bibirnate.utils.EntityUtils.getColumnName;
 import static com.svydovets.bibirnate.utils.EntityUtils.getIdField;
 import static com.svydovets.bibirnate.utils.EntityUtils.getTableName;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
-import java.util.Objects;
 import java.util.Optional;
 
 import com.svydovets.bibirnate.jdbc.JdbcEntityDao;
@@ -15,7 +15,6 @@ import com.svydovets.bibirnate.logs.SqlLogger;
 import com.svydovets.bibirnate.mapper.EntityMapperService;
 import com.svydovets.bibirnate.session.query.processor.QueryProcessorFactory;
 
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 /**
@@ -75,6 +74,16 @@ public class BaseJdbcEntityDao implements JdbcEntityDao {
     public void remove(Object entity) {
         var queryProcessor = QueryProcessorFactory.defineQueryProcessor(DELETE, entity, connection,
           sqlLogger);
+        queryProcessor.execute();
+    }
+
+    /**
+     * {@inheritDoc}
+     **/
+    @Override
+    public void update(Object entity) {
+        var queryProcessor = QueryProcessorFactory.defineQueryProcessor(UPDATE, entity, connection,
+                sqlLogger);
         queryProcessor.execute();
     }
 

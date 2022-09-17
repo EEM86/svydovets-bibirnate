@@ -43,4 +43,10 @@ public interface JdbcEntityDao {
 
     EntityMapperService getEntityMapperService();
 
+    /**
+     * Update entity in database.
+     *
+     * @param entity to be updated
+     */
+    void update(Object entity);
 }

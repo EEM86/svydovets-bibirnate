@@ -25,14 +25,12 @@ public class QueryProcessorFactory {
     public static QueryProcessor defineQueryProcessor(CrudOperation operation, Object persistentObject,
                                                       Connection connection, SqlLogger sqlLogger) {
 
-        switch (operation) {
-            case DELETE:
-                return new DeleteQueryProcessor(persistentObject, connection, sqlLogger);
-            default:
-                throw new UnsupportedPersistentOperationException(String
-                  .format("Could not define query processor for operation type: %s", operation));
-
-        }
+        return switch (operation) {
+            case DELETE -> new DeleteQueryProcessor(persistentObject, connection, sqlLogger);
+            case UPDATE -> new UpdateQueryProcessor(persistentObject, connection, sqlLogger);
+            default -> throw new UnsupportedPersistentOperationException(String
+                    .format("Could not define query processor for operation type: %s", operation));
+        };
 
     }
 
