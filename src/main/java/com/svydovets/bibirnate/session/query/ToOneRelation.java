@@ -2,9 +2,15 @@ package com.svydovets.bibirnate.session.query;
 
 import java.lang.reflect.Field;
 
+import com.svydovets.bibirnate.annotation.ManyToOne;
+import com.svydovets.bibirnate.annotation.OneToOne;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * {@link OneToOne}/{@link ManyToOne} specific {@link EntityRelation} POJO.
+ */
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class ToOneRelation extends EntityRelation {
