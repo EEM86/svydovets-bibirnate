@@ -22,12 +22,15 @@ public class DemoApp {
     public static void main(String[] args) {
         SessionFactory sessionFactory = getSessionFactory();
         try (Session session = sessionFactory.openSession()) {
-            var query  = "insert into persons (first_name, last_name, email, age) values (?, ?, ?, ?);";
-            for (int i = 0; i < 1; i++) {
-                Query typedQuery = session.createTypedQuery(query, Person.class);
-                insertIntoPersons(typedQuery);
-                //typedQuery.execute();
-            }
+            final Person person1 = new Person();
+            person1.setEmail("asda@gmail.com");
+            session.persist(person1);
+//            var query  = "insert into persons (first_name, last_name, email, age) values (?, ?, ?, ?);";
+//            for (int i = 0; i < 1; i++) {
+//                Query typedQuery = session.createTypedQuery(query, Person.class);
+//                insertIntoPersons(typedQuery);
+//                //typedQuery.execute();
+//            }
 
             TransactionManager transactionManager = session.getTransactionManager();
             try {

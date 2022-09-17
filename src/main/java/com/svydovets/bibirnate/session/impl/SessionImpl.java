@@ -90,6 +90,14 @@ public class SessionImpl implements Session {
         }
     }
 
+    @Override
+    public void persist(Object entity) {
+        Objects.requireNonNull(entity);
+        checkIfSessionClosed();
+        jdbcEntityDao.persist(entity);
+        log.info("Here persisted entity should be persisted into the cache. Available only for licensed clients.");
+    }
+
     /**
      * {@inheritDoc}
      */
