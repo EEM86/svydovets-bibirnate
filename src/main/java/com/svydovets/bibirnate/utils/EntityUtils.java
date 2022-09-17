@@ -135,6 +135,9 @@ public final class EntityUtils {
     }
 
     public static <T> T wrapIdValue(T id) {
+        if (id == null) {
+            return null;
+        }
         if (id.getClass().equals(String.class)) {
             return (T) String.format("'%s'", id);
         }

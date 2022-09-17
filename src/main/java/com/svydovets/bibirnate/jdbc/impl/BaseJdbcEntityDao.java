@@ -2,8 +2,8 @@ package com.svydovets.bibirnate.jdbc.impl;
 
 import static com.svydovets.bibirnate.session.query.CrudOperation.CREATE;
 import static com.svydovets.bibirnate.session.query.CrudOperation.DELETE;
-import static com.svydovets.bibirnate.session.query.processor.QueryProcessorFactory.defineQueryProcessor;
 import static com.svydovets.bibirnate.session.query.CrudOperation.UPDATE;
+import static com.svydovets.bibirnate.session.query.processor.QueryProcessorFactory.defineQueryProcessor;
 import static com.svydovets.bibirnate.utils.EntityUtils.getColumnName;
 import static com.svydovets.bibirnate.utils.EntityUtils.getIdField;
 import static com.svydovets.bibirnate.utils.EntityUtils.getTableName;

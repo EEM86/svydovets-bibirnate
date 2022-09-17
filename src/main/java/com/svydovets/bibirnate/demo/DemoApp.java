@@ -24,11 +24,12 @@ public class DemoApp {
         sqlLoggingProperties.setEnabled(true);
 
         var dbProperties = DatabaseProperties.builder()
-          .url("jdbc:postgresql://rds-postgres-svydovets.c3bxmbbb5a4p.eu-central-1.rds.amazonaws.com:5432/svydovetsDB")
-          .user("masterSvydovets")
-          .password("demo4bibernate")
-          .driverName("org.postgresql.Driver")
-          .build();
+                .url("jdbc:postgresql://rds-postgres-svydovets.c3bxmbbb5a4p"
+                        + ".eu-central-1.rds.amazonaws.com:5432/svydovetsDB")
+                .user("masterSvydovets")
+                .password("demo4bibernate")
+                .driverName("org.postgresql.Driver")
+                .build();
 
         //TODO: provide actual DB schema:
         // for goverla team -> goverla
@@ -39,68 +40,79 @@ public class DemoApp {
         connectionPoolProperties.setSchema("public");
 
         var sessionFactoryBuilder = new DefaultSessionFactoryBuilderImpl()
-          .withSqlQueriesLoggingEnabled(sqlLoggingProperties)
-          .withDatabaseConnection(dbProperties)
-          .withConnectionPool(connectionPoolProperties);
+                .withSqlQueriesLoggingEnabled(sqlLoggingProperties)
+                .withDatabaseConnection(dbProperties)
+                .withConnectionPool(connectionPoolProperties);
 
         return PersistenceContextProvider.createSessionFactory(sessionFactoryBuilder);
     }
 
     @SneakyThrows
     public static void main(String[] args) {
-        SessionFactory sessionFactory = getSessionFactory();
-        try (Session session = sessionFactory.openSession()) {
-            var query = "insert into persons (first_name, last_name, email, age) values (?, ?, ?, ?);";
-            for (int i = 0; i < 1; i++) {
-                Query typedQuery = session.createTypedQuery(query, Person.class);
-                insertIntoPersons(typedQuery);
-                typedQuery.execute();
-            }
-
-            TransactionManager transactionManager = session.getTransactionManager();
-            try {
-                transactionManager.begin();
-
-                SqlGenerator.generateInsertQueriesToNotes(1).forEach(noteQuery -> {
-                    Query typedQuery = session.createTypedQuery(noteQuery, Note.class);
-                    typedQuery.execute();
-                });
-
-                Query typedQuery =
-                  session.createTypedQuery("select * from persons where first_name like ?", Person.class);
-                typedQuery.addParameter("P%");
-                Person firstResult = (Person) typedQuery.getFirstResult();
-                System.out.println(firstResult.toString());
-                //will be extracted from cache
-                firstResult = (Person) typedQuery.getFirstResult();
-                System.out.println(firstResult.toString());
-
-                typedQuery = session.createTypedQuery("select * from persons", Person.class);
-                System.out.println(typedQuery.getResultList().size());
-                //will be extracted from cache
-                System.out.println(typedQuery.getResultList().size());
-
-                Person person = session.findById(2, Person.class);
-                Optional.ofNullable(person)
-                  .ifPresentOrElse(System.out::println,
-                    () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
-                session.remove(person);
-
-                Optional.ofNullable(person)
-                  .ifPresentOrElse(System.out::println,
-                    () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
-
-                Note note = session.findById(2, Note.class);
-
-                Optional.ofNullable(note)
-                  .ifPresentOrElse(System.out::println,
-                    () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
-
-                transactionManager.commit();
-            } catch (Exception ex) {
-                transactionManager.rollback();
-            }
-        }
+    //        var person = new Person();
+    //        person.setEmail("34tgdfg@gmail.com");
+    //        person.setFirstName("34tgdfg@gmail.com");
+    //        person.setLastName("34tgdfg@gmail.com");
+    //        SessionFactory sessionFactory = getSessionFactory();
+    //        try (Session session = sessionFactory.openSession()) {
+    //            TransactionManager transactionManager = session.getTransactionManager();
+    //
+    //            Query typedQuery = session.createTypedQuery("select * from persons where first_name like ?",
+    //            Person.class);
+    //            typedQuery.addParameter("P%");
+    //            Person firstResult = (Person) typedQuery.getFirstResult();
+    //            System.out.println(firstResult.toString());
+    //            //will be extracted from cache
+    //            firstResult = (Person) typedQuery.getFirstResult();
+    //            System.out.println(firstResult.toString());
+    //
+    //            typedQuery = session.createTypedQuery("select * from persons", Person.class);
+    //            System.out.println(typedQuery.getResultList().size());
+    //            //will be extracted from cache
+    //            System.out.println(typedQuery.getResultList().size());
+    //
+    //            Person person1 = session.findById(2, Person.class);
+    //            Optional.ofNullable(person1)
+    //                    .ifPresentOrElse(System.out::println,
+    //                            () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
+    //            session.remove(person1);
+    //
+    //            Optional.ofNullable(person1)
+    //                    .ifPresentOrElse(System.out::println,
+    //                            () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
+    //
+    //            Note note = session.findById(2, Note.class);
+    //
+    //            Optional.ofNullable(note)
+    //                    .ifPresentOrElse(System.out::println,
+    //                            () -> System.out.println("There is no such object  ¯\\_(ツ)_/¯"));
+    //            try {
+    //                transactionManager.begin();
+    //
+    //                session.persist(person);
+    //
+    //                transactionManager.commit();
+    //            } catch (Exception ex) {
+    //                transactionManager.rollback();
+    //            }
+    //
+    //            TransactionManager transactionManager1 = session.getTransactionManager();
+    //            try {
+    //                transactionManager1.begin();
+    //
+    //                SqlGenerator.generateInsertQueriesToNotes(1).forEach(noteQuery -> {
+    //                    Query typedQuery1 = session.createTypedQuery(noteQuery, Note.class);
+    //                    typedQuery1.execute();
+    //                });
+    //
+    //                transactionManager1.commit();
+    //            } catch (Exception ex) {
+    //                transactionManager1.rollback();
+    //            }
+    //
+    //        } catch (Exception ex) {
+    //            // do smth
+    //        }
     }
 
     private static void insertIntoPersons(Query typedQuery) {
@@ -110,7 +122,7 @@ public class DemoApp {
         int age = SqlGenerator.getRandomNumberUsingInts(15, 85);
         int randomInt = SqlGenerator.getRandomNumberUsingInts(0, 99);
         var email = String.format("%s%s.%s_%s%s", randomFirstName.toLowerCase(Locale.ROOT), randomInt,
-          randomLastName.toLowerCase(), age, emailEnd);
+                randomLastName.toLowerCase(), age, emailEnd);
 
         typedQuery.addParameter(randomFirstName);
         typedQuery.addParameter(randomLastName);
