@@ -28,6 +28,7 @@ public class QueryProcessorFactory {
         return switch (operation) {
             case DELETE -> new DeleteQueryProcessor(persistentObject, connection, sqlLogger);
             case UPDATE -> new UpdateQueryProcessor(persistentObject, connection, sqlLogger);
+            case CREATE -> new InsertQueryProcessor(persistentObject, connection, sqlLogger);
             default -> throw new UnsupportedPersistentOperationException(String
                     .format("Could not define query processor for operation type: %s", operation));
         };

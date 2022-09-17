@@ -1,7 +1,9 @@
 package com.svydovets.bibirnate.jdbc.impl;
 
+import static com.svydovets.bibirnate.session.query.CrudOperation.CREATE;
 import static com.svydovets.bibirnate.session.query.CrudOperation.DELETE;
 import static com.svydovets.bibirnate.session.query.CrudOperation.UPDATE;
+import static com.svydovets.bibirnate.session.query.processor.QueryProcessorFactory.defineQueryProcessor;
 import static com.svydovets.bibirnate.utils.EntityUtils.getColumnName;
 import static com.svydovets.bibirnate.utils.EntityUtils.getIdField;
 import static com.svydovets.bibirnate.utils.EntityUtils.getTableName;
@@ -72,8 +74,18 @@ public class BaseJdbcEntityDao implements JdbcEntityDao {
      **/
     @Override
     public void remove(Object entity) {
-        var queryProcessor = QueryProcessorFactory.defineQueryProcessor(DELETE, entity, connection,
+        var queryProcessor = defineQueryProcessor(DELETE, entity, connection,
           sqlLogger);
+        queryProcessor.execute();
+    }
+
+    /**
+     * {@inheritDoc}
+     * @param entity to save
+     */
+    @Override
+    public void persist(Object entity) {
+        var queryProcessor = defineQueryProcessor(CREATE, entity, connection, sqlLogger);
         queryProcessor.execute();
     }
 

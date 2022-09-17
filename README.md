@@ -239,7 +239,23 @@ See more in the <a name="query">Query</a> block
 <summary>persist</summary>
 Insert entity into DB to proper table.
 
-IN PROGRESS
+```java
+  SessionFactory sessionFactory = getSessionFactory();
+  try (Session session = sessionFactory.openSession()) {
+      TransactionManager transactionManager = session.getTransactionManager();
+      try {
+      transactionManager.begin();
+         
+          session.persist(entity);
+        
+          transactionManager.commit();
+      } catch (Exception ex) {
+        transactionManager.rollback();
+      }
+  } catch(Exception ex){
+      // do smth
+  }
+```
 </details>
 <details>
 <summary>update</summary>

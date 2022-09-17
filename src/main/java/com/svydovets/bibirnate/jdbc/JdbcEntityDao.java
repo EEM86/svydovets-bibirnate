@@ -39,6 +39,13 @@ public interface JdbcEntityDao {
      */
     void remove(Object entity);
 
+    /**
+     * Save entity to the database.
+     *
+     * @param entity to save
+     */
+    void persist(Object entity);
+
     Connection getConnection();
 
     EntityMapperService getEntityMapperService();
