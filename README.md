@@ -442,7 +442,8 @@ Query  query = session.createTypedQuery("delete from persons where id = ?;", Per
 ## Mapping
 <details>
 <summary>Description</summary>
-At this moment for selection bibernate supports only to-one associations (one-to-one and many-to-one)
+At this moment for selection, bibernate supports only to-one associations (one-to-one and many-to-one)
+with eager fetch type (associated entity will be loaded at the same time with entity that owns this relation)
 this association must be specified only on the child entity side (entity with foreign key column)
 and also must be marked with @JoinColumn annotation where specified foreign key column name.
 
